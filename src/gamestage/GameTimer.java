@@ -14,11 +14,6 @@ import player.Player;
 public class GameTimer extends AnimationTimer{
 	private Scene scene;
 	private GraphicsContext gc;
-	//direction input booleans
-	private static boolean left;
-	private static boolean right;
-	private static boolean up;
-	private static boolean down;
 
 	private Player player;
 
@@ -27,49 +22,17 @@ public class GameTimer extends AnimationTimer{
 	    this.scene = scene;
 
 
-	    this.player = new Player("player");
-	    this.prepareActionHandlers();
+	    this.player = new Player("player", this.scene);
 	}
 
 
 	@Override
 	public void handle(long arg0) {
 		// TODO Auto-generated method stub
-		this.player.render(gc, 0, 0);
-
+		this.gc.clearRect(0, 0, GameStage.WINDOW_WIDTH, GameStage.WINDOW_WIDTH);
+		this.player.render(gc, this.player.getXPos(), this.player.getYPos());
+		this.player.movePlayer();
 	}
 
-	//For movement of player character
-	private void prepareActionHandlers() {
-	    this.scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
-	    	public void handle(KeyEvent e){
-	    		String code = e.getCode().toString();
-	            if(code.equals("A")) {
-	                GameTimer.left = true;
-	            }else if(code.equals("D")) {
-	                GameTimer.right = true;
-	            }else if(code.equals("W")){
-	                GameTimer.up = true;
-	            }else if(code.equals("S")){
-	                GameTimer.down = true;
-	            }
-	    	}
-	    });
-
-	    this.scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
-	    	public void handle(KeyEvent e){
-	    		String code = e.getCode().toString();
-	    		if(code.equals("A")) {
-	                GameTimer.left = false;
-	    		}else if(code.equals("D")) {
-	                GameTimer.right = false;
-	    		}else if(code.equals("W")){
-	                GameTimer.up = false;
-	    		}else if(code.equals("S")){
-	                GameTimer.down = false;
-	    		}
-	    	}
-	    });
-	}
 }
 

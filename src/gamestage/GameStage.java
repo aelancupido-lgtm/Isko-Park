@@ -23,8 +23,10 @@ public class GameStage {
 	private Canvas canvas;
 	private Group root;
 
+	public final static int WINDOW_WIDTH = 800;
+
 	public GameStage(){
-		this.canvas = new Canvas(800, 800);
+		this.canvas = new Canvas(WINDOW_WIDTH, WINDOW_WIDTH);
 		this.root = new Group();
 		this.root.getChildren().add(canvas);
 		this.gameScene = new Scene(root);
