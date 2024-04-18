@@ -11,10 +11,9 @@ public class Sprite {
 	protected double width;
 	protected double height;
 
-	public Sprite(double xPos, double yPos, Image image){
+	public Sprite(double xPos, double yPos){
 		this.xPos = xPos;
 		this.yPos = yPos;
-		this.loadImage(image);
 		this.visible = true;
 	}
 
