@@ -18,5 +18,30 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class GameStage {
+	private Stage stage;
+	private Scene gameScene;
+	private Canvas canvas;
+	private Group root;
+
+	public GameStage(){
+		this.canvas = new Canvas(800, 800);
+		this.root = new Group();
+		this.root.getChildren().add(canvas);
+		this.gameScene = new Scene(root);
+	}
+
+	public void setStage(Stage stage){
+		this.stage = stage;
+		stage.setTitle("Isko Park");
+		stage.setScene(this.gameScene);
+		stage.setResizable(false);
+		stage.show();
+
+		GraphicsContext graphics = this.canvas.getGraphicsContext2D();
+		GameTimer gameTimer = new GameTimer(gameScene, graphics);
+		gameTimer.start();
+	}
+
+
 
 }
