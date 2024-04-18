@@ -48,6 +48,13 @@ public class Player extends Sprite{
 	private String direction; //indicates if player is facing right or left
 	private String action;
 
+	//for player jump
+	private final static double JUMP_HEIGHT = 10;
+	private final static double JUMP_ACCELERATION = 0.8;
+	private double jumpSpeed;
+	private double jumpYPos;
+	private boolean isJumping;
+
 	//Player constructor
 	public Player(String name, Scene scene){
 		super(INITIAL_X, INITIAL_Y);
@@ -57,6 +64,9 @@ public class Player extends Sprite{
 		this.scene = scene;
 		this.spriteNum = 0;
 		this.spriteCounter = 0;
+		this.jumpSpeed = 0;
+		this.jumpYPos = 0;
+		this.isJumping = false;
 		this.color = INITIAL_COLOR;
 		this.direction = INITIAL_DIRECTION;
 		this.action = INITIAL_ACTION;
@@ -69,7 +79,10 @@ public class Player extends Sprite{
 	    this.scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 	    	public void handle(KeyEvent e){
 	    		String code = e.getCode().toString();
-	    		if(code.equals("W")) up = true;
+	    		if(code.equals("W") && !up && !isJumping){
+	    			up = true;
+	    			jump();
+	    		}
 	    		if(code.equals("A")) left = true;
 	    		if(code.equals("D")) right = true;
 	    	}
@@ -94,8 +107,8 @@ public class Player extends Sprite{
 		this.dx = 0;
 		this.dy = 0;
 
-		if (this.up){
-			this.dy = -SPEED;
+		if (this.up && !this.left && !this.right && !this.isJumping){
+			jump();
 		}
 
 		if (this.left){
@@ -114,6 +127,18 @@ public class Player extends Sprite{
 			this.yPos += dy;
 		}
 
+		if (isJumping){
+			// update vertical position based on jump
+			yPos += jumpSpeed;
+			jumpSpeed += JUMP_ACCELERATION;
+			
+			//check if the player landed
+			if (yPos >= jumpYPos){
+				yPos = jumpYPos;
+				isJumping = false;
+			}
+		}
+
 		this.animatePlayer();
 
 		//For sprite animation
@@ -125,26 +150,33 @@ public class Player extends Sprite{
 
 	}
 
+	//Initiates a jump for the player
+	// *Sets the player's state to jumping
+	// *Assigns an initial upward jump speed
+	// *Records the current vertical position of the player
+	private void jump(){
+		isJumping = true;
+		jumpSpeed = -JUMP_HEIGHT;
+		jumpYPos = yPos;
+	}
+
 	//For sprite animation
 	// *Bug: if player stops moving, idle does not show
-	private void animatePlayer(){
-		Image img = null;
+	private void animatePlayer() {
+	  Image img = null;
 
-		if (this.up){
-			this.action = ACTIONS[2]; // jump
-		} else if(this.left || this.right) {
-			this.action = ACTIONS[1]; // walk
-		} else {
-			this.action = ACTIONS[0]; // idle
-		}
+	  if (this.left || this.right) {
+	      this.action = ACTIONS[1]; // walk
+	      img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+	  } else if (this.up) {
+	      this.action = ACTIONS[2]; // jump
+	      img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+	  } else {
+	      this.action = ACTIONS[0]; // idle
+	      img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+	  }
 
-		if(!this.up && (this.left || this.right)) {
-			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
-		} else {
-			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
-		}
-
-		this.loadImage(img);
+	  this.loadImage(img);
 	}
 
 	//Getter methods
