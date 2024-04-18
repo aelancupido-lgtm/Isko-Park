@@ -17,6 +17,10 @@ public class Player extends Sprite{
 	private final static int PLAYER_HEIGHT = 52;
 	private final static double SPEED = 2.0;
 
+	// User for sprite animation.
+	private final static int MAX_FRAME = 9;
+	private final static int MAX_SPRITE = 4;
+
 	// Player images
 	public final static Image PLAYER_LEFT_IDLE = new Image("assets/green_character/green_left_idle_1.png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
 
@@ -65,7 +69,7 @@ public class Player extends Sprite{
 		this.scene = scene;
 		this.prepareActionHandlers();
 
-		this.spriteNum = 1;
+		this.spriteNum = 0;
 		this.spriteCounter = 0;
 		this.direction = "right";
 	}
@@ -89,7 +93,6 @@ public class Player extends Sprite{
 	    });
 
 	    this.scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
-
 			public void handle(KeyEvent e){
 	    		String code = e.getCode().toString();
 	    		if(code.equals("A")) {
@@ -108,7 +111,6 @@ public class Player extends Sprite{
 	// *Checks if player will reach boundary
 	// *Animates player with animatePlayer method
 	public void movePlayer(){
-
 		//Reset dx and dy value
 		this.dx = 0;
 		this.dy = 0;
@@ -135,12 +137,8 @@ public class Player extends Sprite{
 
 		//For sprite animation
 		this.spriteCounter++;
-		if (this.spriteCounter > 9){
-			if (this.spriteNum == 4){
-				this.spriteNum = 1;
-			} else{
-				this.spriteNum++;
-			}
+		if (this.spriteCounter > MAX_FRAME){
+			this.spriteNum = (this.spriteNum % MAX_SPRITE) + 1; // wrapping sprite number using modulo.
 			this.spriteCounter = 0;
 		}
 

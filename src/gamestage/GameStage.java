@@ -36,7 +36,7 @@ public class GameStage {
 		this.stage = stage;
 		stage.setTitle("Isko Park");
 		stage.setScene(this.gameScene);
-		stage.setResizable(false);
+//		stage.setResizable(false);
 		stage.show();
 
 		GraphicsContext graphics = this.canvas.getGraphicsContext2D();
