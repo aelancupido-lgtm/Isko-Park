@@ -55,6 +55,7 @@ public class Player extends Sprite{
 	private Scene scene;
 	private int spriteNum;
 	private int spriteCounter;
+	private String direction; //indicates if player is facing right or left
 
 	//Player constructor
 	public Player(String name, Scene scene){
@@ -63,8 +64,10 @@ public class Player extends Sprite{
 		this.hasKey = false;
 		this.scene = scene;
 		this.prepareActionHandlers();
+
 		this.spriteNum = 1;
 		this.spriteCounter = 0;
+		this.direction = "right";
 	}
 
 	//For getting user input for player movement
@@ -75,8 +78,10 @@ public class Player extends Sprite{
 	    		String code = e.getCode().toString();
 	            if(code.equals("A")) {
 	                left = true;
+	                direction = "left";
 	            }else if(code.equals("D")) {
 	                right = true;
+	                direction = "right";
 	            }else if(code.equals("W")){
 	                up = true;
 	            }
@@ -103,6 +108,11 @@ public class Player extends Sprite{
 	// *Checks if player will reach boundary
 	// *Animates player with animatePlayer method
 	public void movePlayer(){
+
+		//Reset dx and dy value
+		this.dx = 0;
+		this.dy = 0;
+
 		if (this.left){
 			this.dx = -SPEED;
 		} else if (this.right){
@@ -123,10 +133,6 @@ public class Player extends Sprite{
 
 		this.animatePlayer();
 
-		//Reset dx and dy value
-		this.dx = 0;
-		this.dy = 0;
-
 		//For sprite animation
 		this.spriteCounter++;
 		if (this.spriteCounter > 9){
@@ -144,9 +150,9 @@ public class Player extends Sprite{
 	// *Bug: if player stops moving, idle does not show
 	private void animatePlayer(){
 		if (this.up){
-			if (this.dx > 0){
+			if (this.direction == "right"){
 				this.loadImage(PLAYER_RIGHT_WALK_4);
-			} else if (this.dx < 0){
+			} else {
 				this.loadImage(PLAYER_LEFT_WALK_4);
 			}
 
@@ -181,9 +187,9 @@ public class Player extends Sprite{
 				break;
 			}
 		} else{
-			if (this.dx > 0){
+			if (this.direction == "right"){
 				this.loadImage(PLAYER_RIGHT_IDLE);
-			} else if (this.dx < 0){
+			} else {
 				this.loadImage(PLAYER_LEFT_IDLE);
 			}
 		}
