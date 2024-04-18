@@ -9,6 +9,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import objects.Key;
 import player.Player;
 
 public class GameTimer extends AnimationTimer{
@@ -16,6 +17,7 @@ public class GameTimer extends AnimationTimer{
 	private GraphicsContext gc;
 
 	private Player player;
+	private Key key;
 
 	GameTimer(Scene scene, GraphicsContext gc) {
 	    this.gc = gc;
@@ -23,6 +25,7 @@ public class GameTimer extends AnimationTimer{
 
 
 	    this.player = new Player("player", this.scene);
+	    this.key = new Key();
 	}
 
 
@@ -30,6 +33,10 @@ public class GameTimer extends AnimationTimer{
 	public void handle(long arg0) {
 		// TODO Auto-generated method stub
 		this.gc.clearRect(0, 0, GameStage.WINDOW_WIDTH, GameStage.WINDOW_WIDTH);
+
+		this.key.checkCollision(this.player);
+
+		this.key.render(gc, this.key.getXPos(), this.key.getYPos());
 		this.player.render(gc, this.player.getXPos(), this.player.getYPos());
 		this.player.movePlayer();
 	}
