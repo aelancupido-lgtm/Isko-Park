@@ -24,8 +24,8 @@ public class Player extends Sprite{
 	private final static String INITIAL_ACTION = ACTIONS[0];
 
 	//Player height must be greater than width by 5 pixels
-	private final static int PLAYER_WIDTH = 47;
-	private final static int PLAYER_HEIGHT = 52;
+	public final static int PLAYER_WIDTH = 47;
+	public final static int PLAYER_HEIGHT = 52;
 	private final static double SPEED = 2.0;
 
 	// User for sprite animation.
@@ -186,6 +186,10 @@ public class Player extends Sprite{
 
 	public String getDirection(){
 		return this.direction;
+	}
+
+	public String getUsername(){
+		return this.name;
 	}
 
 

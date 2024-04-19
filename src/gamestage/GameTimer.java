@@ -20,6 +20,11 @@ public class GameTimer extends AnimationTimer{
 	private Player player;
 	private Key key;
 	private Door door;
+	private static final double FONT_SIZE = 15;
+
+	//username position differences
+	private static final double USERNAME_HEIGHT = 10;
+	private static final double USERNAME_WIDTH = 5;
 
 	GameTimer(Scene scene, GraphicsContext gc) {
 	    this.gc = gc;
@@ -48,13 +53,14 @@ public class GameTimer extends AnimationTimer{
 
 	//For rendering sprites
 	private void renderSprites(){
-		this.door.render(gc, this.door.getXPos(), this.door.getYPos());
+		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
 
 		if (this.key.isVisible()){
-			this.key.render(gc, this.key.getXPos(), this.key.getYPos());
+			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());
 		}
 
-		this.player.render(gc, this.player.getXPos(), this.player.getYPos());
+		this.drawPlayerUsername();
+		this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
 	}
 
 	//For sprite movement
@@ -62,6 +68,15 @@ public class GameTimer extends AnimationTimer{
 		this.key.move();
 		this.player.movePlayer();
 	}
+
+	//For player username
+	private void drawPlayerUsername(){
+		this.gc.setFont(Font.font("Verdana", FontWeight.BOLD, FONT_SIZE));
+		this.gc.setFill(Color.BLACK);
+		this.gc.fillText(this.player.getUsername(), this.player.getXPos() - USERNAME_WIDTH, this.player.getYPos() - USERNAME_HEIGHT);
+	}
+
+
 
 }
 
