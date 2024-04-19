@@ -11,6 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import objects.Door;
 import objects.Key;
+import obstacle.Button;
 import player.Player;
 
 public class GameTimer extends AnimationTimer{
@@ -20,6 +21,7 @@ public class GameTimer extends AnimationTimer{
 	private Player player;
 	private Key key;
 	private Door door;
+	private Button button;
 	private static final double FONT_SIZE = 15;
 
 	//username position differences
@@ -33,6 +35,7 @@ public class GameTimer extends AnimationTimer{
 	    this.player = new Player("player", this.scene);
 	    this.key = new Key();
 	    this.door = new Door();
+	    this.button = new Button();
 	}
 
 
@@ -49,11 +52,16 @@ public class GameTimer extends AnimationTimer{
 	private void checkStatus(){
 		this.key.checkCollision(this.player);
 		this.door.checkCollision(this.player);
+		this.button.checkCollision(this.player);
 	}
 
 	//For rendering sprites
 	private void renderSprites(){
+		this.gc.setFill(Color.ORANGE);
+		this.gc.fillRect(0, Player.INITIAL_Y + Player.PLAYER_HEIGHT, GameStage.WINDOW_WIDTH, GameStage.WINDOW_WIDTH - Player.INITIAL_Y);
+
 		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
+		this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());
 
 		if (this.key.isVisible()){
 			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());

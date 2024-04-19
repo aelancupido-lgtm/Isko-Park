@@ -6,7 +6,7 @@ import sprite.Sprite;
 
 public class Door extends Sprite{
 	private final static double INITIAL_X = 650;
-	private final static double INITIAL_Y = 580;
+	private final static double INITIAL_Y = 582;
 	private final static double DOOR_SIZE = 70;
 	private final static Image CLOSED_DOOR_IMAGE = new Image("assets/closed_door.png", DOOR_SIZE, DOOR_SIZE, true, false);
 	private final static Image OPEN_DOOR_IMAGE = new Image("assets/open_door.png", DOOR_SIZE, DOOR_SIZE, true, false);
