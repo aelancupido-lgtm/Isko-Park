@@ -79,22 +79,22 @@ public class Player extends Sprite{
 	private void prepareActionHandlers() {
 	    this.scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 	    	public void handle(KeyEvent e){
-	    		String code = e.getCode().toString();
-	    		if(e.getCode().equals(KeyCode.SPACE) && !up && !isJumping){
+	    		KeyCode code = e.getCode();
+	    		if(code.equals(KeyCode.SPACE) && !up && !isJumping){
 	    			up = true;
 	    			jump();
 	    		}
-	    		if(code.equals("A")) left = true;
-	    		if(code.equals("D")) right = true;
+	    		if(code.equals(KeyCode.A)) left = true;
+	    		if(code.equals(KeyCode.D)) right = true;
 	    	}
 	    });
 
 	    this.scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
 			public void handle(KeyEvent e){
-	    		String code = e.getCode().toString();
-	    		if(e.getCode().equals(KeyCode.SPACE)) up = false;
-	    		if(code.equals("A")) left = false;
-	    		if(code.equals("D")) right = false;
+				KeyCode code = e.getCode();
+	    		if(code.equals(KeyCode.SPACE)) up = false;
+	    		if(code.equals(KeyCode.A)) left = false;
+	    		if(code.equals(KeyCode.D)) right = false;
 	    	}
 	    });
 	}
