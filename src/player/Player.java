@@ -4,6 +4,7 @@ import gamestage.GameStage;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import objects.Key;
 import sprite.Sprite;
@@ -79,7 +80,7 @@ public class Player extends Sprite{
 	    this.scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 	    	public void handle(KeyEvent e){
 	    		String code = e.getCode().toString();
-	    		if(code.equals("W") && !up && !isJumping){
+	    		if(e.getCode().equals(KeyCode.SPACE) && !up && !isJumping){
 	    			up = true;
 	    			jump();
 	    		}
@@ -91,7 +92,7 @@ public class Player extends Sprite{
 	    this.scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
 			public void handle(KeyEvent e){
 	    		String code = e.getCode().toString();
-	    		if(code.equals("W")) up = false;
+	    		if(e.getCode().equals(KeyCode.SPACE)) up = false;
 	    		if(code.equals("A")) left = false;
 	    		if(code.equals("D")) right = false;
 	    	}
