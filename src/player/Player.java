@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import objects.Key;
 import sprite.Sprite;
 
 public class Player extends Sprite{
@@ -39,8 +40,6 @@ public class Player extends Sprite{
 	private boolean up;
 
 	private String name; //player username
-	private boolean hasKey;
-	private Image playerCharacter;
 	private Scene scene;
 	private int spriteNum;
 	private int spriteCounter;
@@ -54,13 +53,14 @@ public class Player extends Sprite{
 	private double jumpSpeed;
 	private double jumpYPos;
 	private boolean isJumping;
+	private Key key;
 
 	//Player constructor
 	public Player(String name, Scene scene){
 		super(INITIAL_X, INITIAL_Y);
 		this.loadImage(INITIAL_IMAGE);
 		this.name = name;
-		this.hasKey = false;
+		this.key = null;
 		this.scene = scene;
 		this.spriteNum = 0;
 		this.spriteCounter = 0;
@@ -131,7 +131,7 @@ public class Player extends Sprite{
 			// update vertical position based on jump
 			yPos += jumpSpeed;
 			jumpSpeed += JUMP_ACCELERATION;
-			
+
 			//check if the player landed
 			if (yPos >= jumpYPos){
 				yPos = jumpYPos;
@@ -161,7 +161,6 @@ public class Player extends Sprite{
 	}
 
 	//For sprite animation
-	// *Bug: if player stops moving, idle does not show
 	private void animatePlayer() {
 	  Image img = null;
 
@@ -180,14 +179,23 @@ public class Player extends Sprite{
 	}
 
 	//Getter methods
-	private boolean checkKey(){
-		return this.hasKey;
+	public Key checkKey(){
+		return this.key;
+	}
+
+	public String getDirection(){
+		return this.direction;
 	}
 
 
 	//Setter methods
-	private void getKey(){
-		this.hasKey = true;
+	public void getKey(Key key){
+		this.key = key;
+	}
+
+	public void removeKey(){
+		this.key = null;
+
 	}
 
 }
