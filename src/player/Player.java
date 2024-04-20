@@ -98,7 +98,7 @@ public class Player extends Sprite{
 	// *Adds dx and dy to player movement
 	// *Checks if player will reach boundary
 	// *Animates player with animatePlayer method
-	public void movePlayer(){
+	public void move(){
 		//Reset dx and dy value
 		this.dx = 0;
 		this.dy = 0;

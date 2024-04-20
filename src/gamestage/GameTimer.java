@@ -75,7 +75,7 @@ public class GameTimer extends AnimationTimer{
 	//For sprite movement
 	private void moveSprites(){
 		this.key.move();
-		this.player.movePlayer();
+		this.player.move();
 	}
 
 	//For player username
