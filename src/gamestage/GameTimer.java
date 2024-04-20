@@ -9,6 +9,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import objects.Door;
 import objects.Key;
 import obstacle.Button;
@@ -79,9 +80,17 @@ public class GameTimer extends AnimationTimer{
 
 	//For player username
 	private void drawPlayerUsername(){
-		this.gc.setFont(Font.font("Verdana", FontWeight.BOLD, FONT_SIZE));
-		this.gc.setFill(Color.BLACK);
-		this.gc.fillText(this.player.getUsername(), this.player.getXPos() - USERNAME_WIDTH, this.player.getYPos() - USERNAME_HEIGHT);
+	    Text text = new Text(this.player.getUsername());
+	    text.setFont(Font.font("Verdana", FontWeight.BOLD, FONT_SIZE));
+
+	    double centerXPos = this.player.getXPos() + (Player.PLAYER_WIDTH / 2);		//get the horizontal center point of the player
+	    double textWidth = text.getLayoutBounds().getWidth();				//get width of text
+	    double textXPos = centerXPos - (textWidth / 2);					//x-coordinate for positioning the text horizontally
+	    double textYPos = this.player.getYPos() - USERNAME_HEIGHT;				//y-coordinate for positioning the text vertically
+
+	    this.gc.setFont(Font.font("Verdana", FontWeight.BOLD, FONT_SIZE));
+	    this.gc.setFill(Color.BLACK);
+	    this.gc.fillText(this.player.getUsername(), textXPos, textYPos);
 	}
 
 
