@@ -23,19 +23,41 @@ public class Door extends Sprite{
 		if (player.getKey() != null){
 			this.open = true;
 			this.loadImage(OPEN_DOOR_IMAGE);
-			player.removeKey();
+			//player.removeKey();
 		}
 	}
 
 	public void checkCollision(Player player){
-		if (this.collidesWith(player)){
-			if(this.open) {
-				player.getKey().use();
-				player.vanish(); // needs delay here.
-			} else {
-				this.unlock(player);
-			}
-		}
+	    if (this.collidesWith(player) && !this.open){
+	        this.unlock(player);
+	        if (player.getKey() != null) {
+	            player.getKey().use();
+	        }
+	    } else if (this.playerAtCenter(player) && this.open){
+	        player.vanish();
+	    }
+	}
+
+	//checks if player is at the center of the door
+	// **returns true if yes, otherwise false
+	public boolean playerAtCenter(Player player){
+		//center position of player
+	    double playerCenterX = player.getXPos() + (Player.PLAYER_WIDTH / 2);
+	    double playerCenterY = player.getYPos() + (Player.PLAYER_HEIGHT / 2);
+
+	    //center position of door
+	    double doorCenterX = this.getXPos() + (DOOR_SIZE / 2);
+	    double doorCenterY = this.getYPos() + (DOOR_SIZE / 2);
+
+	    double diffX = Math.abs(playerCenterX - doorCenterX);
+	    double diffY = Math.abs(playerCenterY - doorCenterY);
+
+	    return diffX <= Player.PLAYER_WIDTH / 2 && diffY <= Player.PLAYER_HEIGHT / 2;
+	}
+
+	//getter
+	public boolean isOpen(){
+		return this.open;
 	}
 
 }
