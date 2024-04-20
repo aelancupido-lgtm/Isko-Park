@@ -39,10 +39,12 @@ public class GameStage {
 		stage.show();
 
 		GraphicsContext graphics = this.canvas.getGraphicsContext2D();
-		GameTimer gameTimer = new GameTimer(gameScene, graphics);
+		GameTimer gameTimer = new GameTimer(gameScene, graphics, this);
 		gameTimer.start();
 	}
 
-
+	public void setGameOverScene(Scene gameOverScene){
+        stage.setScene(gameOverScene);
+    }
 
 }
