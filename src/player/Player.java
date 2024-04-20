@@ -178,7 +178,7 @@ public class Player extends Sprite{
 	}
 
 	//Getter methods
-	public Key checkKey(){
+	public Key getKey(){
 		return this.key;
 	}
 
@@ -192,7 +192,7 @@ public class Player extends Sprite{
 
 
 	//Setter methods
-	public void getKey(Key key){
+	public void acquireKey(Key key){
 		this.key = key;
 	}
 
@@ -202,7 +202,6 @@ public class Player extends Sprite{
 	}
 
 	@Override
-	//For player movement
 	public void render(GraphicsContext gc, double xPos, double yPos){
 		super.render(gc, xPos, yPos);
 

@@ -21,7 +21,7 @@ public class Key extends Sprite{
 	public void checkCollision(Player player){
 		if(this.collidesWith(player) && this.player == null && this.visible){
 			this.player = player;
-			this.player.getKey(this);
+			this.player.acquireKey(this);
 			this.move();
 			}
 		}

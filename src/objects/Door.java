@@ -20,18 +20,21 @@ public class Door extends Sprite{
 	}
 
 	public void unlock(Player player){
-		if (player.checkKey() != null){
+		if (player.getKey() != null){
 			this.open = true;
 			this.loadImage(OPEN_DOOR_IMAGE);
+			player.removeKey();
 		}
 	}
 
 	public void checkCollision(Player player){
-		if (this.collidesWith(player) && this.open){
-			player.checkKey().use();
-			player.vanish();
-		} else if (this.collidesWith(player)){
-			this.unlock(player);
+		if (this.collidesWith(player)){
+			if(this.open) {
+				player.getKey().use();
+				player.vanish(); // needs delay here.
+			} else {
+				this.unlock(player);
+			}
 		}
 	}
 

@@ -57,7 +57,9 @@ public class GameTimer extends AnimationTimer{
 			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());
 		}
 
-		this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
+		if(this.player.isVisible()) {
+			this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
+		}
 	}
 
 	//For sprite movement
