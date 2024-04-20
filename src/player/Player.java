@@ -3,9 +3,14 @@ package player;
 import gamestage.GameStage;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import objects.Key;
 import sprite.Sprite;
 
@@ -31,6 +36,8 @@ public class Player extends Sprite{
 	// User for sprite animation.
 	private final static int MAX_FRAME = 9;
 	private final static int MAX_SPRITE = 4;
+
+	private static final double USERNAME_FONTSIZE = 15;
 
 	// Player image
 	public final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
@@ -194,7 +201,28 @@ public class Player extends Sprite{
 
 	}
 
+	@Override
+	//For player movement
+	public void render(GraphicsContext gc, double xPos, double yPos){
+		super.render(gc, xPos, yPos);
+
+		//For player username
+	    Text text = new Text(this.name);
+	    text.setFont(Font.font("Verdana", FontWeight.BOLD, USERNAME_FONTSIZE));
+
+	    double centerXPos = this.getXPos() + (PLAYER_WIDTH / 2);	//get the horizontal center point of the player
+	    double textWidth = text.getLayoutBounds().getWidth();
+	    double textXPos = centerXPos - (textWidth / 2);				//x-coordinate for positioning the text horizontally
+	    double textYPos = this.yPos - 10;							//y-coordinate for positioning the text vertically
+
+	    gc.setFont(Font.font("Verdana", FontWeight.BOLD, USERNAME_FONTSIZE));
+	    gc.setFill(Color.BLACK);
+		gc.fillText(this.name, textXPos, textYPos);
+	}
 }
+
+// Issues:
+// Restrict the characters for username
 
 //Debugging Print.
 // System.out.println("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png");
