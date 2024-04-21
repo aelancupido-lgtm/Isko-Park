@@ -21,7 +21,7 @@ public class Player extends Sprite{
 
 	//Initial player spawn location
 	public final static int INITIAL_X = 50;
-	public final static int INITIAL_Y = 600;
+	public final static int INITIAL_Y = 594;
 
 	private final static int INITIAL_INDEX = 0; // increment this for multiplayer.
 	private final String INITIAL_COLOR = COLORS[INITIAL_INDEX]; // not static since this is an instance variable, not a class variable.
@@ -29,8 +29,8 @@ public class Player extends Sprite{
 	private final static String INITIAL_ACTION = ACTIONS[0];
 
 	//Player height must be greater than width by 5 pixels
-	public final static int PLAYER_WIDTH = 47;
-	public final static int PLAYER_HEIGHT = 52;
+	public final static int PLAYER_WIDTH = 43;
+	public final static int PLAYER_HEIGHT = 48;
 	private final static double SPEED = 2.0;
 
 	// User for sprite animation.
@@ -55,7 +55,7 @@ public class Player extends Sprite{
 	private String action;
 
 	//for player jump
-	private final static double JUMP_HEIGHT = 10;
+	private final static double JUMP_HEIGHT = 12;
 	private final static double JUMP_ACCELERATION = 0.8;
 	private double jumpSpeed;
 	private double jumpYPos;

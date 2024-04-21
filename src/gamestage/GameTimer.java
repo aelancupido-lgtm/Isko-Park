@@ -4,12 +4,12 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import objects.Door;
 import objects.Key;
 import obstacle.Button;
 import player.Player;
+import tile.TileManager;
 
 public class GameTimer extends AnimationTimer{
 	private Scene scene;
@@ -21,6 +21,7 @@ public class GameTimer extends AnimationTimer{
 	private Key key;
 	private Door door;
 	private Button button;
+	private TileManager tm;
 
 	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage) {
 	    this.gc = gc;
@@ -32,6 +33,8 @@ public class GameTimer extends AnimationTimer{
 	    this.key = new Key();
 	    this.door = new Door();
 	    this.button = new Button();
+	    this.tm = new TileManager();
+	    this.tm.loadMap("matrix_1");
 	}
 
 
@@ -65,8 +68,8 @@ public class GameTimer extends AnimationTimer{
 
 	//For rendering sprites
 	private void renderSprites(){
-		this.gc.setFill(Color.ORANGE);
-		this.gc.fillRect(0, Player.INITIAL_Y + Player.PLAYER_HEIGHT, GameStage.WINDOW_WIDTH, GameStage.WINDOW_WIDTH - Player.INITIAL_Y);
+
+		this.tm.draw(gc);
 
 		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
 		this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());

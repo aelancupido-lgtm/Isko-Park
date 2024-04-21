@@ -23,6 +23,12 @@ public class GameStage {
 	private Group root;
 
 	public final static int WINDOW_WIDTH = 800;
+	public final static int TILE_SIZE = 16;
+	public final static int MAX_ROW = WINDOW_WIDTH/TILE_SIZE;
+
+
+	public final static Color BACKGROUND_COLOR = Color.WHITE;
+	public final static Color TILE_COLOR = Color.ORANGE;
 
 	public GameStage(){
 		this.canvas = new Canvas(WINDOW_WIDTH, WINDOW_WIDTH);

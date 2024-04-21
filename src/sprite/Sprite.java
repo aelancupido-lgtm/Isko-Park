@@ -17,7 +17,7 @@ public class Sprite {
 		this.visible = true;
 	}
 
-	private Rectangle2D getBounds(){
+	public Rectangle2D getBounds(){
 		return new Rectangle2D(this.xPos, this.yPos, this.width, this.height);
 	}
 
