@@ -41,7 +41,10 @@ public class TileManager {
 		while(col < GameStage.MAX_ROW && row < GameStage.MAX_ROW ){
 
 			int tileNum = tileMap[col][row];
-			this.platforms.add(new Sprite(x, y, tile[tileNum].tileImage));
+
+			if (tileNum == 1){
+				this.platforms.add(new Sprite(x, y, tile[tileNum].tileImage));
+			}
 
 			col++;
 
