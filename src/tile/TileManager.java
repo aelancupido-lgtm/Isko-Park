@@ -1,18 +1,22 @@
 package tile;
 
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 import javafx.scene.canvas.GraphicsContext;
+import sprite.Sprite;
 import gamestage.GameStage;
 
 public class TileManager {
 	private Tile tile[];
 	private int tileMap[][];
+	private ArrayList<Sprite> platforms;
 
 	public TileManager(){
 		this.tile = new Tile[2];
+		this.platforms = new ArrayList<Sprite>();
 		this.tileMap = new int [GameStage.MAX_ROW][GameStage.MAX_ROW];
 		this.populateTileList();
 	}
@@ -20,15 +24,15 @@ public class TileManager {
 	//For tile list
 	private void populateTileList(){
 		this.tile[0] = new Tile();
-		this.tile[0].tileColor = GameStage.BACKGROUND_COLOR;
+		this.tile[0].tileImage = GameStage.BACKGROUND_IMAGE;
 
 		this.tile[1] = new Tile();
-		this.tile[1].tileColor = GameStage.TILE_COLOR;
+		this.tile[1].tileImage = GameStage.TILE_IMAGE;
 		this.tile[1].collision = true;
 	}
 
-	//For rendering map
-	public void draw (GraphicsContext gc){
+	//Populates the platforms arraylist
+	private void populatePlatforms(){
 		int col = 0;
 		int row = 0;
 		int x = 0;
@@ -37,9 +41,8 @@ public class TileManager {
 		while(col < GameStage.MAX_ROW && row < GameStage.MAX_ROW ){
 
 			int tileNum = tileMap[col][row];
+			this.platforms.add(new Sprite(x, y, tile[tileNum].tileImage));
 
-			gc.setFill(tile[tileNum].tileColor);
-			gc.fillRect(x, y, GameStage.TILE_SIZE, GameStage.TILE_SIZE);
 			col++;
 
 			x+= GameStage.TILE_SIZE;
@@ -51,6 +54,14 @@ public class TileManager {
 				y += GameStage.TILE_SIZE;
 			}
 
+		}
+
+	}
+
+	//For rendering map
+	public void draw (GraphicsContext gc){
+		for (Sprite platform: this.platforms){
+			platform.render(gc, platform.getXPos(), platform.getYPos());
 		}
 	}
 
@@ -83,10 +94,16 @@ public class TileManager {
 			}
 
 			in.close();
+			this.populatePlatforms();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	//Returns the platforms arraylist
+	public ArrayList<Sprite> getPlatforms(){
+		return this.platforms;
 	}
 
 

@@ -1,9 +1,11 @@
 package tile;
 
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 public class Tile {
 	public boolean collision = false;
-	public Color tileColor;
+	public Image tileImage;
+
+
 
 }

@@ -30,6 +30,9 @@ public class GameStage {
 	public final static Color BACKGROUND_COLOR = Color.WHITE;
 	public final static Color TILE_COLOR = Color.ORANGE;
 
+	public final static Image BACKGROUND_IMAGE = new Image("assets/white.png", TILE_SIZE, TILE_SIZE, false, false);
+	public final static Image TILE_IMAGE = new Image("assets/orange.png", TILE_SIZE, TILE_SIZE, false, false);
+
 	public GameStage(){
 		this.canvas = new Canvas(WINDOW_WIDTH, WINDOW_WIDTH);
 		this.root = new Group();

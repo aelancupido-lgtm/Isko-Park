@@ -17,6 +17,13 @@ public class Sprite {
 		this.visible = true;
 	}
 
+	public Sprite(double xPos, double yPos, Image img){
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.visible = true;
+		this.loadImage(img);
+	}
+
 	public Rectangle2D getBounds(){
 		return new Rectangle2D(this.xPos, this.yPos, this.width, this.height);
 	}
@@ -42,6 +49,7 @@ public class Sprite {
 			e.printStackTrace();
 		}
 	}
+
 
 	//For player movement
 	public void render(GraphicsContext gc, double xPos, double yPos){
