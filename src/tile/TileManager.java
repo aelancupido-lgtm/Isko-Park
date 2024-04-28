@@ -109,6 +109,10 @@ public class TileManager {
 		return this.platforms;
 	}
 
-
+	public int getTile(int x, int y) {
+	    int col = x / GameStage.TILE_SIZE;
+	    int row = y / GameStage.TILE_SIZE;
+	    return tileMap[col][row];
+	}
 
 }

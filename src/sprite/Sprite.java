@@ -94,4 +94,7 @@ public class Sprite {
 		this.visible = false;
 	}
 
+ 	public double getHeight() {
+        return this.height;
+    }
 }
