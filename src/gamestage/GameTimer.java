@@ -29,12 +29,12 @@ public class GameTimer extends AnimationTimer{
 //		this.gameStage = gameStage;
 //	    this.gameOver = new GameOver(scene, gc);
 
-	    this.player = new Player("player", this.scene);
 	    this.key = new Key();
 	    this.door = new Door();
 	    this.button = new Button();
 	    this.tm = new TileManager();
 	    this.tm.loadMap("matrix_1");
+		this.player = new Player("player", this.scene, this.tm);
 	}
 
 

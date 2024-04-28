@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import objects.Key;
+import tile.TileManager;
 import sprite.Sprite;
 
 public class Player extends Sprite{
@@ -57,13 +58,16 @@ public class Player extends Sprite{
 	//for player jump
 	private final static double JUMP_HEIGHT = 12;
 	private final static double JUMP_ACCELERATION = 0.8;
+	private final static double FALL_SPEED = 6;
 	private double jumpSpeed;
 	private double jumpYPos;
 	private boolean jumping;
+	private boolean falling;
 	private Key key;
+	private TileManager tileManager;
 
 	//Player constructor
-	public Player(String name, Scene scene){
+	public Player(String name, Scene scene, TileManager tileManager){
 		super(INITIAL_X, INITIAL_Y);
 		this.loadImage(INITIAL_IMAGE);
 		this.name = name;
@@ -74,6 +78,8 @@ public class Player extends Sprite{
 		this.jumpSpeed = 0;
 		this.jumpYPos = 0;
 		this.jumping = false;
+		this.falling = false;
+		this.tileManager = tileManager;
 		this.color = INITIAL_COLOR;
 		this.direction = INITIAL_DIRECTION;
 		this.action = INITIAL_ACTION;
@@ -126,6 +132,10 @@ public class Player extends Sprite{
 			this.yPos += dy;
 		}
 
+		if (!this.jumping){
+			this.falling = true;
+		}
+
 		if (this.jumping){
 			// update vertical position based on jump
 			this.yPos += this.jumpSpeed;
@@ -136,6 +146,51 @@ public class Player extends Sprite{
 				this.yPos = this.jumpYPos;
 				this.jumping = false;
 			}
+		} else if (this.falling) {
+			this.jumpSpeed = 0;
+			this.yPos += FALL_SPEED;
+		}
+
+		//Check for collisions with platforms
+		for (Sprite platform : tileManager.getPlatforms()) {
+		    if (this.collidesWith(platform)) {
+
+				//Check for vertical collisions with the platform
+				// *Iterates over the width of the player
+				// *Makes sure that each player's vertical position is checked for collisions
+		        for (int x = (int) this.xPos; x < this.xPos + this.width; x++) {
+					int bottom = tileManager.getTile((int) (this.xPos + this.width / 2), (int) (this.yPos + this.height));
+		            int top = tileManager.getTile(x, (int) (this.yPos));
+
+			        if (this.falling && bottom == 1) {
+			            this.yPos = platform.getYPos() - this.height;
+			            this.jumping = false;
+			            this.falling = false;
+			            break;
+			        } else if (this.falling && top == 1) {
+			            this.yPos = platform.getYPos() + platform.getHeight();
+			            this.jumpSpeed = 0;
+			            this.falling = true;
+			            break;
+			        }
+		        }
+ 				
+				//Check for horizontal collisions with the platform
+				// *Iterates over the height of the player
+				// *Makes sure that each player's horizontal position is checked for collisions
+		        for (int y = (int) this.yPos; y < this.yPos + this.height; y++) {
+		            int left = tileManager.getTile((int) (this.xPos - 1), y);
+		            int right = tileManager.getTile((int) (this.xPos + this.width), y);
+		           
+		            if (!this.falling && left == 1) {
+		                this.xPos = platform.getXPos() + platform.getHeight();
+		                break;
+		            } else if (!this.falling && right == 1) {
+		                this.xPos = platform.getXPos() - platform.getHeight();
+		                break;
+		            }
+		        }
+		    }
 		}
 
 		this.animatePlayer();
@@ -154,9 +209,12 @@ public class Player extends Sprite{
 	// *Assigns an initial upward jump speed
 	// *Records the current vertical position of the player
 	private void jump(){
-		this.jumping = true;
-		this.jumpSpeed = -JUMP_HEIGHT;
-		this.jumpYPos = this.yPos;
+		if(!this.falling){
+			this.jumping = true;
+			this.jumpSpeed = -JUMP_HEIGHT;
+			this.jumpYPos = this.yPos;
+			this.falling = true;
+		}
 	}
 
 	//For sprite animation
