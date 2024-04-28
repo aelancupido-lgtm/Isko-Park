@@ -57,7 +57,7 @@ public class Player extends Sprite{
 
 	//for player jump
 	private final static double JUMP_HEIGHT = 12;
-	private final static double JUMP_ACCELERATION = 0.8;
+	private final static double JUMP_GRAVITY = 0.6;
 	private final static double FALL_SPEED = 6;
 	private double jumpSpeed;
 	private double jumpYPos;
@@ -139,7 +139,7 @@ public class Player extends Sprite{
 		if (this.jumping){
 			// update vertical position based on jump
 			this.yPos += this.jumpSpeed;
-			this.jumpSpeed += JUMP_ACCELERATION;
+			this.jumpSpeed += JUMP_GRAVITY;
 
 			//check if the player landed
 			if (this.yPos >= this.jumpYPos){
@@ -174,14 +174,14 @@ public class Player extends Sprite{
 			            break;
 			        }
 		        }
- 				
+
 				//Check for horizontal collisions with the platform
 				// *Iterates over the height of the player
 				// *Makes sure that each player's horizontal position is checked for collisions
 		        for (int y = (int) this.yPos; y < this.yPos + this.height; y++) {
 		            int left = tileManager.getTile((int) (this.xPos - 1), y);
 		            int right = tileManager.getTile((int) (this.xPos + this.width), y);
-		           
+
 		            if (!this.falling && left == 1) {
 		                this.xPos = platform.getXPos() + platform.getHeight();
 		                break;
