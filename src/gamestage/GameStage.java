@@ -22,9 +22,9 @@ public class GameStage {
 	private Canvas canvas;
 	private Group root;
 
-	public final static int WINDOW_WIDTH = 800;
+	public final static int WINDOW_SIZE = 800;
 	public final static int TILE_SIZE = 16;
-	public final static int MAX_ROW = WINDOW_WIDTH/TILE_SIZE;
+	public final static int MAX_ROW = WINDOW_SIZE/TILE_SIZE;
 
 
 	public final static Color BACKGROUND_COLOR = Color.WHITE;
@@ -34,10 +34,10 @@ public class GameStage {
 	public final static Image TILE_IMAGE = new Image("assets/orange.png", TILE_SIZE, TILE_SIZE, false, false);
 
 	public GameStage(){
-		this.canvas = new Canvas(WINDOW_WIDTH, WINDOW_WIDTH);
 		this.root = new Group();
 		this.root.getChildren().add(canvas);
 		this.gameScene = new Scene(root);
+		this.canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
 	}
 
 	public void setStage(Stage stage){

@@ -32,7 +32,7 @@ public class Key extends Sprite{
 			switch (direction){
 			case "left":
 				//To avoid cases where key is out of screen
-				if (this.player.getXPos() + (KEY_SIZE * 2) >= 0 && this.player.getXPos() + (KEY_SIZE * 2) <= GameStage.WINDOW_WIDTH){
+				if (this.player.getXPos() + (KEY_SIZE * 2) >= 0 && this.player.getXPos() + (KEY_SIZE * 2) <= GameStage.WINDOW_SIZE){
 					this.xPos = this.player.getXPos() + KEY_SIZE / 1.5;
 				} else{
 					this.xPos = this.player.getXPos() + KEY_SIZE / 3.5;
@@ -40,7 +40,7 @@ public class Key extends Sprite{
 				break;
 			case "right":
 				//To avoid cases where key is out of screen
-				if (this.player.getXPos() - (KEY_SIZE * 2) >= 0 && this.player.getXPos() - (KEY_SIZE * 2) <= GameStage.WINDOW_WIDTH) {
+				if (this.player.getXPos() - (KEY_SIZE * 2) >= 0 && this.player.getXPos() - (KEY_SIZE * 2) <= GameStage.WINDOW_SIZE) {
 					this.xPos = this.player.getXPos() - KEY_SIZE / 1.5;
 				} else {
 					this.xPos = this.player.getXPos() - KEY_SIZE / 3.5;
@@ -49,7 +49,7 @@ public class Key extends Sprite{
 
 			}
 
-			if (this.player.getYPos() - (KEY_SIZE * 2) >= 0 && this.player.getYPos() - (KEY_SIZE * 2) <= GameStage.WINDOW_WIDTH){
+			if (this.player.getYPos() - (KEY_SIZE * 2) >= 0 && this.player.getYPos() - (KEY_SIZE * 2) <= GameStage.WINDOW_SIZE){
 				this.yPos = this.player.getYPos() - KEY_SIZE;
 			} else {
 				this.yPos = this.player.getYPos() - KEY_SIZE / 3.5;

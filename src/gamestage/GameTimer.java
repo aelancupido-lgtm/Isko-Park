@@ -40,7 +40,7 @@ public class GameTimer extends AnimationTimer{
 
 	@Override
 	public void handle(long arg0) {
-		this.gc.clearRect(0, 0, GameStage.WINDOW_WIDTH, GameStage.WINDOW_WIDTH);
+		this.gc.clearRect(0, 0, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
 
 		this.checkStatus();
 		this.renderSprites();

@@ -118,11 +118,11 @@ public class Player extends Sprite{
 			this.direction = DIRECTIONS[1];
 		}
 
-		if (this.xPos + this.dx >= 0 && this.xPos + this.dx + this.width <= GameStage.WINDOW_WIDTH){
+		if (this.xPos + this.dx >= 0 && this.xPos + this.dx + this.width <= GameStage.WINDOW_SIZE){
 			this.xPos += dx;
 		}
 
-		if (this.yPos + this.dy >= 0 && this.yPos + this.height + this.dy <= GameStage.WINDOW_WIDTH){
+		if (this.yPos + this.dy >= 0 && this.yPos + this.height + this.dy <= GameStage.WINDOW_SIZE){
 			this.yPos += dy;
 		}
 
