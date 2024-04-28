@@ -1,26 +1,25 @@
 package gamestage;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class GameStage {
-	private Stage stage;
-	private Scene gameScene;
-	private Canvas canvas;
 	private Group root;
+	private Scene gameScene;
+	private Scene splashScene;
+	private Stage stage;
+	private Canvas canvas;
+	private GameTimer gameTimer;
 
 	public final static int WINDOW_SIZE = 800;
 	public final static int TILE_SIZE = 16;
@@ -35,25 +34,61 @@ public class GameStage {
 
 	public GameStage(){
 		this.root = new Group();
-		this.root.getChildren().add(canvas);
 		this.gameScene = new Scene(root);
 		this.canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+		this.root.getChildren().add(canvas);
 	}
 
 	public void setStage(Stage stage){
 		this.stage = stage;
 		stage.setTitle("Isko Park");
-		stage.setScene(this.gameScene);
+
+		this.initSplash();
+
+		stage.setScene(this.splashScene);
+		this.prepareActionHandlers(this.splashScene);
 //		stage.setResizable(false);
 		stage.show();
-
-		GraphicsContext graphics = this.canvas.getGraphicsContext2D();
-		GameTimer gameTimer = new GameTimer(gameScene, graphics, this);
-		gameTimer.start();
 	}
 
-	public void setGameOverScene(Scene gameOverScene){
-        stage.setScene(gameOverScene);
-    }
+	private void initSplash() {
+		StackPane root = new StackPane();
+
+        root.getChildren().addAll(this.drawBackground("splash"));
+        this.splashScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+	}
+
+	private ImageView drawBackground(String name) {
+        // load the GIF image.
+        Image gifImage = new Image("assets/" + name + ".gif", GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE, false, false);
+
+        // create an ImageView to display the GIF image.
+        ImageView imageView = new ImageView(gifImage);
+
+        return imageView;
+	}
+
+
+	private void prepareActionHandlers(Scene scene) {
+	    scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+	    	public void handle(KeyEvent e){
+	    		KeyCode code = e.getCode();
+	    		if(code.equals(KeyCode.ENTER))setGame(stage);
+	    	}
+	    });
+	}
+
+	private void setGame(Stage stage) {
+        stage.setScene(this.gameScene);
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        this.gameTimer = new GameTimer(this.gameScene, gc);	// create a gametimer class.
+
+        gameTimer.start(); // invoke the start method of the animation timer.
+	}
+
+
+//	public void setGameOverScene(Scene gameOverScene){
+//        stage.setScene(gameOverScene);
+//    }
 
 }
