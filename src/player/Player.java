@@ -57,7 +57,7 @@ public class Player extends Sprite{
 
 	//for player jump
 	private final static double JUMP_HEIGHT = 12;
-	private final static double JUMP_ACCELERATION = 0.8;
+	private final static double JUMP_ACCELERATION = 0.6;
 	private final static double FALL_SPEED = 6;
 	private double jumpSpeed;
 	private double jumpYPos;
