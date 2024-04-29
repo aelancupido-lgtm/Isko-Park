@@ -154,7 +154,6 @@ public class Player extends Sprite{
 		//Check for collisions with platforms
 		for (Sprite platform : tileManager.getPlatforms()) {
 		    if (this.collidesWith(platform)) {
-
 				//Check for vertical collisions with the platform
 				// *Iterates over the width of the player
 				// *Makes sure that each player's vertical position is checked for collisions
@@ -174,14 +173,14 @@ public class Player extends Sprite{
 			            break;
 			        }
 		        }
- 				
+
 				//Check for horizontal collisions with the platform
 				// *Iterates over the height of the player
 				// *Makes sure that each player's horizontal position is checked for collisions
 		        for (int y = (int) this.yPos; y < this.yPos + this.height; y++) {
 		            int left = tileManager.getTile((int) (this.xPos - 1), y);
 		            int right = tileManager.getTile((int) (this.xPos + this.width), y);
-		           
+
 		            if (!this.falling && left == 1) {
 		                this.xPos = platform.getXPos() + platform.getHeight();
 		                break;

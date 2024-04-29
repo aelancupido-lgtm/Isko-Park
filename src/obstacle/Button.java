@@ -4,6 +4,11 @@ import javafx.scene.image.Image;
 import player.Player;
 import sprite.Sprite;
 
+/*
+ * Button class
+ * 	- currently does nothing when clicked
+ * */
+
 public class Button extends Sprite{
 	private static final double BUTTON_SIZE = 32;
 	private static final double INITIAL_X = 450;

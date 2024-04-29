@@ -81,14 +81,14 @@ public class GameStage {
 	private void setGame(Stage stage) {
         stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        this.gameTimer = new GameTimer(this.gameScene, gc);	// create a gametimer class.
+        this.gameTimer = new GameTimer(this.gameScene, gc, this);	// create a gametimer class.
 
         gameTimer.start(); // invoke the start method of the animation timer.
 	}
 
 
-//	public void setGameOverScene(Scene gameOverScene){
-//        stage.setScene(gameOverScene);
-//    }
+	public void setGameOverScene(Scene gameOverScene){
+        stage.setScene(gameOverScene);
+    }
 
 }

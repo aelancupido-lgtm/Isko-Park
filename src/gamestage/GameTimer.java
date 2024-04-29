@@ -22,12 +22,14 @@ public class GameTimer extends AnimationTimer{
 	private Door door;
 	private Button button;
 	private TileManager tm;
+	private GameOver gameOver;
+	private GameStage gameStage;
 
-	GameTimer(Scene scene, GraphicsContext gc) {
+	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage) {
 	    this.gc = gc;
 	    this.scene = scene;
-//		this.gameStage = gameStage;
-//	    this.gameOver = new GameOver(scene, gc);
+		this.gameStage = gameStage;
+	    this.gameOver = new GameOver(scene, gc);
 
 	    this.key = new Key();
 	    this.door = new Door();
@@ -55,15 +57,15 @@ public class GameTimer extends AnimationTimer{
 
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
-//        if (this.door.isOpen() && this.door.playerAtCenter(this.player)){
-//            PauseTransition transition = new PauseTransition(Duration.seconds(1));
-//            transition.setOnFinished(event -> {
-//            	this.stop();
-//                this.gameOver.showGameOver();
-//                gameStage.setGameOverScene(gameOver.getScene());
-//            });
-//            transition.play();
-//        }
+        if (this.door.isOpen() && this.door.playerAtCenter(this.player)){
+            PauseTransition transition = new PauseTransition(Duration.seconds(1));
+            transition.setOnFinished(event -> {
+            	this.stop();
+                this.gameOver.showGameOver();
+                gameStage.setGameOverScene(gameOver.getScene());
+            });
+            transition.play();
+        }
 	}
 
 	//For rendering sprites

@@ -7,7 +7,7 @@ import sprite.Sprite;
 
 public class Key extends Sprite{
 	private final static int INITIAL_X = 100;
-	private final static int INITIAL_Y = 512;
+	private final static int INITIAL_Y = 118;
 	private final static int KEY_SIZE = 35;
 	private final static Image KEY_IMAGE = new Image("assets/key.png", KEY_SIZE, KEY_SIZE, true, false);
 
