@@ -1,0 +1,88 @@
+package chat;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+
+import java.io.IOException;
+
+import gamestage.GameStage;
+
+public class ChatServerUDP {
+	private static byte[] incoming = new byte[256];
+	private static final int PORT = GameStage.SERVER_PORT_NUMBER;
+
+	private static DatagramSocket socket;
+
+	static {
+		try {
+			socket = new DatagramSocket(PORT);
+		} catch (SocketException e){
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static ArrayList<Integer> users = new ArrayList<>();
+	private static InetAddress address = null;
+
+	static {
+		try {
+			address = InetAddress.getByName(GameStage.SERVER_ADDRESS);
+		} catch (UnknownHostException e){
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void forwardMessage(int userPort, byte[] byteMessage, String message){
+        for (int forward_port : users) {
+            if (forward_port != userPort) {
+                DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, address, forward_port);
+                try {
+                    socket.send(forward);
+                    System.out.println("Sent message: " + message + " to " + forward_port);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+	}
+
+	public static void main(String[] args){
+		System.out.println("Server started on port " + PORT);
+
+		while (true){
+
+			DatagramPacket packet = new DatagramPacket(incoming, incoming.length); // prepare packet
+            try {
+                socket.receive(packet); // receive packet
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            String message = new String(packet.getData(), 0, packet.getLength()); // create a string
+            System.out.println("Server received: " + message);
+
+
+            if (message.contains("init;")) {
+                users.add(packet.getPort());
+                String username = message.replace("init;", "");
+                byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
+                int userPort = packet.getPort();
+
+                forwardMessage(userPort, newUserMessage, "[Server] Player " + username + " has joined the chat!");
+                }
+
+            // forward
+            else {
+                int userPort = packet.getPort();  // get port from the packet
+                byte[] byteMessage = message.getBytes(); // convert the string to bytes
+
+                forwardMessage(userPort, byteMessage, message);
+            }
+
+			}
+		}
+	}

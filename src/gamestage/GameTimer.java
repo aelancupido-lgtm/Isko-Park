@@ -1,21 +1,28 @@
 package gamestage;
 
+import java.io.IOException;
+
+import chat.ChatClientUDP;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import objects.Door;
 import objects.Key;
 import obstacle.Button;
+
 import player.Player;
 import tile.TileManager;
 
 public class GameTimer extends AnimationTimer{
 	private Scene scene;
 	private GraphicsContext gc;
-//	private GameStage gameStage;
-//	private GameOver gameOver;
 
 	private Player player;
 	private Key key;
@@ -25,18 +32,27 @@ public class GameTimer extends AnimationTimer{
 	private GameOver gameOver;
 	private GameStage gameStage;
 
-	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage) {
+	private TextArea messageArea;
+	private TextField inputBox;
+	private ChatClientUDP client;
+	private Group root;
+	private String identifier;
+
+	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root, String identifier) {
 	    this.gc = gc;
 	    this.scene = scene;
+	    this.root = root;
 		this.gameStage = gameStage;
 	    this.gameOver = new GameOver(scene, gc);
-
+	    this.identifier = identifier;
 	    this.key = new Key();
 	    this.door = new Door();
 	    this.button = new Button();
 	    this.tm = new TileManager();
 	    this.tm.loadMap("matrix_1");
-		this.player = new Player("player", this.scene, this.tm);
+		this.player = new Player(identifier, this.scene, this.tm);
+
+	    this.initChat();
 	}
 
 
@@ -47,6 +63,47 @@ public class GameTimer extends AnimationTimer{
 		this.checkStatus();
 		this.renderSprites();
 		this.moveSprites();
+	}
+
+	private void initChat(){
+		this.messageArea = new TextArea();
+		this.inputBox = new TextField();
+
+	    this.client = new ChatClientUDP();
+	    try {
+			this.client.createClientThread(this.messageArea, identifier);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		this.messageArea.setMaxWidth(GameStage.CHAT_SIZE);
+		this.messageArea.setLayoutX(GameStage.WINDOW_SIZE);
+		this.messageArea.setMinHeight(GameStage.WINDOW_SIZE - 2.5);
+		this.messageArea.setEditable(false);
+		this.messageArea.setWrapText(true);
+		this.messageArea.setMouseTransparent(true);
+		this.messageArea.setFocusTraversable(false);
+
+		this.inputBox.setMaxWidth(GameStage.CHAT_SIZE);
+		this.inputBox.setPromptText("Enter your message");
+		this.inputBox.setLayoutX(GameStage.WINDOW_SIZE + 7.5);
+		this.inputBox.setMinHeight(GameStage.CHAT_INPUT_SIZE);
+		this.inputBox.setLayoutY(GameStage.WINDOW_SIZE - GameStage.CHAT_INPUT_SIZE);
+
+		this.inputBox.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.ENTER){
+				String message = "[" + this.identifier + "] " + inputBox.getText();
+				messageArea.setText(messageArea.getText() + message + "\n");
+				inputBox.setText("");
+				client.sendMessage(message);
+			} else if (e.getCode() == KeyCode.ESCAPE){
+				inputBox.setFocusTraversable(false);
+				root.requestFocus();
+			}
+		});
+
+		this.inputBox.setFocusTraversable(false);
+		this.root.getChildren().addAll(messageArea, inputBox);
 	}
 
 	//For checking collision between objects and the player

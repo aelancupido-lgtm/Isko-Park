@@ -1,6 +1,12 @@
 package player;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import gamestage.GameStage;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -65,25 +71,27 @@ public class Player extends Sprite{
 	private boolean falling;
 	private Key key;
 	private TileManager tileManager;
+//	private Client client;
 
 	//Player constructor
 	public Player(String name, Scene scene, TileManager tileManager){
 		super(INITIAL_X, INITIAL_Y);
-		this.loadImage(INITIAL_IMAGE);
-		this.name = name;
-		this.key = null;
-		this.scene = scene;
-		this.spriteNum = 0;
-		this.spriteCounter = 0;
-		this.jumpSpeed = 0;
-		this.jumpYPos = 0;
-		this.jumping = false;
-		this.falling = false;
-		this.tileManager = tileManager;
-		this.color = INITIAL_COLOR;
-		this.direction = INITIAL_DIRECTION;
-		this.action = INITIAL_ACTION;
-		this.prepareActionHandlers();
+//		try {
+			this.loadImage(INITIAL_IMAGE);
+			this.name = name;
+			this.key = null;
+			this.scene = scene;
+			this.spriteNum = 0;
+			this.spriteCounter = 0;
+			this.jumpSpeed = 0;
+			this.jumpYPos = 0;
+			this.jumping = false;
+			this.falling = false;
+			this.tileManager = tileManager;
+			this.color = INITIAL_COLOR;
+			this.direction = INITIAL_DIRECTION;
+			this.action = INITIAL_ACTION;
+			this.prepareActionHandlers();
 	}
 
 	//For getting user input for player movement
