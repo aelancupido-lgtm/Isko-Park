@@ -29,7 +29,7 @@ public class Player extends Sprite{
 
 	//Initial player spawn location
 	public final static int INITIAL_X = 50;
-	public final static int INITIAL_Y = 594;
+	public final static int INITIAL_Y = 592;
 
 	private final static int INITIAL_INDEX = 0; // increment this for multiplayer.
 	private final String INITIAL_COLOR = COLORS[INITIAL_INDEX]; // not static since this is an instance variable, not a class variable.
