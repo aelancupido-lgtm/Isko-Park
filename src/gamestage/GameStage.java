@@ -1,5 +1,7 @@
 package gamestage;
 
+import java.net.URL;
+
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -7,13 +9,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class GameStage {
 	private Group root;
@@ -72,14 +75,23 @@ public class GameStage {
         this.splashScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
 	}
 
-	private ImageView drawBackground(String name) {
-        // load the GIF image.
-        Image gifImage = new Image("assets/" + name + ".gif", GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE, false, false);
+	private MediaView drawBackground(String name) {
+		// getting the video url file.
+		URL url = getClass().getResource("/assets/splash.mp4");
 
-        // create an ImageView to display the GIF image.
-        ImageView imageView = new ImageView(gifImage);
+        // instantiating MediaPlayer class   
+        MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));  
+		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop the video.
+		mediaPlayer.setAutoPlay(true); // auto play the video.
 
-        return imageView;
+        // instantiating MediaView class   
+        MediaView mediaView = new MediaView(mediaPlayer); 
+		mediaView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the video to the height of the window.
+		mediaView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the video to the width of the window.
+		mediaView.setPreserveRatio(false); // do not preserve the ratio of the video.
+
+
+		return mediaView;
 	}
 
 
