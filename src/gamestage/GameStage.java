@@ -2,6 +2,8 @@ package gamestage;
 
 import java.net.URL;
 
+import chat.ChatServerUDP;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -45,6 +47,7 @@ public class GameStage {
 	public final static int SERVER_PORT_NUMBER = 8080;
 	public final static String SERVER_ADDRESS = "localhost";
 
+	public static ChatServerUDP server;
 
 	public GameStage(){
 		this.root = new Group();
@@ -54,6 +57,24 @@ public class GameStage {
 
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
 		this.playerUsernameInputDialog.setHeaderText("Enter your username");
+	}
+
+	public void initServer(){
+		server = new ChatServerUDP();
+		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
+
+			protected ChatServerUDP call() throws Exception {
+
+				server.run();
+				return server;
+			}
+
+		};
+
+		Thread th = new Thread(task);
+		th.setDaemon(true);
+		th.start();
+
 	}
 
 	public void setStage(Stage stage){

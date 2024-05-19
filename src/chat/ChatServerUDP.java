@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import gamestage.GameStage;
 
-public class ChatServerUDP {
+public class ChatServerUDP extends Thread{
 	private static byte[] incoming = new byte[256];
 	private static final int PORT = GameStage.SERVER_PORT_NUMBER;
 
@@ -50,9 +50,9 @@ public class ChatServerUDP {
         }
 	}
 
-	public static void main(String[] args){
-		System.out.println("Server started on port " + PORT);
-
+	@Override
+	public void run(){
+        System.out.println("Server started on port " + PORT);
 		while (true){
 
 			DatagramPacket packet = new DatagramPacket(incoming, incoming.length); // prepare packet
@@ -84,5 +84,42 @@ public class ChatServerUDP {
             }
 
 			}
-		}
+
+	}
+
+//	public static void main(String[] args){
+//		System.out.println("Server started on port " + PORT);
+//
+//		while (true){
+//
+//			DatagramPacket packet = new DatagramPacket(incoming, incoming.length); // prepare packet
+//            try {
+//                socket.receive(packet); // receive packet
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//            String message = new String(packet.getData(), 0, packet.getLength()); // create a string
+//            System.out.println("Server received: " + message);
+//
+//
+//            if (message.contains("init;")) {
+//                users.add(packet.getPort());
+//                String username = message.replace("init;", "");
+//                byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
+//                int userPort = packet.getPort();
+//
+//                forwardMessage(userPort, newUserMessage, "[Server] Player " + username + " has joined the chat!");
+//                }
+//
+//            // forward
+//            else {
+//                int userPort = packet.getPort();  // get port from the packet
+//                byte[] byteMessage = message.getBytes(); // convert the string to bytes
+//
+//                forwardMessage(userPort, byteMessage, message);
+//            }
+//
+//			}
+//		}
 	}
