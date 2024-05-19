@@ -1,15 +1,12 @@
 package application;
 
 
-import chat.ChatServerUDP;
 import gamestage.GameStage;
 import javafx.application.Application;
-import javafx.concurrent.Task;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
-	static ChatServerUDP server;
 	Stage window;
 	String address;
 	int port;
