@@ -88,7 +88,6 @@ public class GameStage {
 		this.initSplash();
 		this.initMode();
 		this.initPlayer();
-		this.initGame();
 		this.initStage();
 		
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
@@ -134,7 +133,9 @@ public class GameStage {
 		//Adds space for chat if multiplayer game
 		if (!GameStage.SINGLE_PLAYER_GAME){
 			this.canvas = new Canvas(GameStage.SCREEN_SIZE, GameStage.WINDOW_SIZE);
-		} else {
+		}  
+		
+		if (GameStage.SINGLE_PLAYER_GAME){
 			this.canvas = new Canvas(GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
 		}
 
@@ -245,6 +246,7 @@ public class GameStage {
 				}
 				if(type == MenuType.PLAYER) {
 					GameStage.SINGLE_PLAYER_GAME = true;
+					initGame();
 					showStageScene(stage);
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
@@ -265,7 +267,7 @@ public class GameStage {
 
 				if (type == MenuType.PLAYER){
 					GameStage.SINGLE_PLAYER_GAME = false;
-
+					initGame();
 					if (GameStage.CREATE_GAME_MODE){
 						try {
 							initServer();
