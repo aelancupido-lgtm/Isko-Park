@@ -29,7 +29,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -53,20 +52,6 @@ public class GameStage {
 	public static String identifier;
 	public static int stageLevel = 1;
 
-	public final static int WINDOW_SIZE = 800;
-	public final static int TILE_SIZE = 16;
-	public final static int MAX_ROW = WINDOW_SIZE/TILE_SIZE;
-	public final static int CHAT_SIZE = 200;
-	public final static int CHAT_INPUT_SIZE = 35;
-	public final static int SCREEN_SIZE = WINDOW_SIZE + CHAT_SIZE;
-
-	public final static Color BACKGROUND_COLOR = Color.WHITE;
-	public final static Color TILE_COLOR = Color.ORANGE;
-
-	public final static Image BACKGROUND_IMAGE = new Image("assets/white.png", TILE_SIZE, TILE_SIZE, false, false);
-	public final static Image TILE_IMAGE = new Image("assets/orange.png", TILE_SIZE, TILE_SIZE, false, false);
-
-	public final static int SERVER_PORT_NUMBER = 8080;
 	public static String serverAddress;
 
 	public static ChatServerUDP server;
@@ -99,7 +84,7 @@ public class GameStage {
 		StackPane root = new StackPane();
 
         root.getChildren().addAll(this.playMedia("splash", ".mp4"));
-        this.splashScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+        this.splashScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 	// Create a scene for the selection of mode.
@@ -107,7 +92,7 @@ public class GameStage {
 		StackPane root = new StackPane();
 
 		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("create a game", "join a game", MenuType.MODE), this.createBackButton(this.splashScene)));
-		this.modeScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		this.modeScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 	// Create a scene for the selection of player.
@@ -115,7 +100,7 @@ public class GameStage {
 		StackPane root = new StackPane();
 		
 		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("single player", "multiplayer", MenuType.PLAYER), this.createBackButton(this.modeScene)));
-		this.playerScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		this.playerScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 	// Create a scene for the stage level.
@@ -123,7 +108,7 @@ public class GameStage {
 		StackPane root = new StackPane();
 		
 		root.getChildren().add(this.playImage("stage_" + GameStage.stageLevel, ".gif"));
-		this.stageScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		this.stageScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 
@@ -132,11 +117,11 @@ public class GameStage {
 
 		//Adds space for chat if multiplayer game
 		if (!GameStage.SINGLE_PLAYER_GAME){
-			this.canvas = new Canvas(GameStage.SCREEN_SIZE, GameStage.WINDOW_SIZE);
+			this.canvas = new Canvas(Config.SCREEN_SIZE, Config.WINDOW_SIZE);
 		}  
 		
 		if (GameStage.SINGLE_PLAYER_GAME){
-			this.canvas = new Canvas(GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+			this.canvas = new Canvas(Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 		}
 
 		this.root.getChildren().add(this.canvas);
@@ -337,8 +322,8 @@ public class GameStage {
 
         // instantiating MediaView class   
         MediaView mediaView = new MediaView(mediaPlayer); 
-		mediaView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the video to the height of the window.
-		mediaView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the video to the width of the window.
+		mediaView.setFitHeight(Config.WINDOW_SIZE); // set the height of the video to the height of the window.
+		mediaView.setFitWidth(Config.WINDOW_SIZE); // set the width of the video to the width of the window.
 		mediaView.setPreserveRatio(false); // do not preserve the ratio of the video.
 		mediaPlayer.setOnError(() -> System.out.println("Media error occurred: " + mediaPlayer.getError()));
 
@@ -355,8 +340,8 @@ public class GameStage {
 		// instantiating ImageView class
 		ImageView imageView = new ImageView(new Image(url.toString()));
 
-		imageView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the image to the height of the window.
-		imageView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the image to the width of the window.
+		imageView.setFitHeight(Config.WINDOW_SIZE); // set the height of the image to the height of the window.
+		imageView.setFitWidth(Config.WINDOW_SIZE); // set the width of the image to the width of the window.
 		imageView.setPreserveRatio(false); // do not preserve the ratio of the image.
 
 		return imageView;

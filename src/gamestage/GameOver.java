@@ -20,12 +20,12 @@ public class GameOver {
 
     public void showGameOver(){
         gc.setFill(Color.ORANGE);
-        gc.fillRect(0, 0, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+        gc.fillRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 
         gc.setFill(Color.BLACK);
         gc.setFont(Font.font("Verdana", FontWeight.BOLD, 60));
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.fillText("Game Over", GameStage.WINDOW_SIZE / 2, GameStage.WINDOW_SIZE / 2);
+        gc.fillText("Game Over", Config.WINDOW_SIZE / 2, Config.WINDOW_SIZE / 2);
     }
 
 	public Scene getScene(){

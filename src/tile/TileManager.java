@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import javafx.scene.canvas.GraphicsContext;
 import sprite.Sprite;
-import gamestage.GameStage;
+import gamestage.Config;
 
 public class TileManager {
 	private Tile tile[];
@@ -17,17 +17,17 @@ public class TileManager {
 	public TileManager(){
 		this.tile = new Tile[2];
 		this.platforms = new ArrayList<Sprite>();
-		this.tileMap = new int [GameStage.MAX_ROW][GameStage.MAX_ROW];
+		this.tileMap = new int [Config.MAX_ROW][Config.MAX_ROW];
 		this.populateTileList();
 	}
 
 	//For tile list
 	private void populateTileList(){
 		this.tile[0] = new Tile();
-		this.tile[0].tileImage = GameStage.BACKGROUND_IMAGE;
+		this.tile[0].tileImage = Config.BACKGROUND_IMAGE;
 
 		this.tile[1] = new Tile();
-		this.tile[1].tileImage = GameStage.TILE_IMAGE;
+		this.tile[1].tileImage = Config.TILE_IMAGE;
 		this.tile[1].collision = true;
 	}
 
@@ -38,7 +38,7 @@ public class TileManager {
 		int x = 0;
 		int y = 0;
 
-		while(col < GameStage.MAX_ROW && row < GameStage.MAX_ROW ){
+		while(col < Config.MAX_ROW && row < Config.MAX_ROW ){
 
 			int tileNum = tileMap[col][row];
 
@@ -48,13 +48,13 @@ public class TileManager {
 
 			col++;
 
-			x+= GameStage.TILE_SIZE;
+			x+= Config.TILE_SIZE;
 
-			if(col == GameStage.MAX_ROW){
+			if(col == Config.MAX_ROW){
 				col = 0;
 				x = 0;
 				row++;
-				y += GameStage.TILE_SIZE;
+				y += Config.TILE_SIZE;
 			}
 
 		}
@@ -79,17 +79,17 @@ public class TileManager {
 			int col = 0;
 			int row = 0;
 
-			while(col < GameStage.MAX_ROW && row < GameStage.MAX_ROW){
+			while(col < Config.MAX_ROW && row < Config.MAX_ROW){
 				String line = in.readLine();
 
-				while(col < GameStage.MAX_ROW){
+				while(col < Config.MAX_ROW){
 					String tiles[] = line.split(" ");
 					int num = Integer.parseInt(tiles[col]);
 					tileMap[col][row] = num;
 					col++;
 				}
 
-				if(col == GameStage.MAX_ROW){
+				if(col == Config.MAX_ROW){
 					col = 0;
 					row++;
 				}

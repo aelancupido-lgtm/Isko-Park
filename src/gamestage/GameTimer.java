@@ -58,7 +58,7 @@ public class GameTimer extends AnimationTimer{
 
 	@Override
 	public void handle(long arg0) {
-		this.gc.clearRect(0, 0, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 
 		this.checkStatus();
 		this.renderSprites();
@@ -76,19 +76,19 @@ public class GameTimer extends AnimationTimer{
 			e.printStackTrace();
 		}
 
-		this.messageArea.setMaxWidth(GameStage.CHAT_SIZE);
-		this.messageArea.setLayoutX(GameStage.WINDOW_SIZE);
-		this.messageArea.setMinHeight(GameStage.WINDOW_SIZE - 2.5);
+		this.messageArea.setMaxWidth(Config.CHAT_SIZE);
+		this.messageArea.setLayoutX(Config.WINDOW_SIZE);
+		this.messageArea.setMinHeight(Config.WINDOW_SIZE - 2.5);
 		this.messageArea.setEditable(false);
 		this.messageArea.setWrapText(true);
 		this.messageArea.setMouseTransparent(true);
 		this.messageArea.setFocusTraversable(false);
 
-		this.inputBox.setMaxWidth(GameStage.CHAT_SIZE);
+		this.inputBox.setMaxWidth(Config.CHAT_SIZE);
 		this.inputBox.setPromptText("Enter your message");
-		this.inputBox.setLayoutX(GameStage.WINDOW_SIZE + 7.5);
-		this.inputBox.setMinHeight(GameStage.CHAT_INPUT_SIZE);
-		this.inputBox.setLayoutY(GameStage.WINDOW_SIZE - GameStage.CHAT_INPUT_SIZE);
+		this.inputBox.setLayoutX(Config.WINDOW_SIZE + 7.5);
+		this.inputBox.setMinHeight(Config.CHAT_INPUT_SIZE);
+		this.inputBox.setLayoutY(Config.WINDOW_SIZE - Config.CHAT_INPUT_SIZE);
 
 		this.inputBox.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.ENTER){

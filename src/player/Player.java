@@ -1,12 +1,6 @@
 package player;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
 import java.util.ArrayList;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -17,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import gamestage.Config;
 import gamestage.GameStage;
 import objects.Key;
 import tile.TileManager;
@@ -28,8 +23,8 @@ public class Player extends Sprite{
 	private final static String[] ACTIONS = {"idle", "walk", "jump", "push", "dead"};
 
 	//Initial player spawn location
-	public final static int INITIAL_X = 50;
-	public final static int INITIAL_Y = 592;
+	public static double INITIAL_X = Config.INITIAL_PLAYER_LOCATION[GameStage.stageLevel - 1][0];
+	public static double INITIAL_Y = Config.INITIAL_PLAYER_LOCATION[GameStage.stageLevel - 1][1];
 
 	private final static int INITIAL_INDEX = 0; // increment this for multiplayer.
 	private final String INITIAL_COLOR = COLORS[INITIAL_INDEX]; // not static since this is an instance variable, not a class variable.
@@ -48,7 +43,7 @@ public class Player extends Sprite{
 	private static final double USERNAME_FONTSIZE = 15;
 
 	// Player image
-	public final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+	private final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
 
 	//direction input booleans
 	private boolean left;
@@ -129,7 +124,7 @@ public class Player extends Sprite{
 			this.dx = 0;
 		}
 
-		if (this.xPos + this.dx >= 0 && this.xPos + this.dx + this.width <= GameStage.WINDOW_SIZE){
+		if (this.xPos + this.dx >= 0 && this.xPos + this.dx + this.width <= Config.WINDOW_SIZE){
 			this.xPos += dx;
 		}
 
