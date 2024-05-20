@@ -3,6 +3,8 @@ package gamestage;
 import java.net.URL;
 
 import chat.ChatServerUDP;
+import javafx.util.Duration;
+import javafx.animation.PauseTransition;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,6 +17,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -38,12 +41,14 @@ public class GameStage {
 	private Scene splashScene;
 	private Scene modeScene;
 	private Scene playerScene;
+	private Scene stageScene;
 	private Stage stage;
 	private Canvas canvas;
 	private GameTimer gameTimer;
 
 	private TextInputDialog playerUsernameInputDialog;
 	public static String identifier;
+	public static int stageLevel = 1;
 
 	public final static int WINDOW_SIZE = 800;
 	public final static int TILE_SIZE = 16;
@@ -68,16 +73,19 @@ public class GameStage {
 	public GameStage(){
 		URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
     	GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
+		GameStage.stageLevel = 1;
 
 		this.initSplash();
 		this.initMode();
 		this.initPlayer();
 		this.initGame();
+		this.initStage();
 		
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
 		this.playerUsernameInputDialog.setHeaderText("Enter your username");
 	}
 
+	// Create a scene for the splash screen.
 	private void initSplash() {
 		StackPane root = new StackPane();
 
@@ -85,20 +93,30 @@ public class GameStage {
         this.splashScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
 	}
 
+	// Create a scene for the selection of mode.
 	private void initMode() {
 		StackPane root = new StackPane();
 
-		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("Create a Game", "Join a Game", MenuType.MODE), this.createBackButton(this.splashScene)));
+		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("create a game", "join a game", MenuType.MODE), this.createBackButton(this.splashScene)));
 		this.modeScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
 	}
 
-	
+	// Create a scene for the selection of player.
 	private void initPlayer() {
 		StackPane root = new StackPane();
 		
 		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("single player", "multiplayer", MenuType.PLAYER), this.createBackButton(this.modeScene)));
 		this.playerScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
 	}
+
+	// Create a scene for the stage level.
+	private void initStage() {
+		StackPane root = new StackPane();
+		
+		root.getChildren().add(this.playImage("stage_" + GameStage.stageLevel, ".gif"));
+		this.stageScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+	}
+
 
 	private void initGame() {
 		this.root = new Group();
@@ -194,7 +212,13 @@ public class GameStage {
             public void handle(ActionEvent e) {
                 System.out.println(text1);; // should call the init server and flash the ip address and also allow the user to select number of players.
 				if(type == MenuType.MODE) showPlayerScene(stage);
-				if(type == MenuType.PLAYER) setGameScene(stage);
+				if(type == MenuType.PLAYER) {
+					showStageScene(stage);
+
+					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.play(); // Start the pause.
+				}
             }
         });
 
@@ -255,8 +279,22 @@ public class GameStage {
 		mediaView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the video to the height of the window.
 		mediaView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the video to the width of the window.
 		mediaView.setPreserveRatio(false); // do not preserve the ratio of the video.
+		mediaPlayer.setOnError(() -> System.out.println("Media error occurred: " + mediaPlayer.getError()));
 
 		return mediaView;
+	}
+
+	private ImageView playImage(String name, String type) {
+		// getting the image url file.
+		URL url = getClass().getResource("/assets/" + name + type);
+
+		// instantiating ImageView class
+		ImageView imageView = new ImageView(new Image(url.toString()));
+		imageView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the image to the height of the window.
+		imageView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the image to the width of the window.
+		imageView.setPreserveRatio(false); // do not preserve the ratio of the image.
+
+		return imageView;
 	}
 
 	private void setGameScene(Stage stage) {
@@ -278,5 +316,9 @@ public class GameStage {
 
 	private void showPlayerScene(Stage stage) {
 		stage.setScene(this.playerScene);
+	}
+
+	private void showStageScene(Stage stage) {
+		stage.setScene(this.stageScene);
 	}
 }
