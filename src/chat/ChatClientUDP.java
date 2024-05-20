@@ -25,7 +25,7 @@ public class ChatClientUDP {
 	private static InetAddress address;
 	static {
 		try {
-			address = InetAddress.getByName(GameStage.SERVER_ADDRESS);
+			address = InetAddress.getByName(InetAddress.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e){
 			throw new RuntimeException(e);
 		}

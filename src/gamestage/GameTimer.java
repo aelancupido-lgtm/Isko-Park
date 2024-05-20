@@ -52,7 +52,7 @@ public class GameTimer extends AnimationTimer{
 	    this.tm.loadMap("matrix_1");
 		this.player = new Player(identifier, this.scene, this.tm);
 
-	    this.initChat();
+		if (!GameStage.SINGLE_PLAYER_GAME) this.initChat();
 	}
 
 

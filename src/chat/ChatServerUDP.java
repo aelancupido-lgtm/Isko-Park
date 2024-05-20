@@ -30,7 +30,7 @@ public class ChatServerUDP extends Thread{
 
 	static {
 		try {
-			address = InetAddress.getByName(GameStage.SERVER_ADDRESS);
+			address = InetAddress.getByName(GameStage.serverAddress);
 		} catch (UnknownHostException e){
 			throw new RuntimeException(e);
 		}

@@ -1,6 +1,9 @@
 package gamestage;
 
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.file.Paths;
 
 import chat.ChatServerUDP;
 import javafx.util.Duration;
@@ -64,15 +67,22 @@ public class GameStage {
 	public final static Image TILE_IMAGE = new Image("assets/orange.png", TILE_SIZE, TILE_SIZE, false, false);
 
 	public final static int SERVER_PORT_NUMBER = 8080;
-	public final static String SERVER_ADDRESS = "localhost";
+	public static String serverAddress;
 
 	public static ChatServerUDP server;
+
+	public static boolean SINGLE_PLAYER_GAME;
+	public static boolean CREATE_GAME_MODE;
 
 	public static Font font;
 
 	public GameStage(){
 		URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
     	GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
+
+		// String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
+    	// GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
+		
 		GameStage.stageLevel = 1;
 
 		this.initSplash();
@@ -121,12 +131,19 @@ public class GameStage {
 	private void initGame() {
 		this.root = new Group();
 
-		this.canvas = new Canvas(GameStage.SCREEN_SIZE, GameStage.WINDOW_SIZE);
+		//Adds space for chat if multiplayer game
+		if (!GameStage.SINGLE_PLAYER_GAME){
+			this.canvas = new Canvas(GameStage.SCREEN_SIZE, GameStage.WINDOW_SIZE);
+		} else {
+			this.canvas = new Canvas(GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		}
+
 		this.root.getChildren().add(this.canvas);
 		this.gameScene = new Scene(root);
 	}
 
-	public void initServer(){
+	private void initServer() throws UnknownHostException{
+		GameStage.serverAddress = InetAddress.getLocalHost().getHostAddress();
 		server = new ChatServerUDP();
 		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
 
@@ -141,6 +158,8 @@ public class GameStage {
 		Thread th = new Thread(task);
 		th.setDaemon(true);
 		th.start();
+
+		System.out.println("Server ip address: " + InetAddress.getLocalHost().getHostAddress());
 
 	}
 
@@ -158,7 +177,14 @@ public class GameStage {
 	    scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 	    	public void handle(KeyEvent e){
 	    		KeyCode code = e.getCode();
-	    		if(code.equals(KeyCode.ENTER)) showModeScene(stage);	
+	    		if(code.equals(KeyCode.ENTER)) {
+					// if (!(playerUsernameInputDialog.getEditor().getText().equals(""))){
+					// 	identifier = playerUsernameInputDialog.getEditor().getText();
+	    			// } else {
+	    			// 	identifier = "temp";
+	    			// }
+					
+					showModeScene(stage);}
 	    	}
 	    });
 	}
@@ -211,8 +237,14 @@ public class GameStage {
             @Override
             public void handle(ActionEvent e) {
                 System.out.println(text1);; // should call the init server and flash the ip address and also allow the user to select number of players.
-				if(type == MenuType.MODE) showPlayerScene(stage);
+
+
+				if(type == MenuType.MODE) {
+					GameStage.CREATE_GAME_MODE = true;
+					showPlayerScene(stage);
+				}
 				if(type == MenuType.PLAYER) {
+					GameStage.SINGLE_PLAYER_GAME = true;
 					showStageScene(stage);
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
@@ -226,6 +258,28 @@ public class GameStage {
             @Override
             public void handle(ActionEvent e) {
                 System.out.println(text2);; // should allow the client input the server ip address.
+
+				if(type == MenuType.MODE) {
+					GameStage.CREATE_GAME_MODE = false;
+				}
+
+				if (type == MenuType.PLAYER){
+					GameStage.SINGLE_PLAYER_GAME = false;
+
+					if (GameStage.CREATE_GAME_MODE){
+						try {
+							initServer();
+						} catch (UnknownHostException e1) {
+							e1.printStackTrace();
+						}
+					}
+
+					showStageScene(stage);
+
+					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.play(); // Start the pause.
+				}
             }
         });
 
@@ -269,8 +323,13 @@ public class GameStage {
 		// getting the video url file.
 		URL url = getClass().getResource("/assets/" + name + type);
 
+		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+
         // instantiating MediaPlayer class   
-        MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));  
+		MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));
+
+		// MediaPlayer mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
+
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop the video.
 		mediaPlayer.setAutoPlay(true); // auto play the video.
 
@@ -285,11 +344,15 @@ public class GameStage {
 	}
 
 	private ImageView playImage(String name, String type) {
+		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+		// ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
+
 		// getting the image url file.
 		URL url = getClass().getResource("/assets/" + name + type);
 
 		// instantiating ImageView class
 		ImageView imageView = new ImageView(new Image(url.toString()));
+
 		imageView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the image to the height of the window.
 		imageView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the image to the width of the window.
 		imageView.setPreserveRatio(false); // do not preserve the ratio of the image.
@@ -301,7 +364,7 @@ public class GameStage {
         stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
-        this.gameTimer = new GameTimer(this.gameScene, gc, this, root, identifier, 0, "CREATE");	// create a gametimer class.
+        this.gameTimer = new GameTimer(this.gameScene, gc, this, root, identifier);	// create a gametimer class.
 
         gameTimer.start(); // invoke the start method of the animation timer.
 	}
