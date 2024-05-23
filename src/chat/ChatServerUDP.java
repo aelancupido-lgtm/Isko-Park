@@ -9,17 +9,17 @@ import java.util.ArrayList;
 
 import java.io.IOException;
 
+import gamestage.Config;
 import gamestage.GameStage;
 
 public class ChatServerUDP extends Thread{
 	private static byte[] incoming = new byte[256];
-	private static final int PORT = GameStage.SERVER_PORT_NUMBER;
 
 	private static DatagramSocket socket;
 
 	static {
 		try {
-			socket = new DatagramSocket(PORT);
+			socket = new DatagramSocket(Config.SERVER_PORT_NUMBER);
 		} catch (SocketException e){
 			throw new RuntimeException(e);
 		}
@@ -30,7 +30,7 @@ public class ChatServerUDP extends Thread{
 
 	static {
 		try {
-			address = InetAddress.getByName(GameStage.SERVER_ADDRESS);
+			address = InetAddress.getByName(GameStage.serverAddress);
 		} catch (UnknownHostException e){
 			throw new RuntimeException(e);
 		}
@@ -52,7 +52,7 @@ public class ChatServerUDP extends Thread{
 
 	@Override
 	public void run(){
-        System.out.println("Server started on port " + PORT);
+        System.out.println("Server started on port " + Config.SERVER_PORT_NUMBER);
 		while (true){
 
 			DatagramPacket packet = new DatagramPacket(incoming, incoming.length); // prepare packet

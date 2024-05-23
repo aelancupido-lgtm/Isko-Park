@@ -1,6 +1,9 @@
 package gamestage;
 
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.file.Paths;
 
 import chat.ChatServerUDP;
 import javafx.util.Duration;
@@ -26,7 +29,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -50,35 +52,27 @@ public class GameStage {
 	public static String identifier;
 	public static int stageLevel = 1;
 
-	public final static int WINDOW_SIZE = 800;
-	public final static int TILE_SIZE = 16;
-	public final static int MAX_ROW = WINDOW_SIZE/TILE_SIZE;
-	public final static int CHAT_SIZE = 200;
-	public final static int CHAT_INPUT_SIZE = 35;
-	public final static int SCREEN_SIZE = WINDOW_SIZE + CHAT_SIZE;
-
-	public final static Color BACKGROUND_COLOR = Color.WHITE;
-	public final static Color TILE_COLOR = Color.ORANGE;
-
-	public final static Image BACKGROUND_IMAGE = new Image("assets/white.png", TILE_SIZE, TILE_SIZE, false, false);
-	public final static Image TILE_IMAGE = new Image("assets/orange.png", TILE_SIZE, TILE_SIZE, false, false);
-
-	public final static int SERVER_PORT_NUMBER = 8080;
-	public final static String SERVER_ADDRESS = "localhost";
+	public static String serverAddress;
 
 	public static ChatServerUDP server;
+
+	public static boolean SINGLE_PLAYER_GAME;
+	public static boolean CREATE_GAME_MODE;
 
 	public static Font font;
 
 	public GameStage(){
 		URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
     	GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
+
+		// String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
+    	// GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
+		
 		GameStage.stageLevel = 1;
 
 		this.initSplash();
 		this.initMode();
 		this.initPlayer();
-		this.initGame();
 		this.initStage();
 		
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
@@ -90,7 +84,7 @@ public class GameStage {
 		StackPane root = new StackPane();
 
         root.getChildren().addAll(this.playMedia("splash", ".mp4"));
-        this.splashScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+        this.splashScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 	// Create a scene for the selection of mode.
@@ -98,7 +92,7 @@ public class GameStage {
 		StackPane root = new StackPane();
 
 		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("create a game", "join a game", MenuType.MODE), this.createBackButton(this.splashScene)));
-		this.modeScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		this.modeScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 	// Create a scene for the selection of player.
@@ -106,7 +100,7 @@ public class GameStage {
 		StackPane root = new StackPane();
 		
 		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("single player", "multiplayer", MenuType.PLAYER), this.createBackButton(this.modeScene)));
-		this.playerScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		this.playerScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 	// Create a scene for the stage level.
@@ -114,19 +108,28 @@ public class GameStage {
 		StackPane root = new StackPane();
 		
 		root.getChildren().add(this.playImage("stage_" + GameStage.stageLevel, ".gif"));
-		this.stageScene = new Scene(root, GameStage.WINDOW_SIZE, GameStage.WINDOW_SIZE);
+		this.stageScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 
 	private void initGame() {
 		this.root = new Group();
 
-		this.canvas = new Canvas(GameStage.SCREEN_SIZE, GameStage.WINDOW_SIZE);
+		//Adds space for chat if multiplayer game
+		if (!GameStage.SINGLE_PLAYER_GAME){
+			this.canvas = new Canvas(Config.SCREEN_SIZE, Config.WINDOW_SIZE);
+		}  
+		
+		if (GameStage.SINGLE_PLAYER_GAME){
+			this.canvas = new Canvas(Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+		}
+
 		this.root.getChildren().add(this.canvas);
 		this.gameScene = new Scene(root);
 	}
 
-	public void initServer(){
+	private void initServer() throws UnknownHostException{
+		GameStage.serverAddress = InetAddress.getLocalHost().getHostAddress();
 		server = new ChatServerUDP();
 		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
 
@@ -141,6 +144,8 @@ public class GameStage {
 		Thread th = new Thread(task);
 		th.setDaemon(true);
 		th.start();
+
+		System.out.println("Server ip address: " + InetAddress.getLocalHost().getHostAddress());
 
 	}
 
@@ -158,7 +163,14 @@ public class GameStage {
 	    scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 	    	public void handle(KeyEvent e){
 	    		KeyCode code = e.getCode();
-	    		if(code.equals(KeyCode.ENTER)) showModeScene(stage);	
+	    		if(code.equals(KeyCode.ENTER)) {
+					// if (!(playerUsernameInputDialog.getEditor().getText().equals(""))){
+					// 	identifier = playerUsernameInputDialog.getEditor().getText();
+	    			// } else {
+	    			// 	identifier = "temp";
+	    			// }
+					
+					showModeScene(stage);}
 	    	}
 	    });
 	}
@@ -211,8 +223,15 @@ public class GameStage {
             @Override
             public void handle(ActionEvent e) {
                 System.out.println(text1);; // should call the init server and flash the ip address and also allow the user to select number of players.
-				if(type == MenuType.MODE) showPlayerScene(stage);
+
+
+				if(type == MenuType.MODE) {
+					GameStage.CREATE_GAME_MODE = true;
+					showPlayerScene(stage);
+				}
 				if(type == MenuType.PLAYER) {
+					GameStage.SINGLE_PLAYER_GAME = true;
+					initGame();
 					showStageScene(stage);
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
@@ -226,6 +245,28 @@ public class GameStage {
             @Override
             public void handle(ActionEvent e) {
                 System.out.println(text2);; // should allow the client input the server ip address.
+
+				if(type == MenuType.MODE) {
+					GameStage.CREATE_GAME_MODE = false;
+				}
+
+				if (type == MenuType.PLAYER){
+					GameStage.SINGLE_PLAYER_GAME = false;
+					initGame();
+					if (GameStage.CREATE_GAME_MODE){
+						try {
+							initServer();
+						} catch (UnknownHostException e1) {
+							e1.printStackTrace();
+						}
+					}
+
+					showStageScene(stage);
+
+					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.play(); // Start the pause.
+				}
             }
         });
 
@@ -269,15 +310,20 @@ public class GameStage {
 		// getting the video url file.
 		URL url = getClass().getResource("/assets/" + name + type);
 
+		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+
         // instantiating MediaPlayer class   
-        MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));  
+		MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));
+
+		// MediaPlayer mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
+
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop the video.
 		mediaPlayer.setAutoPlay(true); // auto play the video.
 
         // instantiating MediaView class   
         MediaView mediaView = new MediaView(mediaPlayer); 
-		mediaView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the video to the height of the window.
-		mediaView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the video to the width of the window.
+		mediaView.setFitHeight(Config.WINDOW_SIZE); // set the height of the video to the height of the window.
+		mediaView.setFitWidth(Config.WINDOW_SIZE); // set the width of the video to the width of the window.
 		mediaView.setPreserveRatio(false); // do not preserve the ratio of the video.
 		mediaPlayer.setOnError(() -> System.out.println("Media error occurred: " + mediaPlayer.getError()));
 
@@ -285,13 +331,17 @@ public class GameStage {
 	}
 
 	private ImageView playImage(String name, String type) {
+		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+		// ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
+
 		// getting the image url file.
 		URL url = getClass().getResource("/assets/" + name + type);
 
 		// instantiating ImageView class
 		ImageView imageView = new ImageView(new Image(url.toString()));
-		imageView.setFitHeight(GameStage.WINDOW_SIZE); // set the height of the image to the height of the window.
-		imageView.setFitWidth(GameStage.WINDOW_SIZE); // set the width of the image to the width of the window.
+
+		imageView.setFitHeight(Config.WINDOW_SIZE); // set the height of the image to the height of the window.
+		imageView.setFitWidth(Config.WINDOW_SIZE); // set the width of the image to the width of the window.
 		imageView.setPreserveRatio(false); // do not preserve the ratio of the image.
 
 		return imageView;
@@ -301,7 +351,7 @@ public class GameStage {
         stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
-        this.gameTimer = new GameTimer(this.gameScene, gc, this, root, identifier, 0, "CREATE");	// create a gametimer class.
+        this.gameTimer = new GameTimer(this.gameScene, gc, this, root, identifier);	// create a gametimer class.
 
         gameTimer.start(); // invoke the start method of the animation timer.
 	}
