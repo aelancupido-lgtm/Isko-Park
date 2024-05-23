@@ -41,6 +41,8 @@ public class ChatClientUDP {
 		}
 	}
 
+	// field ng clientThread
+
 	public void createClientThread(TextArea messageArea, String identifier) throws IOException{
 		ChatClientThreadUDP clientThread = new ChatClientThreadUDP(socket, messageArea);
 		Task<ChatClientThreadUDP> task = new Task<ChatClientThreadUDP>(){
@@ -61,9 +63,4 @@ public class ChatClientUDP {
         DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, address, Config.SERVER_PORT_NUMBER);
         socket.send(initialize);
 	}
-
-
-
-
-
 }

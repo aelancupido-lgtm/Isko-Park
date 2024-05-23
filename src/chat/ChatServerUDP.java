@@ -73,10 +73,15 @@ public class ChatServerUDP extends Thread{
                 int userPort = packet.getPort();
 
                 forwardMessage(userPort, newUserMessage, "[Server] Player " + username + " has joined the chat!");
-                }
+
+            
+            } else if (message.contains("coor;")){
+                
+
+
 
             // forward
-            else {
+            } else {
                 int userPort = packet.getPort();  // get port from the packet
                 byte[] byteMessage = message.getBytes(); // convert the string to bytes
 

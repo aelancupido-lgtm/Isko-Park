@@ -13,6 +13,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import gamestage.Config;
 import gamestage.GameStage;
+import gamestage.GameTimer;
 import objects.Key;
 import tile.TileManager;
 import sprite.Sprite;
@@ -41,6 +42,7 @@ public class Player extends Sprite{
 	private final static int MAX_SPRITE = 4;
 
 	private static final double USERNAME_FONTSIZE = 15;
+	private boolean sentIdleCheck = false;
 
 	// Player image
 	private final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
@@ -140,6 +142,18 @@ public class Player extends Sprite{
 			this.dy += FALL_GRAVITY;
 			this.jumping = false;
         }
+
+		if (!GameStage.SINGLE_PLAYER_GAME){
+			if (this.dx != 0 || this.dy != 0){
+				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.spriteNum + ";";
+				GameTimer.client.sendMessage(message);
+				this.sentIdleCheck = false;
+			} else if (this.dx == 0 && this.dy == 0 && !this.sentIdleCheck){
+				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";idle;" + this.direction + ";";
+				GameTimer.client.sendMessage(message);
+				this.sentIdleCheck = true;
+			}
+		}
 
 		this.checkPlatformCollisionX(prevXPos);
 		this.checkPlatformCollisionY();

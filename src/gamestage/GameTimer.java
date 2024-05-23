@@ -34,9 +34,10 @@ public class GameTimer extends AnimationTimer{
 
 	private TextArea messageArea;
 	private TextField inputBox;
-	private ChatClientUDP client;
+	public static ChatClientUDP client;
 	private Group root;
 	private String identifier;
+	private int counter;
 
 	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root, String identifier) {
 	    this.gc = gc;
@@ -49,8 +50,9 @@ public class GameTimer extends AnimationTimer{
 	    this.door = new Door();
 	    this.button = new Button();
 	    this.tm = new TileManager();
-	    this.tm.loadMap("matrix_1");
+	    this.tm.loadMap("matrix_2");
 		this.player = new Player(identifier, this.scene, this.tm);
+		this.counter = 0;
 
 		if (!GameStage.SINGLE_PLAYER_GAME) this.initChat();
 	}
@@ -139,6 +141,10 @@ public class GameTimer extends AnimationTimer{
 
 		if(this.player.isVisible()) {
 			this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
+			// TODO
+			// for loop ng players
+			// if is visible
+			// render
 		}
 	}
 
@@ -146,6 +152,20 @@ public class GameTimer extends AnimationTimer{
 	private void moveSprites(){
 		this.key.move();
 		this.player.move();
+		// message: coor;50;40;
+
+		String message = "coor;" + this.identifier + ";" +  this.player.getXPos() + ";" + this.player.getYPos() + ";";
+
+
+		// if (this.counter == 0){
+		// 	String message = "coor;" + this.identifier + ";" +  this.player.getXPos() + ";" + this.player.getYPos() + ";";
+			// this.client.sendMessage(message);
+		// }
+
+		// this.counter = ++this.counter % Config.FRAME_NUMBER;
 	}
+
+	//setter ng players
+
 }
 

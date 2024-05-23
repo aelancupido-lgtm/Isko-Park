@@ -45,6 +45,7 @@ public class Button extends Sprite{
 		if (this.playerAtCenter(player)){
 			this.clicked = true;
 			this.loadImage(BUTTON_CLICKED);
+			// player dead
 		}
 	}
 

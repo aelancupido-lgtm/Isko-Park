@@ -249,6 +249,13 @@ public class GameStage {
 
 				if(type == MenuType.MODE) {
 					GameStage.CREATE_GAME_MODE = false;
+					initGame();
+
+					showStageScene(stage);
+
+					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.play();
 				}
 
 				if (type == MenuType.PLAYER){

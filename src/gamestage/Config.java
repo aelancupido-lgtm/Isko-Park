@@ -10,6 +10,7 @@ public class Config {
 	public final static int CHAT_SIZE = 200;
 	public final static int CHAT_INPUT_SIZE = 35;
 	public final static int SCREEN_SIZE = WINDOW_SIZE + CHAT_SIZE;
+	// public final static int FRAME_NUMBER = 60;
 
 	public final static Color BACKGROUND_COLOR = Color.WHITE;
 	public final static Color TILE_COLOR = Color.ORANGE;
