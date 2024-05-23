@@ -332,14 +332,14 @@ public class GameStage {
 	}
 
 	private ImageView playImage(String name, String type) {
-		String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
-		ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
+		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+		// ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
 
 		// getting the image url file.
-		// URL url = getClass().getResource("/assets/" + name + type);
+		URL url = getClass().getResource("/assets/" + name + type);
 
 		// instantiating ImageView class
-		// ImageView imageView = new ImageView(new Image(url.toString()));
+		ImageView imageView = new ImageView(new Image(url.toString()));
 
 		imageView.setFitHeight(Config.WINDOW_SIZE); // set the height of the image to the height of the window.
 		imageView.setFitWidth(Config.WINDOW_SIZE); // set the width of the image to the width of the window.
