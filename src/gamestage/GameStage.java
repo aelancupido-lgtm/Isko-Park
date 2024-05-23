@@ -62,11 +62,11 @@ public class GameStage {
 	public static Font font;
 
 	public GameStage(){
-		// URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
-    	// GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
+		URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
+    	GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
 
-		String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
-    	GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
+		// String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
+    	// GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
 		
 		GameStage.stageLevel = 1;
 
