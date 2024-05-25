@@ -85,7 +85,8 @@ public class Player extends Sprite{
 			this.color = INITIAL_COLOR;
 			this.direction = INITIAL_DIRECTION;
 			this.action = INITIAL_ACTION;
-			this.prepareActionHandlers();
+
+			if (this.name.equals(GameTimer.getPlayer())) this.prepareActionHandlers();
 	}
 
 	//For getting user input for player movement
@@ -143,17 +144,7 @@ public class Player extends Sprite{
 			this.jumping = false;
         }
 
-		if (!GameStage.SINGLE_PLAYER_GAME){
-			if (this.dx != 0 || this.dy != 0){
-				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.spriteNum + ";";
-				GameTimer.client.sendMessage(message);
-				this.sentIdleCheck = false;
-			} else if (this.dx == 0 && this.dy == 0 && !this.sentIdleCheck){
-				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";idle;" + this.direction + ";";
-				GameTimer.client.sendMessage(message);
-				this.sentIdleCheck = true;
-			}
-		}
+		this.sendPlayerCoordinates();
 
 		this.checkPlatformCollisionX(prevXPos);
 		this.checkPlatformCollisionY();
@@ -168,6 +159,21 @@ public class Player extends Sprite{
 
 	}
 
+	// send player coordinates to server
+	private void sendPlayerCoordinates(){
+		if (!GameStage.SINGLE_PLAYER_GAME){
+			if (this.dx != 0 || this.dy != 0){
+				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.left + ";" + this.right + ";" + this.spriteNum + ";";
+				GameTimer.client.sendMessage(message);
+				this.sentIdleCheck = false;
+			} else if (this.dx == 0 && this.dy == 0 && !this.sentIdleCheck){
+				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";idle;" + this.direction + ";" + this.left + ";" + this.right + ";";
+				GameTimer.client.sendMessage(message);
+				this.sentIdleCheck = true;
+			}
+		}
+
+	}
     private void checkPlatformCollisionX(double prevXPos) {
         ArrayList<Sprite> platforms = tileManager.getPlatforms();
 
@@ -266,13 +272,30 @@ public class Player extends Sprite{
 		this.key = key;
 	}
 
+	public void setAction(String action){
+		this.action = action;
+	}
+
+	public void setDirection(String direction){
+		this.direction = direction;
+	}
+
+	public void setSpriteNum(int num){
+		this.spriteNum = num;
+	}
+
+	public void setLeftRight(boolean left, boolean right){
+		this.left = left;
+		this.right = right;
+	}
+
 	public void removeKey(){
 		this.key = null;
-
 	}
 
 	@Override
 	public void render(GraphicsContext gc, double xPos, double yPos){
+		this.animatePlayer();
 		super.render(gc, xPos, yPos);
 
 		//For player username

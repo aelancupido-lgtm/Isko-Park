@@ -90,6 +90,14 @@ public class Sprite {
 		this.dy = val;
 	}
 
+	public void setXPos(double val){
+		this.xPos = val;
+	}
+
+	public void setYPos(double val){
+		this.yPos = val;
+	}
+
 	public void vanish(){
 		this.visible = false;
 	}

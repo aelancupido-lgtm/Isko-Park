@@ -26,6 +26,7 @@ public class ChatServerUDP extends Thread{
 	}
 
 	private static ArrayList<Integer> users = new ArrayList<>();
+    private static ArrayList<String> identifiers = new ArrayList<>();
 	private static InetAddress address = null;
 
 	static {
@@ -50,6 +51,25 @@ public class ChatServerUDP extends Thread{
         }
 	}
 
+    // send all players to new port
+    public static void initPlayersArray(int userPort){
+        System.out.println("initializing players...");
+        String players = "player;";
+        for (String identifier : identifiers ){
+            players = players + identifier + ";";
+        }
+
+        System.out.println(players);
+        DatagramPacket forward = new DatagramPacket(players.getBytes(), players.getBytes().length, address, userPort);
+        try {
+            socket.send(forward);
+            System.out.println("Sent message: " + players + " to " + userPort);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 	@Override
 	public void run(){
         System.out.println("Server started on port " + Config.SERVER_PORT_NUMBER);
@@ -70,15 +90,16 @@ public class ChatServerUDP extends Thread{
                 users.add(packet.getPort());
                 String username = message.replace("init;", "");
                 byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
+                byte[] addUserMessage = new String("player;" + username).getBytes();
                 int userPort = packet.getPort();
 
+                System.out.println("identifiers in list: " + identifiers.size());
+                // send all players to new port
+                if (identifiers.size() != 0) initPlayersArray(userPort);
+
+                identifiers.add(username);
                 forwardMessage(userPort, newUserMessage, "[Server] Player " + username + " has joined the chat!");
-
-            
-            } else if (message.contains("coor;")){
-                
-
-
+                forwardMessage(userPort, addUserMessage, "player;" + username);
 
             // forward
             } else {

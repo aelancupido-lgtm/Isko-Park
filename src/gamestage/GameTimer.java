@@ -1,10 +1,13 @@
 package gamestage;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import chat.ChatClientUDP;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -21,14 +24,14 @@ import player.Player;
 import tile.TileManager;
 
 public class GameTimer extends AnimationTimer{
-	private Scene scene;
+	private static Scene scene;
 	private GraphicsContext gc;
 
 	private Player player;
 	private Key key;
 	private Door door;
 	private Button button;
-	private TileManager tm;
+	private static TileManager tm;
 	private GameOver gameOver;
 	private GameStage gameStage;
 
@@ -36,25 +39,27 @@ public class GameTimer extends AnimationTimer{
 	private TextField inputBox;
 	public static ChatClientUDP client;
 	private Group root;
-	private String identifier;
-	private int counter;
+	private static String identifier;
+	private HashMap<String, Player> players;
 
 	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root, String identifier) {
 	    this.gc = gc;
-	    this.scene = scene;
+	    GameTimer.scene = scene;
 	    this.root = root;
 		this.gameStage = gameStage;
 	    this.gameOver = new GameOver(scene, gc);
-	    this.identifier = identifier;
+	    GameTimer.identifier = identifier;
 	    this.key = new Key();
 	    this.door = new Door();
 	    this.button = new Button();
-	    this.tm = new TileManager();
-	    this.tm.loadMap("matrix_2");
-		this.player = new Player(identifier, this.scene, this.tm);
-		this.counter = 0;
+	    GameTimer.tm = new TileManager();
+	    GameTimer.tm.loadMap("matrix_1");
+		this.player = new Player(identifier, GameTimer.scene, GameTimer.tm);
 
-		if (!GameStage.SINGLE_PLAYER_GAME) this.initChat();
+		if (!GameStage.SINGLE_PLAYER_GAME) {	
+			this.players = new HashMap<>();
+			this.initChat();
+		}
 	}
 
 
@@ -71,9 +76,9 @@ public class GameTimer extends AnimationTimer{
 		this.messageArea = new TextArea();
 		this.inputBox = new TextField();
 
-	    this.client = new ChatClientUDP();
+	    GameTimer.client = new ChatClientUDP();
 	    try {
-			this.client.createClientThread(this.messageArea, identifier);
+			GameTimer.client.createClientThread(this.messageArea, identifier, this.players);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -86,6 +91,16 @@ public class GameTimer extends AnimationTimer{
 		this.messageArea.setMouseTransparent(true);
 		this.messageArea.setFocusTraversable(false);
 
+		this.messageArea.textProperty().addListener(new ChangeListener<Object>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
+				messageArea.setScrollTop(Double.MAX_VALUE);
+			}
+			
+		});
+
+
 		this.inputBox.setMaxWidth(Config.CHAT_SIZE);
 		this.inputBox.setPromptText("Enter your message");
 		this.inputBox.setLayoutX(Config.WINDOW_SIZE + 7.5);
@@ -94,7 +109,7 @@ public class GameTimer extends AnimationTimer{
 
 		this.inputBox.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.ENTER){
-				String message = "[" + this.identifier + "] " + inputBox.getText();
+				String message = "[" + GameTimer.identifier + "] " + inputBox.getText();
 				messageArea.setText(messageArea.getText() + message + "\n");
 				inputBox.setText("");
 				client.sendMessage(message);
@@ -130,7 +145,7 @@ public class GameTimer extends AnimationTimer{
 	//For rendering sprites
 	private void renderSprites(){
 
-		this.tm.draw(gc);
+		GameTimer.tm.draw(gc);
 
 		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
 		this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());
@@ -141,31 +156,35 @@ public class GameTimer extends AnimationTimer{
 
 		if(this.player.isVisible()) {
 			this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
-			// TODO
-			// for loop ng players
-			// if is visible
-			// render
 		}
+
+		//Render other players
+		if (!GameStage.SINGLE_PLAYER_GAME){
+			this.players.forEach((key, user) -> 
+				user.render(gc, user.getXPos(), user.getYPos())
+			);
+		}
+		
 	}
 
 	//For sprite movement
 	private void moveSprites(){
 		this.key.move();
 		this.player.move();
-		// message: coor;50;40;
-
-		String message = "coor;" + this.identifier + ";" +  this.player.getXPos() + ";" + this.player.getYPos() + ";";
-
-
-		// if (this.counter == 0){
-		// 	String message = "coor;" + this.identifier + ";" +  this.player.getXPos() + ";" + this.player.getYPos() + ";";
-			// this.client.sendMessage(message);
-		// }
-
-		// this.counter = ++this.counter % Config.FRAME_NUMBER;
 	}
 
-	//setter ng players
+	public static TileManager getTileManager(){
+		return GameTimer.tm;
+	}
+
+	public static Scene getScene(){
+		return GameTimer.scene;
+
+	}
+
+	public static String getPlayer(){
+		return GameTimer.identifier;
+	}
 
 }
 
