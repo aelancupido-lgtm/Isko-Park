@@ -43,8 +43,6 @@ public class ChatClientUDP {
 		}
 	}
 
-	// field ng clientThread
-
 	public void createClientThread(TextArea messageArea, String identifier, HashMap<String, Player> players) throws IOException{
 		ChatClientThreadUDP clientThread = new ChatClientThreadUDP(socket, messageArea, players);
 		Task<ChatClientThreadUDP> task = new Task<ChatClientThreadUDP>(){

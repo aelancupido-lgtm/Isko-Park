@@ -28,9 +28,9 @@ public class GameTimer extends AnimationTimer{
 	private GraphicsContext gc;
 
 	private Player player;
-	private Key key;
-	private Door door;
-	private Button button;
+	private static Key key;
+	private static Door door;
+	private static Button button;
 	private static TileManager tm;
 	private GameOver gameOver;
 	private GameStage gameStage;
@@ -49,9 +49,9 @@ public class GameTimer extends AnimationTimer{
 		this.gameStage = gameStage;
 	    this.gameOver = new GameOver(scene, gc);
 	    GameTimer.identifier = identifier;
-	    this.key = new Key();
-	    this.door = new Door();
-	    this.button = new Button();
+	    GameTimer.key = new Key();
+	    GameTimer.door = new Door();
+	    GameTimer.button = new Button();
 	    GameTimer.tm = new TileManager();
 	    GameTimer.tm.loadMap("matrix_1");
 		this.player = new Player(identifier, GameTimer.scene, GameTimer.tm);
@@ -125,13 +125,13 @@ public class GameTimer extends AnimationTimer{
 
 	//For checking collision between objects and the player
 	private void checkStatus(){
-		this.key.checkCollision(this.player);
-		this.door.checkCollision(this.player);
-		this.button.checkCollision(this.player);
+		GameTimer.key.checkCollision(this.player);
+		GameTimer.door.checkCollision(this.player);
+		GameTimer.button.checkCollision(this.player);
 
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
-        if (this.door.isOpen() && this.door.playerAtCenter(this.player)){
+        if (GameTimer.door.isOpen() && GameTimer.door.playerAtCenter(this.player)){
             PauseTransition transition = new PauseTransition(Duration.seconds(1));
             transition.setOnFinished(event -> {
             	this.stop();
@@ -147,11 +147,14 @@ public class GameTimer extends AnimationTimer{
 
 		GameTimer.tm.draw(gc);
 
-		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
-		this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());
+		GameTimer.door.render(this.gc, GameTimer.door.getXPos(), GameTimer.door.getYPos());
 
-		if (this.key.isVisible()){
-			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());
+		if (GameTimer.button.isVisible()){
+			GameTimer.button.render(this.gc, GameTimer.button.getXPos(), GameTimer.button.getYPos());
+		}
+
+		if (GameTimer.key.isVisible()){
+			GameTimer.key.render(this.gc, GameTimer.key.getXPos(), GameTimer.key.getYPos());
 		}
 
 		if(this.player.isVisible()) {
@@ -160,16 +163,16 @@ public class GameTimer extends AnimationTimer{
 
 		//Render other players
 		if (!GameStage.SINGLE_PLAYER_GAME){
-			this.players.forEach((key, user) -> 
-				user.render(gc, user.getXPos(), user.getYPos())
-			);
+			this.players.forEach((key, user) -> {
+				if (user.isVisible()) user.render(gc, user.getXPos(), user.getYPos());
+			});
 		}
 		
 	}
 
 	//For sprite movement
 	private void moveSprites(){
-		this.key.move();
+		GameTimer.key.move();
 		this.player.move();
 	}
 
@@ -184,6 +187,18 @@ public class GameTimer extends AnimationTimer{
 
 	public static String getPlayer(){
 		return GameTimer.identifier;
+	}
+
+	public static Door getDoor(){
+		return GameTimer.door;
+	}
+
+	public static Key getKey(){
+		return GameTimer.key;
+	}
+
+	public static Button getButton(){
+		return GameTimer.button;
 	}
 
 }

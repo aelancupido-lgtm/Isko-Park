@@ -19,7 +19,7 @@ import tile.TileManager;
 import sprite.Sprite;
 
 public class Player extends Sprite{
-	private final static String[] COLORS = {"green", "red", "yellow", "orange"};
+	private final static String[] COLORS = {"green", "gray", "violet", "orange"};
 	private final static String[] DIRECTIONS = {"left", "right"};
 	private final static String[] ACTIONS = {"idle", "walk", "jump", "push", "dead"};
 
@@ -27,7 +27,7 @@ public class Player extends Sprite{
 	public static double INITIAL_X = Config.INITIAL_PLAYER_LOCATION[GameStage.stageLevel - 1][0];
 	public static double INITIAL_Y = Config.INITIAL_PLAYER_LOCATION[GameStage.stageLevel - 1][1];
 
-	private final static int INITIAL_INDEX = 0; // increment this for multiplayer.
+	private static int INITIAL_INDEX = 0; // increment this for multiplayer.
 	private final String INITIAL_COLOR = COLORS[INITIAL_INDEX]; // not static since this is an instance variable, not a class variable.
 	private final static String INITIAL_DIRECTION = DIRECTIONS[1];
 	private final static String INITIAL_ACTION = ACTIONS[0];
@@ -67,26 +67,27 @@ public class Player extends Sprite{
 	private boolean falling;
 	private Key key;
 	private TileManager tileManager;
-//	private Client client;
 
 	//Player constructor
 	public Player(String name, Scene scene, TileManager tileManager){
 		super(INITIAL_X, INITIAL_Y);
-//		try {
-			this.loadImage(INITIAL_IMAGE);
-			this.name = name;
-			this.key = null;
-			this.scene = scene;
-			this.spriteNum = 0;
-			this.spriteCounter = 0;
-			this.jumping = false;
-			this.falling = false;
-			this.tileManager = tileManager;
-			this.color = INITIAL_COLOR;
-			this.direction = INITIAL_DIRECTION;
-			this.action = INITIAL_ACTION;
+		this.loadImage(INITIAL_IMAGE);
+		this.name = name;
+		this.key = null;
+		this.scene = scene;
+		this.spriteNum = 0;
+		this.spriteCounter = 0;
+		this.jumping = false;
+		this.falling = false;
+		this.tileManager = tileManager;
+		this.direction = INITIAL_DIRECTION;
+		this.action = INITIAL_ACTION;
 
-			if (this.name.equals(GameTimer.getPlayer())) this.prepareActionHandlers();
+		// TODO: make color constant for all players [currently, player 1 (one who input identifier is green)]
+		this.color = INITIAL_COLOR;
+		Player.INITIAL_INDEX++;
+
+		if (this.name.equals(GameTimer.getPlayer())) this.prepareActionHandlers();
 	}
 
 	//For getting user input for player movement
@@ -144,11 +145,10 @@ public class Player extends Sprite{
 			this.jumping = false;
         }
 
-		this.sendPlayerCoordinates();
+		if (!GameStage.SINGLE_PLAYER_GAME) this.sendPlayerCoordinates();
 
 		this.checkPlatformCollisionX(prevXPos);
 		this.checkPlatformCollisionY();
-		this.animatePlayer();
 
 		//For sprite animation
 		this.spriteCounter++;
@@ -161,16 +161,14 @@ public class Player extends Sprite{
 
 	// send player coordinates to server
 	private void sendPlayerCoordinates(){
-		if (!GameStage.SINGLE_PLAYER_GAME){
-			if (this.dx != 0 || this.dy != 0){
-				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.left + ";" + this.right + ";" + this.spriteNum + ";";
-				GameTimer.client.sendMessage(message);
-				this.sentIdleCheck = false;
-			} else if (this.dx == 0 && this.dy == 0 && !this.sentIdleCheck){
-				String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";idle;" + this.direction + ";" + this.left + ";" + this.right + ";";
-				GameTimer.client.sendMessage(message);
-				this.sentIdleCheck = true;
-			}
+		if (this.dx != 0 || this.dy != 0){
+			String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.left + ";" + this.right + ";" + this.spriteNum + ";";
+			GameTimer.client.sendMessage(message);
+			this.sentIdleCheck = false;
+		} else if (this.dx == 0 && this.dy == 0 && !this.sentIdleCheck){
+			String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";idle;" + this.direction + ";" + this.left + ";" + this.right + ";";
+			GameTimer.client.sendMessage(message);
+			this.sentIdleCheck = true;
 		}
 
 	}

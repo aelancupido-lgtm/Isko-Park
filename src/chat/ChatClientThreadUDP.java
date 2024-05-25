@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import gamestage.GameTimer;
 import javafx.scene.control.TextArea;
+import objects.Key;
 import player.Player;
 
 public class ChatClientThreadUDP extends Thread{
@@ -80,7 +81,23 @@ public class ChatClientThreadUDP extends Thread{
                     textArea.appendText("");
                     
                 }
+            } else if(message.equals("door;opened")){
+                GameTimer.getDoor().setOpen();
+                GameTimer.getKey().use();
+            } else if(message.contains("door;")){
+                String playerName = message.split(";")[1];
+                this.players.get(playerName).vanish();
+            } else if(message.equals("button;clicked")){
+                GameTimer.getButton().setClicked();
+            } else if(message.contains("key;")){
+                String[] playerKey = message.split(";");
+                Player player = this.players.get(playerKey[1]);
+                Key key = GameTimer.getKey();
+                key.setPlayer(player);
+                player.acquireKey(key);
+                
             }
+
             //Regular chat
             else {
                 message = message  + "\n";

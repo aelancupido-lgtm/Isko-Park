@@ -2,6 +2,7 @@ package objects;
 
 import gamestage.Config;
 import gamestage.GameStage;
+import gamestage.GameTimer;
 import javafx.scene.image.Image;
 import player.Player;
 import sprite.Sprite;
@@ -23,6 +24,7 @@ public class Key extends Sprite{
 		if(this.collidesWith(player) && this.player == null && this.visible){
 			this.player = player;
 			this.player.acquireKey(this);
+			if (!GameStage.SINGLE_PLAYER_GAME) sendKeyCoordinates();
 			this.move();
 			}
 		}
@@ -59,11 +61,18 @@ public class Key extends Sprite{
 
 	}
 
+	private void sendKeyCoordinates(){
+		GameTimer.client.sendMessage("key;" + this.player.getUsername());
+	}
+
 	//For unlocking door
 	public void use(){
 		this.player = null;
 		this.vanish();
 	}
 
+	public void setPlayer(Player player){
+		this.player = player;
+	}
 
 }

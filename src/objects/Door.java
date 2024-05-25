@@ -2,6 +2,7 @@ package objects;
 
 import gamestage.Config;
 import gamestage.GameStage;
+import gamestage.GameTimer;
 import javafx.scene.image.Image;
 import player.Player;
 import sprite.Sprite;
@@ -25,6 +26,7 @@ public class Door extends Sprite{
 		if (player.getKey() != null){
 			this.open = true;
 			this.loadImage(OPEN_DOOR_IMAGE);
+			if (!GameStage.SINGLE_PLAYER_GAME) GameTimer.client.sendMessage("door;opened");
 			//player.removeKey();
 		}
 	}
@@ -36,7 +38,8 @@ public class Door extends Sprite{
 	            player.getKey().use();
 	        }
 	    } else if (this.playerAtCenter(player) && this.open){
-	        player.vanish();
+	        if (!GameStage.SINGLE_PLAYER_GAME && player.isVisible()) GameTimer.client.sendMessage("door;" + player.getUsername());
+			player.vanish();
 	    }
 	}
 
@@ -60,6 +63,11 @@ public class Door extends Sprite{
 	//getter
 	public boolean isOpen(){
 		return this.open;
+	}
+
+	public void setOpen(){
+		this.open = true;
+		this.loadImage(OPEN_DOOR_IMAGE);
 	}
 
 }
