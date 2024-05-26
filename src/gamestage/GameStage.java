@@ -63,8 +63,8 @@ public class GameStage {
 	public static Font font;
 
 	public GameStage(){
-		// URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
-    	// GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
+		URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
+    	GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
 
 		String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
     	GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
@@ -323,14 +323,14 @@ public class GameStage {
 
 	private MediaView playMedia(String name, String type) {
 		// getting the video url file.
-		// URL url = getClass().getResource("/assets/" + name + type);
+		URL url = getClass().getResource("/assets/" + name + type);
 
-		String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
 
         // instantiating MediaPlayer class   
-		// MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));
+		MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));
 
-		MediaPlayer mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
+		// MediaPlayer mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
 
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop the video.
 		mediaPlayer.setAutoPlay(true); // auto play the video.
@@ -346,14 +346,14 @@ public class GameStage {
 	}
 
 	private ImageView playImage(String name, String type) {
-		String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
-		ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
+		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+		// ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
 
 		// getting the image url file.
-		// URL url = getClass().getResource("/assets/" + name + type);
+		URL url = getClass().getResource("/assets/" + name + type);
 
 		// instantiating ImageView class
-		// ImageView imageView = new ImageView(new Image(url.toString()));
+		ImageView imageView = new ImageView(new Image(url.toString()));
 
 		imageView.setFitHeight(Config.WINDOW_SIZE); // set the height of the image to the height of the window.
 		imageView.setFitWidth(Config.WINDOW_SIZE); // set the width of the image to the width of the window.
