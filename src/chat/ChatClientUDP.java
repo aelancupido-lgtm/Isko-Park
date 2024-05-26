@@ -6,14 +6,20 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 
 import gamestage.Config;
+import gamestage.GameTimer;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
-import player.Player;
 
 public class ChatClientUDP {
+	private static String serverAddress;
+	private ChatClientThreadUDP clientThread;
+
+	public ChatClientUDP(String serverAddress){
+		ChatClientUDP.serverAddress = serverAddress;
+	}
+
 
 	private static DatagramSocket socket;
 	static {
@@ -27,7 +33,7 @@ public class ChatClientUDP {
 	private static InetAddress address;
 	static {
 		try {
-			address = InetAddress.getByName(InetAddress.getLocalHost().getHostAddress());
+			address = InetAddress.getByName(serverAddress);
 		} catch (UnknownHostException e){
 			throw new RuntimeException(e);
 		}
@@ -43,8 +49,8 @@ public class ChatClientUDP {
 		}
 	}
 
-	public void createClientThread(TextArea messageArea, String identifier, HashMap<String, Player> players) throws IOException{
-		ChatClientThreadUDP clientThread = new ChatClientThreadUDP(socket, messageArea, players);
+	public void createClientThread(TextArea messageArea, String identifier, GameTimer gameTimer) throws IOException{
+		this.clientThread = new ChatClientThreadUDP(socket, messageArea, gameTimer);
 		Task<ChatClientThreadUDP> task = new Task<ChatClientThreadUDP>(){
 
 			protected ChatClientThreadUDP call() throws Exception {

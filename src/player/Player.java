@@ -69,17 +69,17 @@ public class Player extends Sprite{
 	private TileManager tileManager;
 
 	//Player constructor
-	public Player(String name, Scene scene, TileManager tileManager){
+	public Player(String name){
 		super(INITIAL_X, INITIAL_Y);
 		this.loadImage(INITIAL_IMAGE);
 		this.name = name;
 		this.key = null;
-		this.scene = scene;
+		this.scene = GameTimer.getScene();
 		this.spriteNum = 0;
 		this.spriteCounter = 0;
 		this.jumping = false;
 		this.falling = false;
-		this.tileManager = tileManager;
+		this.tileManager = GameTimer.getTileManager();
 		this.direction = INITIAL_DIRECTION;
 		this.action = INITIAL_ACTION;
 

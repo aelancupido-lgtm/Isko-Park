@@ -17,11 +17,13 @@ public class ChatClientThreadUDP extends Thread{
 
 	private TextArea textArea;
     private HashMap<String, Player> players;
+    private GameTimer gameTimer;
 
-	public ChatClientThreadUDP(DatagramSocket socket, TextArea textArea, HashMap<String, Player> players){
+	public ChatClientThreadUDP(DatagramSocket socket, TextArea textArea, GameTimer gameTimer){
 		this.socket = socket;
 		this.textArea = textArea;
-        this.players = players;
+        this.gameTimer = gameTimer;
+        this.players = this.gameTimer.getPlayers();
 	}
 
 	@Override
@@ -34,8 +36,6 @@ public class ChatClientThreadUDP extends Thread{
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-
             
             String message = new String(packet.getData(), 0, packet.getLength());
 
@@ -67,35 +67,34 @@ public class ChatClientThreadUDP extends Thread{
             // for adding players to gametimer hashmap
             } else if (message.contains("player;")){
                 String[] players = message.split(";");
-                if (players.length > 2){
-                    for(int i = 1; i<players.length; i++){
-                        this.players.put(players[i], new Player(players[i], GameTimer.getScene(), GameTimer.getTileManager()));
-                        String current = textArea.getText();
-                        textArea.setText(current + players[i] + "\n");
-                        textArea.appendText("");
-                    }
-                } else {
-                    this.players.put(players[1], new Player(players[1], GameTimer.getScene(), GameTimer.getTileManager()));   
-                    String current = textArea.getText();
-                    textArea.setText(current + players[1] + "\n");
-                    textArea.appendText("");
-                    
+                for(int i = 1; i<players.length; i++){
+                    this.players.put(players[i], new Player(players[i]));
+                    // String current = textArea.getText();
+                    // textArea.setText(current + players[i] + "\n");
+                    // textArea.appendText("");
                 }
+
+            // opens door for all players
             } else if(message.equals("door;opened")){
-                GameTimer.getDoor().setOpen();
-                GameTimer.getKey().use();
+                this.gameTimer.getDoor().setOpen();
+                this.gameTimer.getKey().use();
+            
+            // for other players entering opened door vanishing
             } else if(message.contains("door;")){
                 String playerName = message.split(";")[1];
                 this.players.get(playerName).vanish();
+
+            // for other players clicking button
             } else if(message.equals("button;clicked")){
-                GameTimer.getButton().setClicked();
+                this.gameTimer.getButton().setClicked();
+
+            // for other players obtaining key
             } else if(message.contains("key;")){
                 String[] playerKey = message.split(";");
                 Player player = this.players.get(playerKey[1]);
-                Key key = GameTimer.getKey();
+                Key key = this.gameTimer.getKey();
                 key.setPlayer(player);
                 player.acquireKey(key);
-                
             }
 
             //Regular chat
