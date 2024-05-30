@@ -31,7 +31,7 @@ public class ChatServerUDP extends Thread{
 
 	static {
 		try {
-			address = InetAddress.getByName(GameStage.serverAddress);
+			address = InetAddress.getByName(GameStage.getServerAddress());
 		} catch (UnknownHostException e){
 			throw new RuntimeException(e);
 		}
@@ -85,8 +85,7 @@ public class ChatServerUDP extends Thread{
             String message = new String(packet.getData(), 0, packet.getLength()); // create a string
             System.out.println("Server received: " + message);
 
-
-            if (message.contains("init;")) {
+            if (message.startsWith("init;")) {
                 users.add(packet.getPort());
                 String username = message.replace("init;", "");
                 byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();

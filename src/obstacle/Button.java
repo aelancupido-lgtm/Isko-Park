@@ -9,8 +9,8 @@ import sprite.Sprite;
 
 public class Button extends Sprite{
 	private static final double BUTTON_SIZE = 32;
-	private static final double INITIAL_X = Config.INITIAL_BUTTON_LOCATION[GameStage.stageLevel - 1][0];
-	private static final double INITIAL_Y = Config.INITIAL_BUTTON_LOCATION[GameStage.stageLevel - 1][1];;
+	private static final double INITIAL_X = Config.INITIAL_BUTTON_LOCATION[GameStage.getLevel()][0];
+	private static final double INITIAL_Y = Config.INITIAL_BUTTON_LOCATION[GameStage.getLevel()][1];;
 	private static final Image BUTTON_UNCLICKED = new Image("assets/button_unclicked.png", BUTTON_SIZE, BUTTON_SIZE, true, false);
 	private static final Image BUTTON_CLICKED = new Image("assets/button_clicked.png", BUTTON_SIZE, BUTTON_SIZE, true, false);
 

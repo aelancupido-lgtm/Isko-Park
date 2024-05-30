@@ -12,8 +12,7 @@ public class Config {
 	public final static int CHAT_INPUT_SIZE = 35;
 	public final static int SCREEN_SIZE = WINDOW_SIZE + CHAT_SIZE;
 
-	// TODO: add chat restrictions on keywords
-	public final static String[] RESERVED_KEYWORDS = {"door;opened", "button;clicked", "coor;", "init;", "player;", "key;"};
+	public final static String[] RESERVED_KEYWORDS = {"button;clicked", "coor;", "init;", "player;", "key;", "door;"};
 
 	public final static Color BACKGROUND_COLOR = Color.WHITE;
 	public final static Color TILE_COLOR = Color.ORANGE;

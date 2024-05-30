@@ -51,10 +51,10 @@ public class GameStage {
 
 	private TextInputDialog playerUsernameInputDialog;
 	private TextInputDialog serverAddressInputDialog;
-	public static String identifier;
-	public static int stageLevel = 1;
+	public static String IDENTIFIER;
+	public static int STAGE_LEVEL = 1;
 
-	public static String serverAddress;
+	public static String SERVER_ADDRESS;
 
 	public static ChatServerUDP server;
 
@@ -67,7 +67,7 @@ public class GameStage {
 		String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
     	GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
 		
-		GameStage.stageLevel = 1;
+		GameStage.STAGE_LEVEL = 1;
 
 		this.initSplash();
 		this.initMode();
@@ -107,7 +107,7 @@ public class GameStage {
 	private void initStage() {
 		StackPane root = new StackPane();
 		
-		root.getChildren().add(this.playImage("stage_" + GameStage.stageLevel, ".gif"));
+		root.getChildren().add(this.playImage("stage_" + GameStage.STAGE_LEVEL, ".gif"));
 		this.stageScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
@@ -135,7 +135,7 @@ public class GameStage {
 	}
 
 	private void initServer() throws UnknownHostException{
-		GameStage.serverAddress = InetAddress.getLocalHost().getHostAddress();
+		GameStage.SERVER_ADDRESS = InetAddress.getLocalHost().getHostAddress();
 		server = new ChatServerUDP();
 		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
 
@@ -172,9 +172,9 @@ public class GameStage {
 	    		if(code.equals(KeyCode.ENTER)) {
 					playerUsernameInputDialog.showAndWait();
 					if (!(playerUsernameInputDialog.getEditor().getText().equals(""))){
-						identifier = playerUsernameInputDialog.getEditor().getText();
+						IDENTIFIER = playerUsernameInputDialog.getEditor().getText();
 	    			} else {
-	    				identifier = "temp";
+	    				IDENTIFIER = "temp";
 	    			}
 					
 					showModeScene(stage);}
@@ -260,7 +260,7 @@ public class GameStage {
 					serverAddressInputDialog.setHeaderText("Enter the server address");
 					serverAddressInputDialog.showAndWait();
 
-					serverAddress = serverAddressInputDialog.getEditor().getText();
+					SERVER_ADDRESS = serverAddressInputDialog.getEditor().getText();
 
 					initGame();
 					showStageScene(stage);
@@ -375,7 +375,7 @@ public class GameStage {
         stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
-        this.gameTimer = new GameTimer(this.gameScene, gc, this, root, identifier);	// create a gametimer class.
+        this.gameTimer = new GameTimer(this.gameScene, gc, this, root, IDENTIFIER);	// create a gametimer class.
 
         gameTimer.start(); // invoke the start method of the animation timer.
 	}
@@ -398,5 +398,17 @@ public class GameStage {
 
 	private void showWaitingScene(Stage stage) {
 		stage.setScene(this.waitingScene);
+	}
+
+	public static int getLevel(){
+		return GameStage.STAGE_LEVEL - 1;
+	}
+
+	public static String getIdentifier(){
+		return GameStage.IDENTIFIER;
+	}
+
+	public static String getServerAddress(){
+		return GameStage.SERVER_ADDRESS;
 	}
 }

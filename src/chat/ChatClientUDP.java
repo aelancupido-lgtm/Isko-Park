@@ -4,27 +4,28 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import gamestage.Config;
+import gamestage.GameStage;
 import gamestage.GameTimer;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
 
 public class ChatClientUDP {
-	private static String serverAddress;
 	private ChatClientThreadUDP clientThread;
-
-	public ChatClientUDP(String serverAddress){
-		ChatClientUDP.serverAddress = serverAddress;
-	}
 
 
 	private static DatagramSocket socket;
 	static {
 		try {
 			socket = new DatagramSocket();
+			InetSocketAddress socketAddress = new InetSocketAddress(GameStage.getServerAddress(), Config.SERVER_PORT_NUMBER);
+			// socket.bind(socketAddress);
+			System.out.println(socketAddress);
+
 		} catch (SocketException e){
 			throw new RuntimeException(e);
 		}
@@ -33,7 +34,7 @@ public class ChatClientUDP {
 	private static InetAddress address;
 	static {
 		try {
-			address = InetAddress.getByName(serverAddress);
+			address = InetAddress.getByName(GameStage.getServerAddress());
 		} catch (UnknownHostException e){
 			throw new RuntimeException(e);
 		}

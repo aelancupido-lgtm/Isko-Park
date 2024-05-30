@@ -40,7 +40,7 @@ public class ChatClientThreadUDP extends Thread{
             String message = new String(packet.getData(), 0, packet.getLength());
 
             // for player coordinates
-            if (message.contains("coor;")){
+            if (message.startsWith("coor;")){
                 String[] playerCoor = message.split(";");
                 
                 String name = playerCoor[1];
@@ -65,7 +65,7 @@ public class ChatClientThreadUDP extends Thread{
 
 
             // for adding players to gametimer hashmap
-            } else if (message.contains("player;")){
+            } else if (message.startsWith("player;")){
                 String[] players = message.split(";");
                 for(int i = 1; i<players.length; i++){
                     this.players.put(players[i], new Player(players[i]));
@@ -80,7 +80,7 @@ public class ChatClientThreadUDP extends Thread{
                 this.gameTimer.getKey().use();
             
             // for other players entering opened door vanishing
-            } else if(message.contains("door;")){
+            } else if(message.startsWith("door;")){
                 String playerName = message.split(";")[1];
                 this.players.get(playerName).vanish();
 
@@ -89,7 +89,7 @@ public class ChatClientThreadUDP extends Thread{
                 this.gameTimer.getButton().setClicked();
 
             // for other players obtaining key
-            } else if(message.contains("key;")){
+            } else if(message.startsWith("key;")){
                 String[] playerKey = message.split(";");
                 Player player = this.players.get(playerKey[1]);
                 Key key = this.gameTimer.getKey();

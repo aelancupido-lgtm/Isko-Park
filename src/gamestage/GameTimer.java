@@ -53,7 +53,7 @@ public class GameTimer extends AnimationTimer{
 	    this.door = new Door();
 	    this.button = new Button();
 	    GameTimer.tm = new TileManager();
-	    GameTimer.tm.loadMap("matrix_1");
+	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.player = new Player(identifier);
 
 		if (!GameStage.SINGLE_PLAYER_GAME) {	
@@ -75,8 +75,7 @@ public class GameTimer extends AnimationTimer{
 	private void initChat(){
 		this.messageArea = new TextArea();
 		this.inputBox = new TextField();
-
-	    GameTimer.client = new ChatClientUDP(GameStage.serverAddress);
+	    GameTimer.client = new ChatClientUDP();
 	    try {
 			GameTimer.client.createClientThread(this.messageArea, identifier, this);
 		} catch (IOException e) {
@@ -109,10 +108,14 @@ public class GameTimer extends AnimationTimer{
 
 		this.inputBox.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.ENTER){
-				String message = "[" + GameTimer.identifier + "] " + inputBox.getText();
-				messageArea.setText(messageArea.getText() + message + "\n");
-				inputBox.setText("");
-				client.sendMessage(message);
+
+				if (checkChatRestrictions(inputBox.getText())){
+					String message = "[" + GameTimer.identifier + "] " + inputBox.getText();
+					messageArea.setText(messageArea.getText() + message + "\n");
+					inputBox.setText("");
+					client.sendMessage(message);
+				}
+				
 			} else if (e.getCode() == KeyCode.ESCAPE){
 				inputBox.setFocusTraversable(false);
 				root.requestFocus();
@@ -140,6 +143,17 @@ public class GameTimer extends AnimationTimer{
             });
             transition.play();
         }
+	}
+
+	//For chat restrictions on keywords
+	private boolean checkChatRestrictions(String chatText){
+		for (String keyword : Config.RESERVED_KEYWORDS) {
+			if (chatText.startsWith(keyword)){
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	//For rendering sprites

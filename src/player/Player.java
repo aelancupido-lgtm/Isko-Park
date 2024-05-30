@@ -24,8 +24,8 @@ public class Player extends Sprite{
 	private final static String[] ACTIONS = {"idle", "walk", "jump", "push", "dead"};
 
 	//Initial player spawn location
-	public static double INITIAL_X = Config.INITIAL_PLAYER_LOCATION[GameStage.stageLevel - 1][0];
-	public static double INITIAL_Y = Config.INITIAL_PLAYER_LOCATION[GameStage.stageLevel - 1][1];
+	public static double INITIAL_X = Config.INITIAL_PLAYER_LOCATION[GameStage.getLevel()][0];
+	public static double INITIAL_Y = Config.INITIAL_PLAYER_LOCATION[GameStage.getLevel()][1];
 
 	private static int INITIAL_INDEX = 0; // increment this for multiplayer.
 	private final String INITIAL_COLOR = COLORS[INITIAL_INDEX]; // not static since this is an instance variable, not a class variable.
