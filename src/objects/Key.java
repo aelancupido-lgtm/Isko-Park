@@ -75,4 +75,8 @@ public class Key extends Sprite{
 		this.player = player;
 	}
 
+	public void removePlayer(){
+		this.player = null;
+	}
+
 }

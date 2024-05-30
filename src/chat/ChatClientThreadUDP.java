@@ -29,7 +29,7 @@ public class ChatClientThreadUDP extends Thread{
 	@Override
 	public void run(){
 		System.out.println("Starting thread");
-        while (true) {
+        while (!this.socket.isClosed()) {
             DatagramPacket packet = new DatagramPacket(incoming, incoming.length);
             try {
                 socket.receive(packet);
@@ -95,6 +95,20 @@ public class ChatClientThreadUDP extends Thread{
                 Key key = this.gameTimer.getKey();
                 key.setPlayer(player);
                 player.acquireKey(key);
+            
+            // for other players exiting the game
+            } else if (message.startsWith("kill;")){
+                String playerName = message.split(";")[1];
+                Player player = this.players.get(playerName);
+                
+                if (player.getKey() != null){
+                    player.getKey().removePlayer();
+                    player.removeKey();
+                }
+
+                player.vanish();
+                this.players.remove(playerName);
+
             }
 
             //Regular chat

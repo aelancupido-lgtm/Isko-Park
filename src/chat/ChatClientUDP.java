@@ -21,11 +21,7 @@ public class ChatClientUDP {
 	private static DatagramSocket socket;
 	static {
 		try {
-			socket = new DatagramSocket();
-			InetSocketAddress socketAddress = new InetSocketAddress(GameStage.getServerAddress(), Config.SERVER_PORT_NUMBER);
-			// socket.bind(socketAddress);
-			System.out.println(socketAddress);
-
+			socket = new DatagramSocket(null);
 		} catch (SocketException e){
 			throw new RuntimeException(e);
 		}
@@ -69,5 +65,9 @@ public class ChatClientUDP {
         byte[] uuid = ("init;" + identifier).getBytes();
         DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, address, Config.SERVER_PORT_NUMBER);
         socket.send(initialize);
+	}
+
+	public void close(){
+		sendMessage("kill;" + GameStage.getIdentifier());
 	}
 }
