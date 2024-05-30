@@ -44,6 +44,7 @@ public class GameStage {
 	private Scene modeScene;
 	private Scene playerScene;
 	private Scene stageScene;
+	private Scene waitingScene;
 	private Stage stage;
 	private Canvas canvas;
 	private GameTimer gameTimer;
@@ -63,9 +64,6 @@ public class GameStage {
 	public static Font font;
 
 	public GameStage(){
-		URL fontUrl = getClass().getResource("/assets/font/PICOBL__.ttf");
-    	GameStage.font = Font.loadFont(fontUrl.toExternalForm(), 12);
-
 		String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
     	GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
 		
@@ -74,7 +72,8 @@ public class GameStage {
 		this.initSplash();
 		this.initMode();
 		this.initPlayer();
-		this.initStage();
+		// this.initStage();
+		// this.initWaiting();
 		
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
 		this.playerUsernameInputDialog.setHeaderText("Enter your username");
@@ -112,6 +111,12 @@ public class GameStage {
 		this.stageScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
+	private void initWaiting() {
+		StackPane root = new StackPane();
+		
+		root.getChildren().add(this.playImage("waiting", ".gif"));
+		this.waitingScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+	}
 
 	private void initGame() {
 		this.root = new Group();
@@ -275,12 +280,23 @@ public class GameStage {
 							e1.printStackTrace();
 						}
 					}
+					initWaiting();
+					showWaitingScene(stage);
+					// temp 1 sec delay
+					PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
+					pause1.setOnFinished(event1 -> {
+						initStage();
+						showStageScene(stage);
 
-					showStageScene(stage);
+						PauseTransition pause2 = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+						pause2.setOnFinished(event2 -> setGameScene(stage)); // Set the gameScene after the pause.
+						pause2.play();
+					}); // Set the gameScene after the pause.
 
-					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
-					pause.play(); // Start the pause.
+					pause1.play(); // Start the pause.
+					
+					// showStageScene(stage);
+					 // Start the pause.
 				}
             }
         });
@@ -323,14 +339,10 @@ public class GameStage {
 
 	private MediaView playMedia(String name, String type) {
 		// getting the video url file.
-		URL url = getClass().getResource("/assets/" + name + type);
-
-		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+		String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
 
         // instantiating MediaPlayer class   
-		MediaPlayer mediaPlayer = new MediaPlayer(new Media(url.toString()));
-
-		// MediaPlayer mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
+		MediaPlayer mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
 
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop the video.
 		mediaPlayer.setAutoPlay(true); // auto play the video.
@@ -346,14 +358,11 @@ public class GameStage {
 	}
 
 	private ImageView playImage(String name, String type) {
-		// String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
-		// ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
-
 		// getting the image url file.
-		URL url = getClass().getResource("/assets/" + name + type);
-
+		String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
+		
 		// instantiating ImageView class
-		ImageView imageView = new ImageView(new Image(url.toString()));
+		ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
 
 		imageView.setFitHeight(Config.WINDOW_SIZE); // set the height of the image to the height of the window.
 		imageView.setFitWidth(Config.WINDOW_SIZE); // set the width of the image to the width of the window.
@@ -385,5 +394,9 @@ public class GameStage {
 
 	private void showStageScene(Stage stage) {
 		stage.setScene(this.stageScene);
+	}
+
+	private void showWaitingScene(Stage stage) {
+		stage.setScene(this.waitingScene);
 	}
 }
