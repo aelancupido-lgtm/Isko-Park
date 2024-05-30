@@ -1,7 +1,6 @@
 package gamestage;
 
 import java.net.InetAddress;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
 

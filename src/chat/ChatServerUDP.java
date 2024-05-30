@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.io.IOException;
 
 import gamestage.Config;
-import gamestage.GameStage;
 
 public class ChatServerUDP extends Thread{
 	private static byte[] incoming = new byte[256];
