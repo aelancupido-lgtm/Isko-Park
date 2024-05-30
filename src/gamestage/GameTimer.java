@@ -18,8 +18,9 @@ import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import objects.Door;
 import objects.Key;
+import obstacle.Box;
 import obstacle.Button;
-
+import obstacle.Spike;
 import player.Player;
 import tile.TileManager;
 
@@ -41,6 +42,8 @@ public class GameTimer extends AnimationTimer{
 	private Group root;
 	private static String identifier;
 	private HashMap<String, Player> players;
+	private Spike spikes;
+	private Box box;
 
 	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root, String identifier) {
 	    this.gc = gc;
@@ -52,6 +55,8 @@ public class GameTimer extends AnimationTimer{
 	    this.key = new Key();
 	    this.door = new Door();
 	    this.button = new Button();
+		this.spikes = new Spike();
+		this.box = new Box();
 	    GameTimer.tm = new TileManager();
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.player = new Player(identifier);
@@ -131,6 +136,7 @@ public class GameTimer extends AnimationTimer{
 		this.key.checkCollision(this.player);
 		this.door.checkCollision(this.player);
 		this.button.checkCollision(this.player);
+		this.spikes.checkCollision(this.player);
 
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
@@ -162,6 +168,8 @@ public class GameTimer extends AnimationTimer{
 		GameTimer.tm.draw(gc);
 
 		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
+		this.spikes.render(gc, this.spikes.getXPos(), this.spikes.getYPos());
+		this.box.render(gc, this.box.getXPos(), this.box.getYPos());
 
 		if (this.button.isVisible()){
 			this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());
@@ -186,8 +194,10 @@ public class GameTimer extends AnimationTimer{
 
 	//For sprite movement
 	private void moveSprites(){
-		this.key.move();
-		this.player.move();
+		if (this.player.isVisible()) {
+			this.key.move();
+			this.player.move();
+		}
 	}
 
 	public static TileManager getTileManager(){
