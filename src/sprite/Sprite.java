@@ -109,4 +109,8 @@ public class Sprite {
  	public double getHeight() {
         return this.height;
     }
+
+	public double getWidth(){
+		return this.width;
+	}
 }

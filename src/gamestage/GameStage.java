@@ -1,8 +1,12 @@
 package gamestage;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.util.Enumeration;
 
 import chat.ChatServerUDP;
 import javafx.util.Duration;
@@ -135,8 +139,41 @@ public class GameStage {
 		this.gameScene = new Scene(root);
 	}
 
+	private String getIPaddress(){
+		try {
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface iface = interfaces.nextElement();
+				if (
+					iface.isLoopback() || 
+				!iface.isUp() || 
+				iface.isVirtual() || 
+				iface.isPointToPoint())
+					continue;
+
+				Enumeration<InetAddress> addresses = iface.getInetAddresses();
+				while(addresses.hasMoreElements()) {
+					InetAddress addr = addresses.nextElement();
+
+					final String ip = addr.getHostAddress();
+					if(Inet4Address.class == addr.getClass()) {
+						System.out.println(ip);
+						return ip;
+					};
+				}
+			}
+		} catch (SocketException e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+
+
 	private void initServer() throws UnknownHostException{
-		GameStage.SERVER_ADDRESS = "192.168.137.1";
+		GameStage.SERVER_ADDRESS = this.getIPaddress();
+
+
 		server = new ChatServerUDP();
 		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
 

@@ -56,7 +56,7 @@ public class GameTimer extends AnimationTimer{
 	    this.door = new Door();
 	    this.button = new Button();
 		this.spikes = new Spike();
-		this.box = new Box();
+		GameTimer.box = new Box();
 	    GameTimer.tm = new TileManager();
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.player = new Player(identifier);
@@ -137,6 +137,7 @@ public class GameTimer extends AnimationTimer{
 		this.door.checkCollision(this.player);
 		this.button.checkCollision(this.player);
 		this.spikes.checkCollision(this.player);
+		GameTimer.box.checkCollision(this.button);
 
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
@@ -169,7 +170,7 @@ public class GameTimer extends AnimationTimer{
 
 		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
 		this.spikes.render(gc, this.spikes.getXPos(), this.spikes.getYPos());
-		this.box.render(gc, this.box.getXPos(), this.box.getYPos());
+		GameTimer.box.render(gc, GameTimer.box.getXPos(), GameTimer.box.getYPos());
 
 		if (this.button.isVisible()){
 			this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());

@@ -13,7 +13,7 @@ public class Config {
 
 	public final static int MAX_PLAYERS = 4;
 
-	public final static String[] RESERVED_KEYWORDS = {"button;clicked", "coor;", "init;", "player;", "key;", "door;", "kill;"};
+	public final static String[] RESERVED_KEYWORDS = {"button;clicked", "coor;", "init;", "player;", "key;", "door;", "kill;", "dead;"};
 
 	public final static Image BACKGROUND_IMAGE = new Image("assets/white.png", TILE_SIZE, TILE_SIZE, false, false);
 	public final static Image TILE_IMAGE = new Image("assets/orange.png", TILE_SIZE, TILE_SIZE, false, false);
@@ -30,7 +30,7 @@ public class Config {
 	public final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}};
 	public final static double[][] INITIAL_BOX_LOCATION = {{280, 608}};
 
-	public final static int MAX_LEVEL = 4;
+	public final static int MAX_LEVEL = 3;
 
 
 

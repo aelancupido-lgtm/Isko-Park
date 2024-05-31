@@ -109,6 +109,10 @@ public class ChatClientThreadUDP extends Thread{
                 player.vanish();
                 this.players.remove(playerName);
 
+            } else if (message.startsWith("dead;")){
+                String playerName = message.split(";")[1];
+                Player player = this.players.get(playerName);
+                player.die();
             }
 
             //Regular chat

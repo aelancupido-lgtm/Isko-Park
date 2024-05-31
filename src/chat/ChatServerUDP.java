@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.io.IOException;
 
 import gamestage.Config;
+import gamestage.GameStage;
 
 public class ChatServerUDP extends Thread{
 	private static byte[] incoming = new byte[256];
@@ -17,7 +18,7 @@ public class ChatServerUDP extends Thread{
 
 	static {
 		try {
-			socket = new DatagramSocket(Config.SERVER_PORT_NUMBER, InetAddress.getByName("192.168.137.1"));
+			socket = new DatagramSocket(Config.SERVER_PORT_NUMBER, InetAddress.getByName(GameStage.getServerAddress()));
 		} catch (SocketException | UnknownHostException e){
 			throw new RuntimeException(e);
 		}
@@ -27,27 +28,7 @@ public class ChatServerUDP extends Thread{
     private static ArrayList<String> identifiers = new ArrayList<>();
     private static ArrayList<InetAddress> hosts = new ArrayList<>();
 
-	// static {
-	// 	try {
-	// 		address = InetAddress.getByName(GameStage.getServerAddress());
-	// 	} catch (UnknownHostException e){
-	// 		throw new RuntimeException(e);
-	// 	}
-	// }
-
 	public static void forwardMessage(int userPort, InetAddress userHost, byte[] byteMessage, String message) throws UnknownHostException{
-        // for (int forward_port : users) {
-        //     if (forward_port != userPort) {
-        //         DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, address, forward_port);
-        //         try {
-        //             socket.send(forward);
-        //             System.out.println("Sent message: " + message + " to " + forward_port);
-        //         } catch (IOException e) {
-        //             throw new RuntimeException(e);
-        //         }
-        //     }
-        // }
-
         for (int i = 0; i < users.size(); i++){
             if (userPort != users.get(i) && userHost != hosts.get(i)){
                 DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, hosts.get(i), users.get(i));

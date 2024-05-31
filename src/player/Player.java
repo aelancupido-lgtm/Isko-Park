@@ -2,6 +2,8 @@ package player;
 
 import java.util.ArrayList;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -12,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import gamestage.Config;
 import gamestage.GameStage;
 import gamestage.GameTimer;
@@ -103,17 +106,21 @@ public class Player extends Sprite{
 	    this.scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 	    	public void handle(KeyEvent e){
 	    		KeyCode code = e.getCode();
-	    		if(code.equals(KeyCode.SPACE) && !jumping && !falling) jump();
-	    		if(code.equals(KeyCode.A)) left = true;
-	    		if(code.equals(KeyCode.D)) right = true;
+				if (isAlive){
+					if(code.equals(KeyCode.SPACE) && !jumping && !falling) jump();
+					if(code.equals(KeyCode.A)) left = true;
+					if(code.equals(KeyCode.D)) right = true;
+				}
 	    	}
 	    });
 
 	    this.scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
 			public void handle(KeyEvent e){
 				KeyCode code = e.getCode();
-	    		if(code.equals(KeyCode.A)) left = false;
-	    		if(code.equals(KeyCode.D)) right = false;
+				if (isAlive){
+					if(code.equals(KeyCode.A)) left = false;
+					if(code.equals(KeyCode.D)) right = false;
+				}
 	    	}
 	    });
 	}
@@ -123,6 +130,7 @@ public class Player extends Sprite{
 	// *Checks if player will reach boundary
 	// *Animates player with animatePlayer method
 	public void move(){
+
 		double prevXPos = this.xPos;
 
 		if (this.left){
@@ -134,36 +142,36 @@ public class Player extends Sprite{
 		} else {
 			this.dx = 0;
 		}
-
+	
 		if (this.xPos + this.dx >= 0 && this.xPos + this.dx + this.width <= Config.WINDOW_SIZE){
 			this.xPos += dx;
 		}
-
+	
 		if (jumping){
-            this.yPos += this.dy;
-            this.dy += JUMP_GRAVITY;
-            if (this.dy > 0) {
-                this.falling = true;
-            }
-        }
-        else if (falling){
+			this.yPos += this.dy;
+			this.dy += JUMP_GRAVITY;
+			if (this.dy > 0) {
+				this.falling = true;
+			}
+		}
+		else if (falling){
 			this.yPos += this.dy;
 			this.dy += FALL_GRAVITY;
 			this.jumping = false;
-        }
-
+		}
+	
 		if (!GameStage.isSinglePlayer()) this.sendPlayerCoordinates();
 		this.checkBoxCollision(prevXPos);
 		this.checkPlatformCollisionX(prevXPos);
 		this.checkPlatformCollisionY();
-
-		//For sprite animation
+	
+			//For sprite animation
 		this.spriteCounter++;
 		if (this.spriteCounter > MAX_FRAME){
 			this.spriteNum = (this.spriteNum % MAX_SPRITE) + 1; // wrapping sprite number using modulo.
 			this.spriteCounter = 0;
 		}
-
+	
 	}
 
 	// send player coordinates to server
@@ -231,11 +239,14 @@ public class Player extends Sprite{
 
 	private void checkBoxCollision(double prevXPos){
 		Box box = GameTimer.getBox();
+		
 		if (this.collidesWith(box)){
-			// this.action = ACTIONS[4];
+			box.move(this);
 			this.xPos = prevXPos;
 			this.dx = 0;
 			this.pushing = true;
+		} else{
+			this.pushing = false;
 		}
 		
 	}
@@ -257,14 +268,49 @@ public class Player extends Sprite{
 		this.jumping = false;
 		this.falling = false;
 		this.isAlive = false;
+
+		if(GameTimer.getPlayer().equals(this.name) && !GameStage.isSinglePlayer()) GameTimer.client.sendMessage("dead;" + this.name);
+
+		// vanish player after 2 seconds
+		Timeline vanishTL = new Timeline(
+			new KeyFrame(
+				Duration.seconds(2),
+				event -> {
+					this.vanish();
+					this.setXPos(Player.INITIAL_X);
+					this.setYPos(Player.INITIAL_Y);
+				}
+            )
+		);
+        vanishTL.setCycleCount(1);
+        vanishTL.play();
+
+		this.respawn();
 	}
 
 	public void respawn() {
-		this.setXPos(Player.INITIAL_X);
-		this.setYPos(Player.INITIAL_Y);
-		this.setAction(Player.INITIAL_ACTION);
-		this.setDirection(Player.INITIAL_DIRECTION);
-		this.isAlive = true;
+		// respawn player after 5 seconds
+			// set player visibility to true 5 seconds after respawning (player flickers otherwise)
+			Timeline respawnTL = new Timeline(
+				new KeyFrame(
+					Duration.seconds(5),
+					event -> {
+						this.setAction(Player.INITIAL_ACTION);
+						this.setDirection(Player.INITIAL_DIRECTION);
+						this.isAlive = true;
+						Timeline appearTL = new Timeline(
+							new KeyFrame(
+								Duration.seconds(5),
+								e -> this.appear()
+							)
+						);
+						appearTL.setCycleCount(1);
+						appearTL.play();
+					}
+				)
+			);
+			respawnTL.setCycleCount(1);
+			respawnTL.play();
 	}
 
 	//For sprite animation
