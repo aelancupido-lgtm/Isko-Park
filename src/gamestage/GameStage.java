@@ -438,8 +438,13 @@ public class GameStage {
 		stage.setScene(this.waitingScene);
 	}
 
+	// for getting int value for array
 	public static int getLevel(){
 		return GameStage.STAGE_LEVEL - 1;
+	}
+
+	public static int getStageLevel(){
+		return GameStage.STAGE_LEVEL;
 	}
 
 	public static String getIdentifier(){

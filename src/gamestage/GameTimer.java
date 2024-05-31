@@ -20,6 +20,7 @@ import objects.Door;
 import objects.Key;
 import obstacle.Box;
 import obstacle.Button;
+import obstacle.Portal;
 import obstacle.Spike;
 import player.Player;
 import tile.TileManager;
@@ -43,6 +44,8 @@ public class GameTimer extends AnimationTimer{
 	private static String identifier;
 	private HashMap<String, Player> players;
 	private Spike spikes;
+	private Portal portalOne;
+	private Portal portalTwo;
 	private static Box box;
 
 	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root, String identifier) {
@@ -56,6 +59,13 @@ public class GameTimer extends AnimationTimer{
 	    this.door = new Door();
 	    this.button = new Button();
 		this.spikes = new Spike();
+
+		//temp portal
+		this.portalOne = new Portal(560, 400);
+		this.portalTwo = new Portal(345, 475);
+		this.portalOne.setWarpPortal(this.portalTwo);
+		this.portalTwo.setWarpPortal(this.portalOne);
+
 		GameTimer.box = new Box();
 	    GameTimer.tm = new TileManager();
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
@@ -139,6 +149,10 @@ public class GameTimer extends AnimationTimer{
 		this.spikes.checkCollision(this.player);
 		GameTimer.box.checkCollision(this.button);
 
+		// temporary
+		this.portalOne.checkCollision(this.player);
+		this.portalTwo.checkCollision(this.player);
+
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
         if (this.door.isOpen() && this.door.playerAtCenter(this.player)){
@@ -171,6 +185,8 @@ public class GameTimer extends AnimationTimer{
 		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
 		this.spikes.render(gc, this.spikes.getXPos(), this.spikes.getYPos());
 		GameTimer.box.render(gc, GameTimer.box.getXPos(), GameTimer.box.getYPos());
+		this.portalOne.render(gc, this.portalOne.getXPos(), this.portalOne.getYPos());
+		this.portalTwo.render(gc, this.portalTwo.getXPos(), this.portalTwo.getYPos());
 
 		if (this.button.isVisible()){
 			this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());

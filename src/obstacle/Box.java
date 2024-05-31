@@ -55,6 +55,10 @@ public class Box extends Sprite{
         }
     }
 
+    public void setXPos(double xPos){
+        this.xPos = xPos;
+    }
+
     // public boolean playerAtBorder(Player player){
     //     //center position of button
     //     double playerBorderX = player.getXPos() + player.getWidth();

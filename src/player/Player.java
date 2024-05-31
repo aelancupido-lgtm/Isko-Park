@@ -175,7 +175,7 @@ public class Player extends Sprite{
 	}
 
 	// send player coordinates to server
-	private void sendPlayerCoordinates(){
+	public void sendPlayerCoordinates(){
 		if (this.dx != 0 || this.dy != 0){
 			String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.left + ";" + this.right + ";" + this.spriteNum + ";";
 			GameTimer.client.sendMessage(message);
