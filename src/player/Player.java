@@ -1,6 +1,7 @@
 package player;
 
 import java.util.ArrayList;
+
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
@@ -59,6 +60,8 @@ public class Player extends Sprite{
 	private String direction; //indicates if player is facing right or left
 	private String action;
 
+	private boolean isAlive;
+
 	//for player jump
 	private final static double JUMP_SPEED = 12;
 	private final static double JUMP_GRAVITY = 0.6;
@@ -77,6 +80,7 @@ public class Player extends Sprite{
 		this.scene = GameTimer.getScene();
 		this.spriteNum = 0;
 		this.spriteCounter = 0;
+		this.isAlive = true;
 		this.jumping = false;
 		this.falling = false;
 		this.tileManager = GameTimer.getTileManager();
@@ -233,22 +237,42 @@ public class Player extends Sprite{
         this.dy = -JUMP_SPEED;
     }
 
+	public void die() {
+		this.setDX(0);
+		this.setDY(0);
+		this.setLeftRight(false, false);
+		this.jumping = false;
+		this.falling = false;
+		this.isAlive = false;
+	}
+
+	public void respawn() {
+		this.setXPos(Player.INITIAL_X);
+		this.setYPos(Player.INITIAL_Y);
+		this.setAction(Player.INITIAL_ACTION);
+		this.setDirection(Player.INITIAL_DIRECTION);
+		this.isAlive = true;
+	}
+
 	//For sprite animation
 	private void animatePlayer() {
-	  Image img = null;
+		Image img = null;
 
-	  if (this.left || this.right) {
-	      this.action = ACTIONS[1]; // walk
-	      img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
-	  } else if (this.jumping) {
-	      this.action = ACTIONS[2]; // jump
-	      img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
-	  } else {
-	      this.action = ACTIONS[0]; // idle
-	      img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
-	  }
+		if (this.left || this.right) {
+			this.action = ACTIONS[1]; // walk
+			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+		} else if (this.jumping) {
+			this.action = ACTIONS[2]; // jump
+			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+		} else if (!this.isAlive) {
+			this.action = ACTIONS[4]; 	// dead
+			img = new Image("assets/" + this.color + "_character/" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+		} else {
+			this.action = ACTIONS[0]; 	// idle
+			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+		}
 
-	  this.loadImage(img);
+		this.loadImage(img);
 	}
 
 	//Getter methods

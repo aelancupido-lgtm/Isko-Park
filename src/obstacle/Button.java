@@ -3,7 +3,10 @@ package obstacle;
 import gamestage.Config;
 import gamestage.GameStage;
 import gamestage.GameTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 import player.Player;
 import sprite.Sprite;
 
@@ -43,6 +46,43 @@ public class Button extends Sprite{
 		if (this.playerAtCenter(player)){
 			this.clicked = true;
 			this.loadImage(BUTTON_CLICKED);
+			player.die();
+
+			// vanish player after 2 seconds
+			Timeline vanishTL = new Timeline(
+				new KeyFrame(
+					Duration.seconds(2),
+					event -> {
+						player.vanish();
+						this.clicked = false;
+						this.loadImage(BUTTON_UNCLICKED);
+					}
+            	)
+			);
+            vanishTL.setCycleCount(1);
+            vanishTL.play();
+
+			// respawn player after 5 seconds
+			// set player visibility to true 5 seconds after respawning (player flickers otherwise)
+			Timeline respawnTL = new Timeline(
+				new KeyFrame(
+					Duration.seconds(5),
+					event -> {
+						player.respawn();
+						Timeline appearTL = new Timeline(
+							new KeyFrame(
+								Duration.seconds(5),
+								e -> player.appear()
+							)
+						);
+						appearTL.setCycleCount(1);
+						appearTL.play();
+					}
+				)
+			);
+			respawnTL.setCycleCount(1);
+			respawnTL.play();
+
 			if (!GameStage.SINGLE_PLAYER_GAME) GameTimer.client.sendMessage("button;clicked");
 			
 			/* 
@@ -57,6 +97,9 @@ public class Button extends Sprite{
 		this.loadImage(BUTTON_CLICKED);
 	}
 
-
+	public void setUnclicked(){
+		this.clicked = false;
+		this.loadImage(BUTTON_UNCLICKED);
+	}
 
 }
