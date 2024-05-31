@@ -2,7 +2,10 @@ package obstacle;
 
 import gamestage.Config;
 import gamestage.GameStage;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 import player.Player;
 import sprite.Sprite;
 
@@ -21,7 +24,42 @@ public class Spike extends Sprite {
 		if (this.collidesWith(player)){
             // TODO: add player death for collision + respawn
             // temp for player death
-            player.vanish();
+            //player.vanish();
+
+            player.die();
+
+			// vanish player after 2 seconds
+			Timeline vanishTL = new Timeline(
+				new KeyFrame(
+					Duration.seconds(1),
+					event -> {
+						player.vanish();    
+					}
+            	)
+			);
+            vanishTL.setCycleCount(1);
+            vanishTL.play();
+
+			// respawn player after 5 seconds
+			// set player visibility to true 5 seconds after respawning (player flickers otherwise)
+			Timeline respawnTL = new Timeline(
+				new KeyFrame(
+					Duration.seconds(3),
+					event -> {
+						player.respawn();
+						Timeline appearTL = new Timeline(
+							new KeyFrame(
+								Duration.seconds(3),
+								e -> player.appear()
+							)
+						);
+						appearTL.setCycleCount(1);
+						appearTL.play();
+					}
+				)
+			);
+			respawnTL.setCycleCount(1);
+			respawnTL.play();
 		}
 	}
 }
