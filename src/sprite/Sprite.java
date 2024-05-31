@@ -102,6 +102,10 @@ public class Sprite {
 		this.visible = false;
 	}
 
+	public void appear(){
+		this.visible = true;
+	}
+
  	public double getHeight() {
         return this.height;
     }
