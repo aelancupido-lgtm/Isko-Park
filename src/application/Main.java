@@ -17,7 +17,7 @@ public class Main extends Application {
 		GameStage game = new GameStage();
 
 		primaryStage.setOnCloseRequest(event -> {
-			if (GameStage.getServerAddress() != null){
+			if (GameStage.isCreated()){
 				if (!GameStage.isSinglePlayer()) GameTimer.client.close();
 			}
 			System.exit(0);

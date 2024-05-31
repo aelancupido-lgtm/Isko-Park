@@ -56,7 +56,7 @@ public class GameStage {
 	private static String SERVER_ADDRESS;
 
 	private static ChatServerUDP server;
-
+	private static boolean GAME_CREATED;
 	private static boolean SINGLE_PLAYER_GAME;
 	private static boolean CREATE_GAME_MODE;
 
@@ -73,6 +73,7 @@ public class GameStage {
 		this.initPlayer();
 		// this.initStage();
 		// this.initWaiting();
+		GameStage.GAME_CREATED = false;
 		
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
 		this.playerUsernameInputDialog.setHeaderText("Enter your username");
@@ -128,6 +129,7 @@ public class GameStage {
 		if (GameStage.SINGLE_PLAYER_GAME){
 			this.canvas = new Canvas(Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 		}
+		GameStage.GAME_CREATED = true;
 
 		this.root.getChildren().add(this.canvas);
 		this.gameScene = new Scene(root);
@@ -423,5 +425,9 @@ public class GameStage {
 		if (GameStage.STAGE_LEVEL < Config.MAX_LEVEL){
 			GameStage.STAGE_LEVEL++;
 		}
+	}
+
+	public static boolean isCreated(){
+		return GameStage.GAME_CREATED;
 	}
 }

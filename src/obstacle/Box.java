@@ -23,7 +23,9 @@ public class Box extends Sprite{
 		if(this.collidesWith(player)){
             // TODO: add push animation to player
             // TODO: add box moving with player push
-            this.xPos = this.xPos * PUSH_FORCE; 
+            if (player.getDirection() == "left"){
+                this.xPos = this.xPos + this.xPos * PUSH_FORCE; 
+                }
 		    }
 		}
     }
