@@ -258,10 +258,10 @@ public class Player extends Sprite{
 	private void animatePlayer() {
 		Image img = null;
 
-		if (this.left || this.right) {
+		if (this.visible && (this.left || this.right)) {
 			this.action = ACTIONS[1]; // walk
 			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
-		} else if (this.jumping) {
+		} else if (this.visible && this.jumping) {
 			this.action = ACTIONS[2]; // jump
 			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
 		} else if (!this.isAlive) {
