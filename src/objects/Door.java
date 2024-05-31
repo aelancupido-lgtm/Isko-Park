@@ -26,7 +26,7 @@ public class Door extends Sprite{
 		if (player.getKey() != null){
 			this.open = true;
 			this.loadImage(OPEN_DOOR_IMAGE);
-			if (!GameStage.SINGLE_PLAYER_GAME) GameTimer.client.sendMessage("door;opened");
+			if (!GameStage.isSinglePlayer()) GameTimer.client.sendMessage("door;opened");
 			//player.removeKey();
 		}
 	}
@@ -38,7 +38,7 @@ public class Door extends Sprite{
 	            player.getKey().use();
 	        }
 	    } else if (this.playerAtCenter(player) && this.open){
-	        if (!GameStage.SINGLE_PLAYER_GAME && player.isVisible()) GameTimer.client.sendMessage("door;" + player.getUsername());
+	        if (!GameStage.isSinglePlayer() && player.isVisible()) GameTimer.client.sendMessage("door;" + player.getUsername());
 			player.vanish();
 	    }
 	}

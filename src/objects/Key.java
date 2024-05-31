@@ -24,7 +24,7 @@ public class Key extends Sprite{
 		if(this.collidesWith(player) && this.player == null && this.visible){
 			this.player = player;
 			this.player.acquireKey(this);
-			if (!GameStage.SINGLE_PLAYER_GAME) sendKeyCoordinates();
+			if (!GameStage.isSinglePlayer()) sendKeyCoordinates();
 			this.move();
 			}
 		}

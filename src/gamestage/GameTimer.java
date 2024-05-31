@@ -43,7 +43,7 @@ public class GameTimer extends AnimationTimer{
 	private static String identifier;
 	private HashMap<String, Player> players;
 	private Spike spikes;
-	private Box box;
+	private static Box box;
 
 	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root, String identifier) {
 	    this.gc = gc;
@@ -61,7 +61,7 @@ public class GameTimer extends AnimationTimer{
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.player = new Player(identifier);
 
-		if (!GameStage.SINGLE_PLAYER_GAME) {	
+		if (!GameStage.isSinglePlayer()) {	
 			this.players = new HashMap<>();
 			this.initChat();
 		}
@@ -184,7 +184,7 @@ public class GameTimer extends AnimationTimer{
 		}
 
 		//Render other players
-		if (!GameStage.SINGLE_PLAYER_GAME){
+		if (!GameStage.isSinglePlayer()){
 			this.players.forEach((key, user) -> {
 				if (user.isVisible()) user.render(gc, user.getXPos(), user.getYPos());
 			});
@@ -227,6 +227,10 @@ public class GameTimer extends AnimationTimer{
 
 	public HashMap<String, Player> getPlayers(){
 		return this.players;
+	}
+
+	public static Box getBox(){
+		return GameTimer.box;
 	}
 
 }

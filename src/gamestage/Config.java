@@ -27,8 +27,10 @@ public class Config {
 
 	// If no button on level, set level index to {} and if conditional for rendering [set to button.vanish()]
 	public final static double[][] INITIAL_BUTTON_LOCATION = {{450, 632}};
-	public final static double[][] INITIAL_BOX_LOCATION = {{400, 538}};
-	public final static double[][] INITIAL_SPIKE_LOCATION = {{280, 608}};
+	public final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}};
+	public final static double[][] INITIAL_BOX_LOCATION = {{280, 608}};
+
+	public final static int MAX_LEVEL = 4;
 
 
 

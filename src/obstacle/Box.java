@@ -12,6 +12,8 @@ public class Box extends Sprite{
     private static final double BOX_SIZE = 32;
     private static final Image BOX_IMAGE = new Image("assets/box.png", BOX_SIZE, BOX_SIZE, true, false);
 
+    private static final double PUSH_FORCE = 0.3;
+
     public Box(){
         super(INITIAL_X, INITIAL_Y);
         this.loadImage(BOX_IMAGE);
@@ -21,6 +23,7 @@ public class Box extends Sprite{
 		if(this.collidesWith(player)){
             // TODO: add push animation to player
             // TODO: add box moving with player push
+            this.xPos = this.xPos * PUSH_FORCE; 
 		    }
 		}
     }

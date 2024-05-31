@@ -17,8 +17,8 @@ public class ChatServerUDP extends Thread{
 
 	static {
 		try {
-			socket = new DatagramSocket(Config.SERVER_PORT_NUMBER);
-		} catch (SocketException e){
+			socket = new DatagramSocket(Config.SERVER_PORT_NUMBER, InetAddress.getByName("192.168.137.1"));
+		} catch (SocketException | UnknownHostException e){
 			throw new RuntimeException(e);
 		}
 	}

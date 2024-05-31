@@ -16,6 +16,7 @@ import gamestage.Config;
 import gamestage.GameStage;
 import gamestage.GameTimer;
 import objects.Key;
+import obstacle.Box;
 import tile.TileManager;
 import sprite.Sprite;
 
@@ -68,6 +69,7 @@ public class Player extends Sprite{
 	private final static double FALL_GRAVITY = 0.3;
 	private boolean jumping;
 	private boolean falling;
+	private boolean pushing;
 	private Key key;
 	private TileManager tileManager;
 
@@ -83,6 +85,7 @@ public class Player extends Sprite{
 		this.isAlive = true;
 		this.jumping = false;
 		this.falling = false;
+		this.pushing = false;
 		this.tileManager = GameTimer.getTileManager();
 		this.direction = INITIAL_DIRECTION;
 		this.action = INITIAL_ACTION;
@@ -149,8 +152,8 @@ public class Player extends Sprite{
 			this.jumping = false;
         }
 
-		if (!GameStage.SINGLE_PLAYER_GAME) this.sendPlayerCoordinates();
-
+		if (!GameStage.isSinglePlayer()) this.sendPlayerCoordinates();
+		this.checkBoxCollision(prevXPos);
 		this.checkPlatformCollisionX(prevXPos);
 		this.checkPlatformCollisionY();
 
@@ -226,6 +229,16 @@ public class Player extends Sprite{
         return onPlatform;
     }
 
+	private void checkBoxCollision(double prevXPos){
+		Box box = GameTimer.getBox();
+		if (this.collidesWith(box)){
+			// this.action = ACTIONS[4];
+			this.xPos = prevXPos;
+			this.dx = 0;
+			this.pushing = true;
+		}
+		
+	}
 
 	//Initiates a jump for the player
 	// *Sets the player's state to jumping
@@ -259,8 +272,13 @@ public class Player extends Sprite{
 		Image img = null;
 
 		if (this.visible && (this.left || this.right)) {
-			this.action = ACTIONS[1]; // walk
-			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+			if (this.pushing) {
+				this.action = ACTIONS[3];
+				img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+			} else{
+				this.action = ACTIONS[1]; // walk
+				img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+			}
 		} else if (this.visible && this.jumping) {
 			this.action = ACTIONS[2]; // jump
 			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);

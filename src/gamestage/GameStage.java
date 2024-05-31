@@ -50,15 +50,15 @@ public class GameStage {
 
 	private TextInputDialog playerUsernameInputDialog;
 	private TextInputDialog serverAddressInputDialog;
-	public static String IDENTIFIER;
-	public static int STAGE_LEVEL = 1;
+	private static String IDENTIFIER;
+	private static int STAGE_LEVEL = 1;
 
-	public static String SERVER_ADDRESS;
+	private static String SERVER_ADDRESS;
 
-	public static ChatServerUDP server;
+	private static ChatServerUDP server;
 
-	public static boolean SINGLE_PLAYER_GAME;
-	public static boolean CREATE_GAME_MODE;
+	private static boolean SINGLE_PLAYER_GAME;
+	private static boolean CREATE_GAME_MODE;
 
 	public static Font font;
 
@@ -134,7 +134,7 @@ public class GameStage {
 	}
 
 	private void initServer() throws UnknownHostException{
-		GameStage.SERVER_ADDRESS = InetAddress.getLocalHost().getHostAddress();
+		GameStage.SERVER_ADDRESS = "192.168.137.1";
 		server = new ChatServerUDP();
 		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
 
@@ -150,7 +150,7 @@ public class GameStage {
 		th.setDaemon(true);
 		th.start();
 
-		System.out.println("Server ip address: " + InetAddress.getLocalHost().getHostAddress());
+		System.out.println("Server ip address: " + GameStage.SERVER_ADDRESS);
 
 	}
 
@@ -409,5 +409,19 @@ public class GameStage {
 
 	public static String getServerAddress(){
 		return GameStage.SERVER_ADDRESS;
+	}
+
+	public static boolean isSinglePlayer(){
+		return GameStage.SINGLE_PLAYER_GAME;
+	}
+
+	public static boolean isCreateGame(){
+		return GameStage.CREATE_GAME_MODE;
+	}
+
+	public static void nextLevel(){
+		if (GameStage.STAGE_LEVEL < Config.MAX_LEVEL){
+			GameStage.STAGE_LEVEL++;
+		}
 	}
 }

@@ -83,7 +83,7 @@ public class Button extends Sprite{
 			respawnTL.setCycleCount(1);
 			respawnTL.play();
 
-			if (!GameStage.SINGLE_PLAYER_GAME) GameTimer.client.sendMessage("button;clicked");
+			if (!GameStage.isSinglePlayer()) GameTimer.client.sendMessage("button;clicked");
 			
 			/* 
 			TODO: add button functionality 
