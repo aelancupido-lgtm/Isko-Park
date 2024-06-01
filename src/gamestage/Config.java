@@ -21,23 +21,24 @@ public class Config {
 	public final static int SERVER_PORT_NUMBER = 8080;
 
     public final static String[] INITIAL_MAPS = {"matrix_1", "matrix_2"};
-    public final static double[][] INITIAL_PLAYER_LOCATION = {{50, 592}};
-    public final static double[][] INITIAL_DOOR_LOCATION = {{650, 576}};
-    public final static double[][] INITIAL_KEY_LOCATION = {{100, 118}};
+
+    public final static double[][] INITIAL_PLAYER_LOCATION = {{50, 592}, {64, 702}};
+    public final static double[][] INITIAL_DOOR_LOCATION = {{650, 576}, {615, 576}};
+    public final static double[][] INITIAL_KEY_LOCATION = {{100, 118}, {453, 350}};
 
 	// If no button on level, set level index to {} and if conditional for rendering [set to button.vanish()]
-	private final static double[][] INITIAL_BUTTON_LOCATION = {{450, 632}};
-	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}};
-	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}};
-	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}};
+	private final static double[][] INITIAL_BUTTON_LOCATION = {{450, 632}, {}};
+	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}, {}};
+	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}, {}};
+	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}, {}};
 
 	// for portal warping
 	// contains indexes of portals
-	private final static int[][] PORTAL_WARPS = {{1, 0}};
+	private final static int[][] PORTAL_WARPS = {{1, 0}, {}};
 
 	// order button, spike, box, portal 
-	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2}};
-	public final static int MAX_LEVEL = 3;
+	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2}, {0, 0, 0, 0}};
+	public final static int MAX_LEVEL = 2;
 
 	// gets the obstacle location based on object number and return xPos or yPos
 	// allows for multiple obstacles of the same type per stage
@@ -80,6 +81,14 @@ public class Config {
 
 	public static int getWarpPortalIndex(int portalIndex){
 		return PORTAL_WARPS[GameStage.getLevel()][portalIndex];
+	}
+
+	public static double getInitialPlayerLocation(boolean isXPos){
+		if (isXPos){
+			return INITIAL_PLAYER_LOCATION[GameStage.getLevel()][0];
+		} else {
+			return INITIAL_PLAYER_LOCATION[GameStage.getLevel()][1];
+		}
 	}
 }
 

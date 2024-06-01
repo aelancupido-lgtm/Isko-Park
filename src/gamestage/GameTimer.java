@@ -148,13 +148,48 @@ public class GameTimer extends AnimationTimer{
         if (this.door.isOpen() && this.door.playerAtCenter(this.player)){
             PauseTransition transition = new PauseTransition(Duration.seconds(1));
             transition.setOnFinished(event -> {
-            	this.stop();
-                this.gameOver.showGameOver();
-                gameStage.setGameOverScene(gameOver.getScene());
+
+				// GameStage.nextLevel();
+				// this.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
+				this.showNextLevel();
             });
             transition.play();
         }
 	}
+
+	private void showNextLevel(){
+		if (GameStage.getLevel() < Config.MAX_LEVEL){
+			GameStage.nextLevel();
+			this.tm.clear(this.gc);
+			this.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
+
+			this.key.removePlayer();
+			this.player.setXPos(Config.getInitialPlayerLocation(true));
+			this.player.setYPos(Config.getInitialPlayerLocation(false));
+			this.player.resetPlayer();
+			this.player.appear();
+
+			this.door = new Door();
+			this.key = new Key();
+
+			if (!GameStage.isSinglePlayer()){
+				this.players.forEach((key, user) -> {
+					user.setXPos(Config.getInitialPlayerLocation(false));
+					user.setYPos(Config.getInitialPlayerLocation(true));
+					user.resetPlayer();
+					user.appear();
+				});
+			}
+
+			this.initObstacles();
+
+		} else {
+            this.stop();
+            this.gameOver.showGameOver();
+            gameStage.setGameOverScene(gameOver.getScene());
+		}
+	}
+
 
 	private void checkObstacleCollision(){
 		for (Spike spike: this.spikesList){

@@ -29,8 +29,8 @@ public class Player extends Sprite{
 	private final static String[] ACTIONS = {"idle", "walk", "jump", "push", "dead"};
 
 	//Initial player spawn location
-	public static double INITIAL_X = Config.INITIAL_PLAYER_LOCATION[GameStage.getLevel()][0];
-	public static double INITIAL_Y = Config.INITIAL_PLAYER_LOCATION[GameStage.getLevel()][1];
+	public static double INITIAL_X = Config.getInitialPlayerLocation(true);
+	public static double INITIAL_Y = Config.getInitialPlayerLocation(false);
 
 	private static int INITIAL_INDEX = 0; // increment this for multiplayer.
 	private final String INITIAL_COLOR = COLORS[INITIAL_INDEX]; // not static since this is an instance variable, not a class variable.
@@ -448,6 +448,19 @@ public class Player extends Sprite{
 	
 	public void removeKey(){
 		this.key = null;
+	}
+
+	public void resetPlayer(){
+		this.removeKey();
+		this.jumping = false;
+		this.falling = false;
+		this.action = INITIAL_ACTION;
+		this.direction = INITIAL_DIRECTION;
+		this.left = false;
+		this.right = false;
+		this.dy = 0;
+		this.dx = 0;
+		this.loadImage(INITIAL_IMAGE);
 	}
 
 	@Override

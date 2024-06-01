@@ -471,9 +471,7 @@ public class GameStage {
 	}
 
 	public static void nextLevel(){
-		if (GameStage.STAGE_LEVEL < Config.MAX_LEVEL){
-			GameStage.STAGE_LEVEL++;
-		}
+		GameStage.STAGE_LEVEL++;
 	}
 
 	public static boolean isCreated(){

@@ -68,6 +68,11 @@ public class TileManager {
 		}
 	}
 
+	public void clear(GraphicsContext gc){
+		this.platforms.clear();
+		gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+	}
+
 	//For reading matrix file
 	// *matrix is 50x50
 	// *tile size is 16x16
