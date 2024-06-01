@@ -1,5 +1,6 @@
 package gamestage;
 
+import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -8,6 +9,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 
+import chat.ChatClientUDP;
 import chat.ChatServerUDP;
 import javafx.util.Duration;
 import javafx.animation.PauseTransition;
@@ -57,6 +59,11 @@ public class GameStage {
 	private static String IDENTIFIER;
 	private static int STAGE_LEVEL = 1;
 
+	public static ChatClientUDP client;
+	
+	// for lobby
+	private static int numUsersWaiting; //number of users waiting
+	
 	private static String SERVER_ADDRESS;
 
 	private static ChatServerUDP server;
@@ -175,9 +182,6 @@ public class GameStage {
 
 		return imageView;
 	}
-
-
-
 
 	private String getIPaddress(){
 		try {
@@ -333,13 +337,13 @@ public class GameStage {
 
 				if(type == MenuType.MODE) {
 					GameStage.CREATE_GAME_MODE = false;
-
 					serverAddressInputDialog = new TextInputDialog();
 					serverAddressInputDialog.setHeaderText("Enter the server address");
 					serverAddressInputDialog.showAndWait();
 
 					SERVER_ADDRESS = serverAddressInputDialog.getEditor().getText();
 
+					initClient(); // initializes the client thread
 					initGame();
 					showStageScene(stage);
 
@@ -358,6 +362,7 @@ public class GameStage {
 							e1.printStackTrace();
 						}
 					}
+					initClient(); // initializes the client thread
 					initWaiting();
 					showWaitingScene(stage);
 					// temp 1 sec delay
@@ -381,6 +386,15 @@ public class GameStage {
 
         return vBox;
     }
+
+	private void initClient(){
+		GameStage.client = new ChatClientUDP();
+	    try {
+			GameStage.client.createClientThread(GameStage.getIdentifier());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	private HBox createBackButton(Scene scene) {
     	HBox hbox = new HBox();
@@ -468,6 +482,11 @@ public class GameStage {
 
 	public static boolean isCreateGame(){
 		return GameStage.CREATE_GAME_MODE;
+	}
+
+	// used for setting number of users waiting
+	public static void setNumWaiting(int usersWaiting){
+		GameStage.numUsersWaiting = usersWaiting;
 	}
 
 	public static void nextLevel(){

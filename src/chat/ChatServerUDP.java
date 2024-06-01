@@ -28,7 +28,7 @@ public class ChatServerUDP extends Thread{
     private static ArrayList<String> identifiers = new ArrayList<>();
     private static ArrayList<InetAddress> hosts = new ArrayList<>();
 
-	public static void forwardMessage(int userPort, InetAddress userHost, byte[] byteMessage, String message) throws UnknownHostException{
+	private static void forwardMessage(int userPort, InetAddress userHost, byte[] byteMessage, String message) throws UnknownHostException{
         for (int i = 0; i < users.size(); i++){
             if (userPort != users.get(i) && userHost != hosts.get(i)){
                 DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, hosts.get(i), users.get(i));
@@ -46,22 +46,38 @@ public class ChatServerUDP extends Thread{
 	}
 
     // send all players to new port
-    public static void initPlayersArray(int userPort, InetAddress userHost){
+    private static void initPlayersArray(int userPort, InetAddress userHost){
         System.out.println("initializing players...");
         String players = "player;";
         for (String identifier : identifiers ){
             players = players + identifier + ";";
         }
 
-        System.out.println(players);
-        DatagramPacket forward = new DatagramPacket(players.getBytes(), players.getBytes().length, userHost, userPort);
+        forwardMessageToClient(userPort, userHost, players.getBytes(), players);
+    }
+
+    private static void forwardMessageToClient(int userPort, InetAddress userHost, byte[] byteMessage, String message){
+        DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, userHost, userPort);
         try {
             socket.send(forward);
-            System.out.println("Sent message: " + players + " to " + userHost.getHostAddress() + ":" + userPort);
+            System.out.println("Sent message: " + message + " to " + userHost.getHostAddress() + ":" + userPort);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private static void forwardMessageToAll(int userPort, InetAddress userHost, byte[] byteMessage, String message){
+        for (int i = 0; i < users.size(); i++){
+            DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, hosts.get(i), users.get(i));
+            forward.setPort(users.get(i));
+            try {
+                forward.setAddress(hosts.get(i));
+                socket.send(forward);
+                System.out.println("Sent message: " + message + " to " + hosts.get(i).getHostAddress() + ":" + users.get(i));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 	@Override
@@ -82,13 +98,20 @@ public class ChatServerUDP extends Thread{
             if (message.startsWith("init;")) {
                 users.add(packet.getPort());
                 hosts.add(packet.getAddress());
+
                 String username = message.replace("init;", "");
+                // new user chat message
                 byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
+                
+                // add user to users hashmap message
                 byte[] addUserMessage = new String("player;" + username).getBytes();
+                
+                byte[] sendNumberOfPlayers = new String("userNum;" + users.size()).getBytes();
+
                 int userPort = packet.getPort();
                 InetAddress userHost = packet.getAddress();
 
-                System.out.println("identifiers in list: " + identifiers.size());
+                // System.out.println("identifiers in list: " + identifiers.size());
                 // send all players to new port
                 if (identifiers.size() != 0) initPlayersArray(userPort, userHost);
 
@@ -97,6 +120,8 @@ public class ChatServerUDP extends Thread{
                 try {
                     forwardMessage(userPort, userHost, newUserMessage, "[Server] Player " + username + " has joined the chat!");
                     forwardMessage(userPort, userHost, addUserMessage, "player;" + username);
+                    forwardMessageToAll(userPort, userHost, sendNumberOfPlayers, "userNum;" + users.size());
+
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }

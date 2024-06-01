@@ -2,7 +2,6 @@ package application;
 
 
 import gamestage.GameStage;
-import gamestage.GameTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -18,7 +17,7 @@ public class Main extends Application {
 
 		primaryStage.setOnCloseRequest(event -> {
 			if (GameStage.isCreated()){
-				if (!GameStage.isSinglePlayer()) GameTimer.client.close();
+				if (!GameStage.isSinglePlayer()) GameStage.client.close();
 			}
 			System.exit(0);
 		});

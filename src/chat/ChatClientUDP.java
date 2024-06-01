@@ -9,9 +9,7 @@ import java.net.UnknownHostException;
 
 import gamestage.Config;
 import gamestage.GameStage;
-import gamestage.GameTimer;
 import javafx.concurrent.Task;
-import javafx.scene.control.TextArea;
 
 public class ChatClientUDP {
 	private ChatClientThreadUDP clientThread;
@@ -45,8 +43,8 @@ public class ChatClientUDP {
 		}
 	}
 
-	public void createClientThread(TextArea messageArea, String identifier, GameTimer gameTimer) throws IOException{
-		this.clientThread = new ChatClientThreadUDP(socket, messageArea, gameTimer);
+	public void createClientThread(String identifier) throws IOException{
+		this.clientThread = new ChatClientThreadUDP(socket);
 		Task<ChatClientThreadUDP> task = new Task<ChatClientThreadUDP>(){
 
 			protected ChatClientThreadUDP call() throws Exception {
@@ -64,6 +62,10 @@ public class ChatClientUDP {
         byte[] uuid = ("init;" + identifier).getBytes();
         DatagramPacket initialize = new DatagramPacket(uuid, uuid.length, address, Config.SERVER_PORT_NUMBER);
         socket.send(initialize);
+	}
+
+	public ChatClientThreadUDP getClientThread(){
+		return this.clientThread;
 	}
 
 	public void close(){

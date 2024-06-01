@@ -2,7 +2,6 @@ package objects;
 
 import gamestage.Config;
 import gamestage.GameStage;
-import gamestage.GameTimer;
 import javafx.scene.image.Image;
 import player.Player;
 import sprite.Sprite;
@@ -62,7 +61,7 @@ public class Key extends Sprite{
 	}
 
 	private void sendKeyCoordinates(){
-		GameTimer.client.sendMessage("key;" + this.player.getUsername());
+		GameStage.client.sendMessage("key;" + this.player.getUsername());
 	}
 
 	//For unlocking door

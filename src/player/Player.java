@@ -188,11 +188,11 @@ public class Player extends Sprite{
 	public void sendPlayerCoordinates(){
 		if ((this.dx != 0 || this.dy != 0) && !this.action.equals("idle")){
 			String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.left + ";" + this.right + ";" + this.spriteNum + ";";
-			GameTimer.client.sendMessage(message);
+			GameStage.client.sendMessage(message);
 			this.sentIdleCheck = false;
 		} else if (this.dx == 0 && this.dy == 0 && !this.sentIdleCheck){
 			String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";idle;" + this.direction + ";" + this.left + ";" + this.right + ";";
-			GameTimer.client.sendMessage(message);
+			GameStage.client.sendMessage(message);
 			this.sentIdleCheck = true;
 		}
 
@@ -320,7 +320,7 @@ public class Player extends Sprite{
 		this.isAlive = false;
 
 		if(GameStage.getIdentifier().equals(this.name) && !GameStage.isSinglePlayer() && !this.sentDeadCheck) {
-			GameTimer.client.sendMessage("dead;" + this.name);
+			GameStage.client.sendMessage("dead;" + this.name);
 			this.sentDeadCheck = true;
 		};
 

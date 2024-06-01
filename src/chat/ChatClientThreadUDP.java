@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.HashMap;
 
+import gamestage.GameStage;
 import gamestage.GameTimer;
 import javafx.scene.control.TextArea;
 import objects.Key;
@@ -18,18 +19,39 @@ public class ChatClientThreadUDP extends Thread{
 	private TextArea textArea;
     private HashMap<String, Player> players;
     private GameTimer gameTimer;
+    private boolean isRunning;
 
-	public ChatClientThreadUDP(DatagramSocket socket, TextArea textArea, GameTimer gameTimer){
+	public ChatClientThreadUDP(DatagramSocket socket){
 		this.socket = socket;
-		this.textArea = textArea;
+        this.isRunning = false;
+	}
+
+    // gametimer and message area is instantiated
+    public void startGame(GameTimer gameTimer, TextArea textArea){
+        this.textArea = textArea;
         this.gameTimer = gameTimer;
         this.players = this.gameTimer.getPlayers();
-	}
+        this.isRunning = true;
+    }
 
 	@Override
 	public void run(){
 		System.out.println("Starting thread");
-        while (!this.socket.isClosed()) {
+
+        // waits for gametimer class and message are to be instantiated
+        while (!isRunning) {
+            System.out.println("Waiting for other players...");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (isRunning) break;
+        }
+
+
+        while (!this.socket.isClosed() && isRunning) {
             DatagramPacket packet = new DatagramPacket(incoming, incoming.length);
             try {
                 socket.receive(packet);
@@ -122,17 +144,14 @@ public class ChatClientThreadUDP extends Thread{
                 Player player = this.players.get(playerName);
                 player.die();
             
-            // TODO: show player push animation
             } else if (message.startsWith("box;")){
                 int boxNumber = Integer.parseInt(message.split(";")[1]);
                 double boxXPos = Double.parseDouble(message.split(";")[2]);
 
                 GameTimer.getBoxes().get(boxNumber).setXPos(boxXPos);
-
-                // this.gameTimer.getBox().setXPos(boxXPos);
-                // String name = message.split(";")[2];
-                // Player player = this.players.get(name);
-                // player.setAction("push");
+            } else if (message.startsWith("userNum;")){
+                int numUsersWaiting = Integer.parseInt(message.split(";")[1]);
+                GameStage.setNumWaiting(numUsersWaiting);
             }
 
             //Regular chat
