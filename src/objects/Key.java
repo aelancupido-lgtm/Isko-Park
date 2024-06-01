@@ -65,6 +65,7 @@ public class Key extends Sprite{
 
 	//For unlocking door
 	public void use(){
+		this.player.removeKey();
 		this.player = null;
 		this.vanish();
 	}

@@ -156,7 +156,7 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	private void showNextLevel(){
-		if (GameStage.getLevel() < Config.MAX_LEVEL){
+		if (GameStage.getStageLevel() != Config.MAX_LEVEL){
 			GameStage.nextLevel();
 			GameTimer.tm.clear(this.gc);
 			GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
@@ -169,6 +169,8 @@ public class GameTimer extends AnimationTimer{
 
 			this.door = new Door();
 			this.key = new Key();
+
+			// TODO: waiting screen for other players
 
 			if (!GameStage.isSinglePlayer()){
 				this.players.forEach((key, user) -> {

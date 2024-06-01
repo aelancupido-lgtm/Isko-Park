@@ -321,6 +321,11 @@ public class Player extends Sprite{
 		this.falling = false;
 		this.isAlive = false;
 
+		if (this.key != null){
+			this.key.removePlayer();
+			this.removeKey();
+		}
+
 		if(GameStage.getIdentifier().equals(this.name) && !GameStage.isSinglePlayer() && !this.sentDeadCheck) {
 			GameTimer.client.sendMessage("dead;" + this.name);
 			this.sentDeadCheck = true;
