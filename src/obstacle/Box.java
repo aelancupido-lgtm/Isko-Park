@@ -8,16 +8,21 @@ import player.Player;
 import sprite.Sprite;
 
 public class Box extends Sprite{
-    private static final double INITIAL_X = Config.INITIAL_BOX_LOCATION[GameStage.getLevel()][0];
-    private static final double INITIAL_Y = Config.INITIAL_BOX_LOCATION[GameStage.getLevel()][1];
+    // private static final double INITIAL_X = Config.INITIAL_BOX_LOCATION[GameStage.getLevel()][0];
+    // private static final double INITIAL_Y = Config.INITIAL_BOX_LOCATION[GameStage.getLevel()][1];
     private static final double BOX_SIZE = 32;
     private static final Image BOX_IMAGE = new Image("assets/box.png", BOX_SIZE, BOX_SIZE, true, false);
 
     private static final double PUSH_FORCE = 1;
+    private static int BOX_NUMBER = 0;
+    private int boxNum;
+    // TODO: allow box player standing (collison y)
 
     public Box(){
-        super(INITIAL_X, INITIAL_Y);
+        super(Config.obstacleLocation("BOX", BOX_NUMBER, true), Config.obstacleLocation("BOX", BOX_NUMBER, false));
         this.loadImage(BOX_IMAGE);
+        this.boxNum = BOX_NUMBER;
+        Box.BOX_NUMBER++;
     }
 
 	public void move(Player player){
@@ -33,7 +38,7 @@ public class Box extends Sprite{
 			this.xPos += dx;
 		}
 
-        if (!GameStage.isSinglePlayer()) GameTimer.client.sendMessage("box;" + this.getXPos());
+        if (!GameStage.isSinglePlayer()) GameTimer.client.sendMessage("box;" + this.boxNum + ";" + this.getXPos());
 	}
 
     private boolean buttonAtCenter(Button button){
@@ -59,17 +64,7 @@ public class Box extends Sprite{
         this.xPos = xPos;
     }
 
-    // public boolean playerAtBorder(Player player){
-    //     //center position of button
-    //     double playerBorderX = player.getXPos() + player.getWidth();
-    //     // double playerBorderY = player.getYPos() + player.getHeight();
-    //     //center x position of key
-    //     double boxBorderX = this.getXPos() + BOX_SIZE;
-    
-
-    //     double diffX = Math.abs(playerBorderX - boxBorderX);
-    //     double diffY = Math.abs(boxCenterY - this.yPos);
-    
-    //     return diffX <= player.getWidth() / 2 && diffY <= player.getHeight() / 2;
-    // }
+    public static void resetBoxCount(){
+		Box.BOX_NUMBER = 0;
+	}
 }

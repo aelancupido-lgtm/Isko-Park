@@ -1,5 +1,6 @@
 package obstacle;
 
+import gamestage.Config;
 import gamestage.GameStage;
 import javafx.scene.image.Image;
 import player.Player;
@@ -10,13 +11,16 @@ public class Portal extends Sprite{
     private final static Image PORTAL_IMAGE = new Image("assets/portal.gif", PORTAL_SIZE, PORTAL_SIZE, true, false);
     private final static double PLAYER_DISTANCE = Player.PLAYER_WIDTH / 4;
 
+    private static int PORTAL_NUMBER = 0;
+
     private Portal warpPortal;
     private boolean warped;
-    // private boolean warped
-    public Portal(double xPos, double yPos){
-        super(xPos, yPos);
+
+    public Portal(){
+        super(Config.obstacleLocation("PORTAL", PORTAL_NUMBER, true), Config.obstacleLocation("PORTAL", PORTAL_NUMBER, false));
         this.loadImage(PORTAL_IMAGE);
         this.warped = false;
+        Portal.PORTAL_NUMBER++;
     }
 
     public void setWarpPortal(Portal portal){
@@ -62,4 +66,8 @@ public class Portal extends Sprite{
     public boolean getWarpMove(){
         return this.warped;
     }
+
+    public static void resetPortalCount(){
+		Portal.PORTAL_NUMBER = 0;
+	}
 }
