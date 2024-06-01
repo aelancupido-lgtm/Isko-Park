@@ -186,7 +186,7 @@ public class Player extends Sprite{
 
 	// send player coordinates to server
 	public void sendPlayerCoordinates(){
-		if (this.dx != 0 || this.dy != 0){
+		if ((this.dx != 0 || this.dy != 0) && !this.action.equals("idle")){
 			String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.left + ";" + this.right + ";" + this.spriteNum + ";";
 			GameTimer.client.sendMessage(message);
 			this.sentIdleCheck = false;
@@ -434,6 +434,18 @@ public class Player extends Sprite{
 		this.right = right;
 	}
 
+	public boolean isPushing(){
+		return this.pushing;
+	}
+
+	public void setPushing(){
+		this.pushing = true;
+	}
+
+	public void stopPushing(){
+		this.pushing = false;
+	}
+	
 	public void removeKey(){
 		this.key = null;
 	}

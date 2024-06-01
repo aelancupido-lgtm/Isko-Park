@@ -56,6 +56,13 @@ public class ChatClientThreadUDP extends Thread{
                 player.setYPos(yPos);
                 player.setDirection(direction);
                 player.setAction(action);
+
+                if (action.equals("push")) {
+                    player.setPushing();
+                } else {
+                    if (player.isPushing()) player.stopPushing();
+                }
+
                 player.setLeftRight(left, right);
 
                 if (playerCoor.length > 8) {
