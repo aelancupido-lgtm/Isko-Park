@@ -13,16 +13,19 @@ import chat.ChatClientUDP;
 import chat.ChatServerUDP;
 import javafx.util.Duration;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -34,6 +37,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -239,10 +243,8 @@ public class GameStage {
 
 	public void setStage(Stage stage){
 		this.stage = stage;
-		stage.setTitle("Isko Park");
-		
-		stage.setScene(this.splashScene);
 		this.prepareActionHandlers(this.splashScene);
+		stage.setScene(this.splashScene);
 		stage.setResizable(false);
 		stage.show();
 	}
@@ -259,7 +261,8 @@ public class GameStage {
 	    				IDENTIFIER = "temp";
 	    			}
 					
-					showModeScene(stage);}
+					showModeScene();
+				}
 	    	}
 	    });
 	}
@@ -316,15 +319,15 @@ public class GameStage {
 
 				if(type == MenuType.MODE) {
 					GameStage.CREATE_GAME_MODE = true;
-					showPlayerScene(stage);
+					showPlayerScene();
 				}
 				if(type == MenuType.PLAYER) {
 					GameStage.SINGLE_PLAYER_GAME = true;
 					initGame();
-					showStageScene(stage);
+					showStageScene();
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.setOnFinished(event -> setGameScene()); // Set the gameScene after the pause.
 					pause.play(); // Start the pause.
 				}
             }
@@ -345,10 +348,10 @@ public class GameStage {
 
 					initClient(); // initializes the client thread
 					initGame();
-					showStageScene(stage);
+					showStageScene();
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.setOnFinished(event -> setGameScene()); // Set the gameScene after the pause.
 					pause.play();
 				}
 
@@ -364,19 +367,57 @@ public class GameStage {
 					}
 					initClient(); // initializes the client thread
 					initWaiting();
-					showWaitingScene(stage);
+					showWaitingScene();
+
+					Parent root = stage.getScene().getRoot();
+					if(root instanceof StackPane) {
+						StackPane stackPane = (StackPane) root;
+						Label node = createLabel("0");
+						stackPane.getChildren().add(node);
+
+						// Run the loop on a separate thread.
+						new Thread(() -> {
+							while(true) {
+								// Use Platform.runLater to update the UI from another thread.
+								Platform.runLater(() -> {
+									int numberOfPlayers = GameStage.server.getNumberOfPlayers();
+									System.out.println(numberOfPlayers);
+
+									node.setText(String.valueOf(numberOfPlayers));
+
+									if(numberOfPlayers == Config.MAX_PLAYERS) {
+										// Start the game here.
+									}
+								});
+
+								// Use PauseTransition to introduce a delay.
+								PauseTransition pause = new PauseTransition(Duration.seconds(1));
+								pause.play();
+
+								// Wait for the pause to finish.
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException ev) {
+									ev.printStackTrace();
+								}
+							}
+						}).start();
+					}
+
 					// temp 1 sec delay
-					PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
-					pause1.setOnFinished(event1 -> {
-						initStage();
-						showStageScene(stage);
+					// PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
+					// pause1.setOnFinished(event1 -> {
+					// 	initStage();
+					// 	showStageScene();
 
-						PauseTransition pause2 = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-						pause2.setOnFinished(event2 -> setGameScene(stage)); // Set the gameScene after the pause.
-						pause2.play();
-					}); // Set the gameScene after the pause.
+					// 	PauseTransition pause2 = new PauseTransition(Duration.seconds(10.0)); // Create a pause of 2 seconds.
+					// 	pause2.setOnFinished(event2 -> setGameScene()); // Set the gameScene after the pause.
+					// 	pause2.play();
+					// }); 
+					
+					// Set the gameScene after the pause.
 
-					pause1.play(); // Start the pause.
+					// pause1.play(); // Start the pause.
 					
 					// showStageScene(stage);
 					 // Start the pause.
@@ -429,9 +470,16 @@ public class GameStage {
         return hbox;
 	}
 
-	private void setGameScene(Stage stage) {
+	private Label createLabel(String text) {
+		Label label = new Label(String.valueOf(text));
+		label.setFont(Font.font(GameStage.font.getName(), 20));
+		label.setTextFill(Color.web("#FF874E"));
+		return label;
+	}
+
+	private void setGameScene() {
 		GameStage.GAME_CREATED = true;
-        stage.setScene(this.gameScene);
+        this.stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
         this.gameTimer = new GameTimer(this.gameScene, gc, this, root);	// create a gametimer class.
@@ -440,23 +488,23 @@ public class GameStage {
 	}
 
 	public void setGameOverScene(Scene gameOverScene){
-        stage.setScene(gameOverScene);
+        this.stage.setScene(gameOverScene);
     }
 
-	private void showModeScene(Stage stage) {
-		stage.setScene(this.modeScene);
+	private void showModeScene() {
+		this.stage.setScene(this.modeScene);
 	}
 
-	private void showPlayerScene(Stage stage) {
-		stage.setScene(this.playerScene);
+	private void showPlayerScene() {
+		this.stage.setScene(this.playerScene);
 	}
 
-	private void showStageScene(Stage stage) {
-		stage.setScene(this.stageScene);
+	private void showStageScene() {
+		this.stage.setScene(this.stageScene);
 	}
 
-	private void showWaitingScene(Stage stage) {
-		stage.setScene(this.waitingScene);
+	private void showWaitingScene() {
+		this.stage.setScene(this.waitingScene);
 	}
 
 	// for getting int value for array
