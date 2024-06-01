@@ -317,11 +317,11 @@ public class GameStage {
                 System.out.println(text1);; // should call the init server and flash the ip address and also allow the user to select number of players.
 
 
-				if(type == MenuType.MODE) {
+				if(type == MenuType.MODE) {	// Create a game.
 					GameStage.CREATE_GAME_MODE = true;
 					showPlayerScene();
 				}
-				if(type == MenuType.PLAYER) {
+				if(type == MenuType.PLAYER) { // Single player game.
 					GameStage.SINGLE_PLAYER_GAME = true;
 					initGame();
 					showStageScene();
@@ -338,7 +338,7 @@ public class GameStage {
             public void handle(ActionEvent e) {
                 System.out.println(text2);; // should allow the client input the server ip address.
 
-				if(type == MenuType.MODE) {
+				if(type == MenuType.MODE) { // Join a game.
 					GameStage.CREATE_GAME_MODE = false;
 					serverAddressInputDialog = new TextInputDialog();
 					serverAddressInputDialog.setHeaderText("Enter the server address");
@@ -348,14 +348,58 @@ public class GameStage {
 
 					initClient(); // initializes the client thread
 					initGame();
-					showStageScene();
 
-					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					pause.setOnFinished(event -> setGameScene()); // Set the gameScene after the pause.
-					pause.play();
+					// TODO: Add a waiting scene here for join a game.
+					initWaiting();
+					showWaitingScene();
+
+					Parent root = stage.getScene().getRoot();
+					if(root instanceof StackPane) {
+						StackPane stackPane = (StackPane) root;
+						Label node = createLabel("0");
+						stackPane.getChildren().add(node);
+
+						// Run the loop on a separate thread.
+						new Thread(() -> {
+							while(true) {
+								// Use Platform.runLater to update the UI from another thread.
+								Platform.runLater(() -> {
+									// int numberOfPlayers = GameStage.server.getNumberOfPlayers();
+									System.out.println(GameStage.numUsersWaiting);
+
+									node.setText(String.valueOf(GameStage.numUsersWaiting));
+
+									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+										// Start the game here.
+									}
+								});
+
+								// Use PauseTransition to introduce a delay.
+								PauseTransition pause = new PauseTransition(Duration.seconds(1));
+								pause.play();
+
+								// Wait for the pause to finish.
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException ev) {
+									ev.printStackTrace();
+								}
+							}
+						}).start();
+					}
+
+
+
+
+
+					// showStageScene();
+
+					// PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					// pause.setOnFinished(event -> setGameScene()); // Set the gameScene after the pause.
+					// pause.play();
 				}
 
-				if (type == MenuType.PLAYER){
+				if (type == MenuType.PLAYER){ // Multiplayer game.
 					GameStage.SINGLE_PLAYER_GAME = false;
 					initGame();
 					if (GameStage.CREATE_GAME_MODE){
