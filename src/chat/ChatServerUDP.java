@@ -24,8 +24,13 @@ public class ChatServerUDP extends Thread{
 		}
 	}
 
+    // ports
 	private static ArrayList<Integer> users = new ArrayList<>();
+    
+    // usernames - for adding other players to clients
     private static ArrayList<String> identifiers = new ArrayList<>();
+
+    // ip addresses
     private static ArrayList<InetAddress> hosts = new ArrayList<>();
 
 	public static void forwardMessage(int userPort, InetAddress userHost, byte[] byteMessage, String message) throws UnknownHostException{

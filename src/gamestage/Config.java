@@ -29,7 +29,11 @@ public class Config {
 	private final static double[][] INITIAL_BUTTON_LOCATION = {{450, 632}};
 	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}};
 	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}};
-	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 345, 475}};
+	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}};
+
+	// for portal warping
+	// contains indexes of portals
+	public final static int[][] PORTAL_WARPS = {{1, 0}};
 
 	// order button, spike, box, portal 
 	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2}};
