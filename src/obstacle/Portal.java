@@ -9,7 +9,7 @@ import sprite.Sprite;
 public class Portal extends Sprite{
     private final static double PORTAL_SIZE = 64;
     private final static Image PORTAL_IMAGE = new Image("assets/portal.gif", PORTAL_SIZE, PORTAL_SIZE, true, false);
-    private final static double PLAYER_DISTANCE = Player.PLAYER_WIDTH / 4;
+    private final static double PLAYER_DISTANCE = Player.PLAYER_HEIGHT / 4;
 
     private static int PORTAL_NUMBER = 0;
 

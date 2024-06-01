@@ -32,7 +32,7 @@ public class Button extends Sprite{
 	// **returns true if yes, otherwise false
 	public boolean playerAtCenter(Player player){
 		//center position of player
-	    double playerCenterX = player.getXPos() + (Player.PLAYER_WIDTH / 2);
+	    double playerCenterX = player.getXPos() + (Player.PLAYER_HEIGHT / 2);
 	    double playerCenterY = player.getYPos() + (Player.PLAYER_HEIGHT / 2);
 
 	    //center x position of key
@@ -41,7 +41,7 @@ public class Button extends Sprite{
 	    double diffX = Math.abs(playerCenterX - btnCenterX);
 	    double diffY = Math.abs(playerCenterY - this.getYPos());
 
-	    return diffX <= Player.PLAYER_WIDTH / 2 && diffY <= Player.PLAYER_HEIGHT / 2;
+	    return diffX <= Player.PLAYER_HEIGHT / 2 && diffY <= Player.PLAYER_HEIGHT / 2;
 	}
 
 	public void checkCollision(Player player){

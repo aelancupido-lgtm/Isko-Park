@@ -37,7 +37,6 @@ public class Player extends Sprite{
 	private final static String INITIAL_DIRECTION = DIRECTIONS[1];
 	private final static String INITIAL_ACTION = ACTIONS[0];
 
-	//Player height must be greater than width by 5 pixels
 	public final static int PLAYER_WIDTH = 43;
 	public final static int PLAYER_HEIGHT = 48;
 	private final static double SPEED = 2.0;
@@ -51,7 +50,7 @@ public class Player extends Sprite{
 	private boolean sentDeadCheck;
 
 	// Player image
-	private final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+	private final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
 
 	//direction input booleans
 	private boolean left;
@@ -169,9 +168,12 @@ public class Player extends Sprite{
 	
 		if (!GameStage.isSinglePlayer()) this.sendPlayerCoordinates();
 		if (this.pushing) this.pushing = false;
-		this.checkBoxCollision(prevXPos, GameTimer.getBoxes());
+		this.checkBoxCollision(prevXPos);
+		this.checkBoxCollisionY();
 		this.checkPlatformCollisionX(prevXPos);
 		this.checkPlatformCollisionY();
+
+		this.checkOnPlatform();
 	
 			//For sprite animation
 		this.spriteCounter++;
@@ -179,9 +181,6 @@ public class Player extends Sprite{
 			this.spriteNum = (this.spriteNum % MAX_SPRITE) + 1; // wrapping sprite number using modulo.
 			this.spriteCounter = 0;
 		}
-
-		System.out.println(this.dy);
-		System.out.println(this.dx);
 	
 	}
 
@@ -226,14 +225,22 @@ public class Player extends Sprite{
                 }
             }
         }
+    }
 
-        //check if player is on any platform
-        if (!this.isOnPlatform(platforms)){
+	private void checkOnPlatform(){
+		ArrayList<Sprite> platforms = tileManager.getPlatforms();
+		ArrayList<Box> boxes = GameTimer.getBoxes();
+
+        boolean onPlatform = this.isOnPlatform(platforms);
+		boolean onBox = this.isOnBox(boxes);
+
+		if (!onPlatform && !onBox){
             this.falling = true;
         } else {
             this.falling = false;
         }
-    }
+
+	}
 
     private boolean isOnPlatform(ArrayList<Sprite> platforms) {
         this.yPos += 1;
@@ -248,17 +255,51 @@ public class Player extends Sprite{
         return onPlatform;
     }
 
-	private void checkBoxCollision(double prevXPos, ArrayList<Box> boxes){
+	private void checkBoxCollision(double prevXPos){
+		ArrayList<Box> boxes = GameTimer.getBoxes();
 		for (Box box: boxes){
-			if (this.collidesWith(box)){
+			// System.out.println(this.falling);
+			if (this.collidesWith(box) && !this.jumping && !this.falling){
 				box.move(this);
-				this.xPos = prevXPos;
+				this.xPos = prevXPos + 0.5;
 				this.dx = 0;
 				this.pushing = true;
 				break;
 			}
 		}
 	}
+
+	private boolean isOnBox(ArrayList<Box> boxes){
+		this.yPos += 1;
+        boolean onBox = false;
+        for (Box box : boxes) {
+            if (this.collidesWith(box)){
+                onBox = true;
+                break;
+            }
+        }
+        this.yPos -= 1;
+        return onBox;
+	}
+
+	private void checkBoxCollisionY() {
+		ArrayList<Box> boxes = GameTimer.getBoxes();
+        for (Box box: boxes){
+            if (this.collidesWith(box)){
+                if (this.dy > 0){  //falling
+                    this.yPos = box.getYPos() - this.height;
+                    this.dy = 0;
+                    this.jumping = false;
+                    this.falling = false;
+                } else if (this.dy < 0){  //jumping
+                    this.yPos = box.getYPos() + box.getHeight();
+                    this.dy = 0;
+                }
+            }
+        }
+    }
+
+
 
 	//Initiates a jump for the player
 	// *Sets the player's state to jumping
@@ -327,6 +368,7 @@ public class Player extends Sprite{
 			respawnTL.play();
 	}
 
+	// TODO: fix player push bug
 	//For sprite animation
 	private void animatePlayer() {
 		Image img = null;
@@ -334,20 +376,20 @@ public class Player extends Sprite{
 		if (this.visible && (this.left || this.right)) {
 			if (this.pushing) {
 				this.action = ACTIONS[3];
-				img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+				img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
 			} else{
 				this.action = ACTIONS[1]; // walk
-				img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+				img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + "_" + this.spriteNum + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
 			}
 		} else if (this.visible && this.jumping) {
 			this.action = ACTIONS[2]; // jump
-			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
 		} else if (!this.isAlive) {
 			this.action = ACTIONS[4]; 	// dead
-			img = new Image("assets/" + this.color + "_character/" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+			img = new Image("assets/" + this.color + "_character/" + this.action + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
 		} else {
 			this.action = ACTIONS[0]; 	// idle
-			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
+			img = new Image("assets/" + this.color + "_character/" + this.direction + "_" + this.action + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
 		}
 
 		this.loadImage(img);
@@ -402,7 +444,7 @@ public class Player extends Sprite{
 	    Text text = new Text(this.name);
 	    text.setFont(Font.font("Verdana", FontWeight.BOLD, USERNAME_FONTSIZE));
 
-	    double centerXPos = this.getXPos() + (PLAYER_WIDTH / 2);	//get the horizontal center point of the player
+	    double centerXPos = this.getXPos() + (PLAYER_HEIGHT / 2);	//get the horizontal center point of the player
 	    double textWidth = text.getLayoutBounds().getWidth();
 	    double textXPos = centerXPos - (textWidth / 2);				//x-coordinate for positioning the text horizontally
 	    double textYPos = this.yPos - 10;							//y-coordinate for positioning the text vertically
