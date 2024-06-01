@@ -97,7 +97,7 @@ public class Player extends Sprite{
 		this.color = INITIAL_COLOR;
 		Player.INITIAL_INDEX++;
 
-		if (this.name.equals(GameTimer.getPlayer())) this.prepareActionHandlers();
+		if (this.name.equals(GameStage.getIdentifier())) this.prepareActionHandlers();
 	}
 
 	//For getting user input for player movement
@@ -161,7 +161,8 @@ public class Player extends Sprite{
 		}
 	
 		if (!GameStage.isSinglePlayer()) this.sendPlayerCoordinates();
-		this.checkBoxCollision(prevXPos);
+		if (this.pushing) this.pushing = false;
+		this.checkBoxCollision(prevXPos, GameTimer.getBoxes());
 		this.checkPlatformCollisionX(prevXPos);
 		this.checkPlatformCollisionY();
 	
@@ -237,18 +238,16 @@ public class Player extends Sprite{
         return onPlatform;
     }
 
-	private void checkBoxCollision(double prevXPos){
-		Box box = GameTimer.getBox();
-		
-		if (this.collidesWith(box)){
-			box.move(this);
-			this.xPos = prevXPos;
-			this.dx = 0;
-			this.pushing = true;
-		} else{
-			this.pushing = false;
+	private void checkBoxCollision(double prevXPos, ArrayList<Box> boxes){
+		for (Box box: boxes){
+			if (this.collidesWith(box)){
+				box.move(this);
+				this.xPos = prevXPos;
+				this.dx = 0;
+				this.pushing = true;
+				break;
+			}
 		}
-		
 	}
 
 	//Initiates a jump for the player
@@ -269,7 +268,7 @@ public class Player extends Sprite{
 		this.falling = false;
 		this.isAlive = false;
 
-		if(GameTimer.getPlayer().equals(this.name) && !GameStage.isSinglePlayer()) GameTimer.client.sendMessage("dead;" + this.name);
+		if(GameStage.getIdentifier().equals(this.name) && !GameStage.isSinglePlayer()) GameTimer.client.sendMessage("dead;" + this.name);
 
 		// vanish player after 2 seconds
 		Timeline vanishTL = new Timeline(

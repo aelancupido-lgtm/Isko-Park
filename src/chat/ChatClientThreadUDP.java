@@ -116,8 +116,12 @@ public class ChatClientThreadUDP extends Thread{
             
             // TODO: show player push animation
             } else if (message.startsWith("box;")){
-                double boxXPos = Double.parseDouble(message.split(";")[1]);
-                this.gameTimer.getBox().setXPos(boxXPos);
+                int boxNumber = Integer.parseInt(message.split(";")[1]);
+                double boxXPos = Double.parseDouble(message.split(";")[2]);
+
+                GameTimer.getBoxes().get(boxNumber).setXPos(boxXPos);
+
+                // this.gameTimer.getBox().setXPos(boxXPos);
                 // String name = message.split(";")[2];
                 // Player player = this.players.get(name);
                 // player.setAction("push");

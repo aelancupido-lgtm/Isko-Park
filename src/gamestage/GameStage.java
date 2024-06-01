@@ -413,7 +413,7 @@ public class GameStage {
         stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
-        this.gameTimer = new GameTimer(this.gameScene, gc, this, root, IDENTIFIER);	// create a gametimer class.
+        this.gameTimer = new GameTimer(this.gameScene, gc, this, root);	// create a gametimer class.
 
         gameTimer.start(); // invoke the start method of the animation timer.
 	}

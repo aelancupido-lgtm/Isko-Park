@@ -1,6 +1,7 @@
 package gamestage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import chat.ChatClientUDP;
@@ -25,6 +26,8 @@ import obstacle.Spike;
 import player.Player;
 import tile.TileManager;
 
+// TODO: fix static variables
+
 public class GameTimer extends AnimationTimer{
 	private static Scene scene;
 	private GraphicsContext gc;
@@ -41,35 +44,27 @@ public class GameTimer extends AnimationTimer{
 	private TextField inputBox;
 	public static ChatClientUDP client;
 	private Group root;
-	private static String identifier;
 	private HashMap<String, Player> players;
-	private Spike spikes;
-	private Portal portalOne;
-	private Portal portalTwo;
-	private static Box box;
 
-	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root, String identifier) {
+	private static ArrayList<Box> boxes = new ArrayList<>();
+	private ArrayList<Portal> portals = new ArrayList<>();
+	private ArrayList<Button> buttons = new ArrayList<>();
+	private ArrayList<Spike> spikesList = new ArrayList<>();
+	
+
+	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root) {
 	    this.gc = gc;
 	    GameTimer.scene = scene;
 	    this.root = root;
 		this.gameStage = gameStage;
 	    this.gameOver = new GameOver(scene, gc);
-	    GameTimer.identifier = identifier;
 	    this.key = new Key();
 	    this.door = new Door();
-	    this.button = new Button();
-		this.spikes = new Spike();
 
-		//temp portal
-		this.portalOne = new Portal(560, 400);
-		this.portalTwo = new Portal(345, 475);
-		this.portalOne.setWarpPortal(this.portalTwo);
-		this.portalTwo.setWarpPortal(this.portalOne);
-
-		GameTimer.box = new Box();
 	    GameTimer.tm = new TileManager();
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
-		this.player = new Player(identifier);
+		this.initObstacles();
+		this.player = new Player(GameStage.getIdentifier());
 
 		if (!GameStage.isSinglePlayer()) {	
 			this.players = new HashMap<>();
@@ -92,7 +87,7 @@ public class GameTimer extends AnimationTimer{
 		this.inputBox = new TextField();
 	    GameTimer.client = new ChatClientUDP();
 	    try {
-			GameTimer.client.createClientThread(this.messageArea, identifier, this);
+			GameTimer.client.createClientThread(this.messageArea, GameStage.getIdentifier(), this);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -125,7 +120,7 @@ public class GameTimer extends AnimationTimer{
 			if (e.getCode() == KeyCode.ENTER){
 
 				if (checkChatRestrictions(inputBox.getText())){
-					String message = "[" + GameTimer.identifier + "] " + inputBox.getText();
+					String message = "[" + GameStage.getIdentifier() + "] " + inputBox.getText();
 					messageArea.setText(messageArea.getText() + message + "\n");
 					inputBox.setText("");
 					client.sendMessage(message);
@@ -145,13 +140,8 @@ public class GameTimer extends AnimationTimer{
 	private void checkStatus(){
 		this.key.checkCollision(this.player);
 		this.door.checkCollision(this.player);
-		this.button.checkCollision(this.player);
-		this.spikes.checkCollision(this.player);
-		GameTimer.box.checkCollision(this.button);
 
-		// temporary
-		this.portalOne.checkCollision(this.player);
-		this.portalTwo.checkCollision(this.player);
+		this.checkObstacleCollision();
 
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
@@ -164,6 +154,26 @@ public class GameTimer extends AnimationTimer{
             });
             transition.play();
         }
+	}
+
+	private void checkObstacleCollision(){
+		for (Spike spike: this.spikesList){
+			spike.checkCollision(this.player);
+		}
+
+		for (Button btn: this.buttons){
+			btn.checkCollision(this.player);
+		}
+
+		for (Portal portal: this.portals){
+			portal.checkCollision(this.player);
+		}
+
+		for (Box box: GameTimer.boxes){
+			for (Button btn: this.buttons){
+				box.checkCollision(btn);
+			}
+		} 
 	}
 
 	//For chat restrictions on keywords
@@ -181,16 +191,9 @@ public class GameTimer extends AnimationTimer{
 	private void renderSprites(){
 
 		GameTimer.tm.draw(gc);
-
 		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
-		this.spikes.render(gc, this.spikes.getXPos(), this.spikes.getYPos());
-		GameTimer.box.render(gc, GameTimer.box.getXPos(), GameTimer.box.getYPos());
-		this.portalOne.render(gc, this.portalOne.getXPos(), this.portalOne.getYPos());
-		this.portalTwo.render(gc, this.portalTwo.getXPos(), this.portalTwo.getYPos());
 
-		if (this.button.isVisible()){
-			this.button.render(this.gc, this.button.getXPos(), this.button.getYPos());
-		}
+		this.renderObstacles();
 
 		if (this.key.isVisible()){
 			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());
@@ -207,6 +210,64 @@ public class GameTimer extends AnimationTimer{
 			});
 		}
 		
+	}
+
+	private void initObstacles(){
+		this.portals.clear();
+		GameTimer.boxes.clear();
+		this.buttons.clear();
+		this.spikesList.clear();
+
+		Button.resetButtonCount();
+		Spike.resetSpikeCount();
+		Box.resetBoxCount();
+		Portal.resetPortalCount();
+
+		int portalNumber = Config.obstacleCount("PORTAL");
+		int boxNumber = Config.obstacleCount("BOX");
+		int spikeNumber = Config.obstacleCount("SPIKE");
+		int buttonNumber = Config.obstacleCount("BUTTON");
+
+		for (int i = 0; i < portalNumber; i++){
+			this.portals.add(new Portal());
+
+			// temp for warp portal
+			if (i != 0){
+				this.portals.get(i).setWarpPortal(this.portals.get(i - 1));
+				this.portals.get(i - 1).setWarpPortal(this.portals.get(i));
+			}
+		}
+
+		for (int i = 0; i < boxNumber; i++){
+			GameTimer.boxes.add(new Box());
+		}
+
+		for (int i =0 ; i < spikeNumber; i++){
+			this.spikesList.add(new Spike());
+		}
+
+		for (int i = 0; i <buttonNumber; i++){
+			this.buttons.add(new Button());
+		}
+	}
+
+	private void renderObstacles(){
+		for (Spike spike: this.spikesList){
+			spike.render(gc, spike.getXPos(), spike.getYPos());
+		}
+
+		for (Button btn: this.buttons){
+			if (btn.isVisible()) btn.render(gc, btn.getXPos(), btn.getYPos());
+		}
+
+		for (Portal portal: this.portals){
+			portal.render(gc, portal.getXPos(), portal.getYPos());
+		}
+
+		for (Box box: GameTimer.boxes){
+			box.render(gc, box.getXPos(), box.getYPos());
+		}
+
 	}
 
 	//For sprite movement
@@ -226,10 +287,6 @@ public class GameTimer extends AnimationTimer{
 
 	}
 
-	public static String getPlayer(){
-		return GameTimer.identifier;
-	}
-
 	public Door getDoor(){
 		return this.door;
 	}
@@ -246,8 +303,8 @@ public class GameTimer extends AnimationTimer{
 		return this.players;
 	}
 
-	public static Box getBox(){
-		return GameTimer.box;
+	public static ArrayList<Box> getBoxes(){
+		return GameTimer.boxes;
 	}
 
 }

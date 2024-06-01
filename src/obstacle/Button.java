@@ -11,8 +11,8 @@ import sprite.Sprite;
 
 public class Button extends Sprite{
 	public static final double BUTTON_SIZE = 32;
-	private static final double INITIAL_X = Config.INITIAL_BUTTON_LOCATION[GameStage.getLevel()][0];
-	private static final double INITIAL_Y = Config.INITIAL_BUTTON_LOCATION[GameStage.getLevel()][1];;
+	private static int BUTTON_NUMBER = 0;
+
 	private static final Image BUTTON_UNCLICKED = new Image("assets/button_unclicked.png", BUTTON_SIZE, BUTTON_SIZE, true, false);
 	private static final Image BUTTON_CLICKED = new Image("assets/button_clicked.png", BUTTON_SIZE, BUTTON_SIZE, true, false);
 
@@ -20,10 +20,11 @@ public class Button extends Sprite{
 	private boolean sentServerMessage;
 
 	public Button(){
-		super(INITIAL_X, INITIAL_Y);
+		super(Config.obstacleLocation("BUTTON", BUTTON_NUMBER, true), Config.obstacleLocation("BUTTON", BUTTON_NUMBER, false));
 		this.loadImage(BUTTON_UNCLICKED);
 		this.clicked = false;
 		this.sentServerMessage = false;
+		Button.BUTTON_NUMBER++;
 	}
 
 
@@ -70,6 +71,10 @@ public class Button extends Sprite{
 	public void setUnclicked(){
 		this.clicked = false;
 		this.loadImage(BUTTON_UNCLICKED);
+	}
+
+	public static void resetButtonCount(){
+		Button.BUTTON_NUMBER = 0;
 	}
 
 }
