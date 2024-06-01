@@ -1,9 +1,8 @@
 package application;
 
-
 import gamestage.GameStage;
-import gamestage.GameTimer;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -18,11 +17,13 @@ public class Main extends Application {
 
 		primaryStage.setOnCloseRequest(event -> {
 			if (GameStage.isCreated()){
-				if (!GameStage.isSinglePlayer()) GameTimer.client.close();
+				if (!GameStage.isSinglePlayer()) GameStage.client.close();
 			}
 			System.exit(0);
 		});
 
+		primaryStage.setTitle("Isko Park");
+		primaryStage.getIcons().add( new Image("/assets/logo.png"));
 		game.setStage(primaryStage);
 	}
 

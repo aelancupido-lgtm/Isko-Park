@@ -2,7 +2,6 @@ package obstacle;
 
 import gamestage.Config;
 import gamestage.GameStage;
-import gamestage.GameTimer;
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
@@ -51,7 +50,7 @@ public class Button extends Sprite{
 			this.setClicked();
 			player.die();
 
-			if (!GameStage.isSinglePlayer() && !this.sentServerMessage) GameTimer.client.sendMessage("button;clicked;" + this.btnNum );
+			if (!GameStage.isSinglePlayer() && !this.sentServerMessage) GameStage.client.sendMessage("button;clicked;" + this.btnNum );
 			this.sentServerMessage = true;
 
 		} else {

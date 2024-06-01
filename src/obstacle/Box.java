@@ -2,7 +2,6 @@ package obstacle;
 
 import gamestage.Config;
 import gamestage.GameStage;
-import gamestage.GameTimer;
 import javafx.scene.image.Image;
 import player.Player;
 import sprite.Sprite;
@@ -37,7 +36,7 @@ public class Box extends Sprite{
 			this.xPos += dx;
 		}
 
-        if (!GameStage.isSinglePlayer()) GameTimer.client.sendMessage("box;" + this.boxNum + ";" + this.getXPos());
+        if (!GameStage.isSinglePlayer()) GameStage.client.sendMessage("box;" + this.boxNum + ";" + this.getXPos());
         this.dx = 0;
 	}
 

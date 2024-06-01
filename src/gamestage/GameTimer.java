@@ -1,10 +1,8 @@
 package gamestage;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import chat.ChatClientUDP;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
@@ -42,7 +40,6 @@ public class GameTimer extends AnimationTimer{
 
 	private TextArea messageArea;
 	private TextField inputBox;
-	public static ChatClientUDP client;
 	private Group root;
 	private HashMap<String, Player> players;
 
@@ -65,6 +62,7 @@ public class GameTimer extends AnimationTimer{
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.initObstacles();
 		this.player = new Player(GameStage.getIdentifier());
+		
 
 		if (!GameStage.isSinglePlayer()) {	
 			this.players = new HashMap<>();
@@ -85,12 +83,8 @@ public class GameTimer extends AnimationTimer{
 	private void initChat(){
 		this.messageArea = new TextArea();
 		this.inputBox = new TextField();
-	    GameTimer.client = new ChatClientUDP();
-	    try {
-			GameTimer.client.createClientThread(this.messageArea, GameStage.getIdentifier(), this);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		GameStage.client.getClientThread().startGame(this, messageArea);
 
 		this.messageArea.setMaxWidth(Config.CHAT_SIZE);
 		this.messageArea.setLayoutX(Config.WINDOW_SIZE);
@@ -123,7 +117,7 @@ public class GameTimer extends AnimationTimer{
 					String message = "[" + GameStage.getIdentifier() + "] " + inputBox.getText();
 					messageArea.setText(messageArea.getText() + message + "\n");
 					inputBox.setText("");
-					client.sendMessage(message);
+					GameStage.client.sendMessage(message);
 				}
 				
 			} else if (e.getCode() == KeyCode.ESCAPE){
