@@ -47,7 +47,8 @@ public class Player extends Sprite{
 	private final static int MAX_SPRITE = 4;
 
 	private static final double USERNAME_FONTSIZE = 15;
-	private boolean sentIdleCheck = false;
+	private boolean sentIdleCheck;
+	private boolean sentDeadCheck;
 
 	// Player image
 	private final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_WIDTH, PLAYER_HEIGHT, true, false);
@@ -97,7 +98,13 @@ public class Player extends Sprite{
 		this.color = INITIAL_COLOR;
 		Player.INITIAL_INDEX++;
 
-		if (this.name.equals(GameStage.getIdentifier())) this.prepareActionHandlers();
+		if (this.name.equals(GameStage.getIdentifier())){
+			this.prepareActionHandlers();
+			if (!GameStage.isSinglePlayer()){
+				this.sentDeadCheck = false;
+				this.sentIdleCheck = false;
+			}
+		}
 	}
 
 	//For getting user input for player movement
@@ -172,6 +179,9 @@ public class Player extends Sprite{
 			this.spriteNum = (this.spriteNum % MAX_SPRITE) + 1; // wrapping sprite number using modulo.
 			this.spriteCounter = 0;
 		}
+
+		System.out.println(this.dy);
+		System.out.println(this.dx);
 	
 	}
 
@@ -268,7 +278,10 @@ public class Player extends Sprite{
 		this.falling = false;
 		this.isAlive = false;
 
-		if(GameStage.getIdentifier().equals(this.name) && !GameStage.isSinglePlayer()) GameTimer.client.sendMessage("dead;" + this.name);
+		if(GameStage.getIdentifier().equals(this.name) && !GameStage.isSinglePlayer() && !this.sentDeadCheck) {
+			GameTimer.client.sendMessage("dead;" + this.name);
+			this.sentDeadCheck = true;
+		};
 
 		// vanish player after 2 seconds
 		Timeline vanishTL = new Timeline(
@@ -297,6 +310,8 @@ public class Player extends Sprite{
 						this.setAction(Player.INITIAL_ACTION);
 						this.setDirection(Player.INITIAL_DIRECTION);
 						this.isAlive = true;
+						this.falling = false;
+						if (!GameStage.isSinglePlayer()) this.sentDeadCheck = false;
 						Timeline appearTL = new Timeline(
 							new KeyFrame(
 								Duration.seconds(5),
