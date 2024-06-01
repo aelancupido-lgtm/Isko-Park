@@ -20,7 +20,7 @@ public class ChatClientUDP {
 	private static DatagramSocket socket;
 	static {
 		try {
-			socket = new DatagramSocket(null);
+			socket = new DatagramSocket();
 		} catch (SocketException e){
 			throw new RuntimeException(e);
 		}
