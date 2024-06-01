@@ -256,7 +256,8 @@ public class GameStage {
 	    				IDENTIFIER = "temp";
 	    			}
 					
-					showModeScene(stage);}
+					showModeScene();
+				}
 	    	}
 	    });
 	}
@@ -313,15 +314,15 @@ public class GameStage {
 
 				if(type == MenuType.MODE) {
 					GameStage.CREATE_GAME_MODE = true;
-					showPlayerScene(stage);
+					showPlayerScene();
 				}
 				if(type == MenuType.PLAYER) {
 					GameStage.SINGLE_PLAYER_GAME = true;
 					initGame();
-					showStageScene(stage);
+					showStageScene();
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.setOnFinished(event -> setGameScene()); // Set the gameScene after the pause.
 					pause.play(); // Start the pause.
 				}
             }
@@ -342,10 +343,10 @@ public class GameStage {
 					SERVER_ADDRESS = serverAddressInputDialog.getEditor().getText();
 
 					initGame();
-					showStageScene(stage);
+					showStageScene();
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					pause.setOnFinished(event -> setGameScene(stage)); // Set the gameScene after the pause.
+					pause.setOnFinished(event -> setGameScene()); // Set the gameScene after the pause.
 					pause.play();
 				}
 
@@ -360,15 +361,15 @@ public class GameStage {
 						}
 					}
 					initWaiting();
-					showWaitingScene(stage);
+					showWaitingScene();
 					// temp 1 sec delay
 					PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
 					pause1.setOnFinished(event1 -> {
 						initStage();
-						showStageScene(stage);
+						showStageScene();
 
 						PauseTransition pause2 = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-						pause2.setOnFinished(event2 -> setGameScene(stage)); // Set the gameScene after the pause.
+						pause2.setOnFinished(event2 -> setGameScene()); // Set the gameScene after the pause.
 						pause2.play();
 					}); // Set the gameScene after the pause.
 
@@ -416,8 +417,8 @@ public class GameStage {
         return hbox;
 	}
 
-	private void setGameScene(Stage stage) {
-        stage.setScene(this.gameScene);
+	private void setGameScene() {
+        this.stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
         this.gameTimer = new GameTimer(this.gameScene, gc, this, root);	// create a gametimer class.
@@ -426,23 +427,23 @@ public class GameStage {
 	}
 
 	public void setGameOverScene(Scene gameOverScene){
-        stage.setScene(gameOverScene);
+        this.stage.setScene(gameOverScene);
     }
 
-	private void showModeScene(Stage stage) {
-		stage.setScene(this.modeScene);
+	private void showModeScene() {
+		this.stage.setScene(this.modeScene);
 	}
 
-	private void showPlayerScene(Stage stage) {
-		stage.setScene(this.playerScene);
+	private void showPlayerScene() {
+		this.stage.setScene(this.playerScene);
 	}
 
-	private void showStageScene(Stage stage) {
-		stage.setScene(this.stageScene);
+	private void showStageScene() {
+		this.stage.setScene(this.stageScene);
 	}
 
-	private void showWaitingScene(Stage stage) {
-		stage.setScene(this.waitingScene);
+	private void showWaitingScene() {
+		this.stage.setScene(this.waitingScene);
 	}
 
 	// for getting int value for array
