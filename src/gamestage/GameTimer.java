@@ -224,13 +224,9 @@ public class GameTimer extends AnimationTimer{
 
 		for (int i = 0; i < portalNumber; i++){
 			this.portals.add(new Portal());
-
-			// temp for warp portal
-			if (i != 0){
-				this.portals.get(i).setWarpPortal(this.portals.get(i - 1));
-				this.portals.get(i - 1).setWarpPortal(this.portals.get(i));
-			}
 		}
+
+		this.setUpPortalWarps();
 
 		for (int i = 0; i < boxNumber; i++){
 			GameTimer.boxes.add(new Box());
@@ -242,6 +238,12 @@ public class GameTimer extends AnimationTimer{
 
 		for (int i = 0; i <buttonNumber; i++){
 			this.buttons.add(new Button());
+		}
+	}
+
+	private void setUpPortalWarps(){
+		for (int i = 0; i< this.portals.size(); i++){
+			this.portals.get(i).setWarpPortal(this.portals.get(Config.getWarpPortalIndex(i)));
 		}
 	}
 
