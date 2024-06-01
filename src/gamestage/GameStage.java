@@ -66,12 +66,15 @@ public class GameStage {
 
 	public static Font font;
 
+	private MediaPlayer mediaPlayer;
+
 	public GameStage(){
 		String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
     	GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
 		
 		GameStage.STAGE_LEVEL = 1;
 
+		this.initBackground();
 		this.initSplash();
 		this.initMode();
 		this.initPlayer();
@@ -87,7 +90,7 @@ public class GameStage {
 	private void initSplash() {
 		StackPane root = new StackPane();
 
-        root.getChildren().addAll(this.playMedia("splash", ".mp4"));
+        root.getChildren().addAll(this.playMedia(), this.playImage("enter", ".gif"));
         this.splashScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
@@ -95,7 +98,7 @@ public class GameStage {
 	private void initMode() {
 		StackPane root = new StackPane();
 
-		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("create a game", "join a game", MenuType.MODE), this.createBackButton(this.splashScene)));
+		root.getChildren().addAll(this.playMedia(), this.createWrapper(this.createMainButton("create a game", "join a game", MenuType.MODE), this.createBackButton(this.splashScene)));
 		this.modeScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
@@ -103,7 +106,7 @@ public class GameStage {
 	private void initPlayer() {
 		StackPane root = new StackPane();
 		
-		root.getChildren().addAll(this.playMedia("background", ".mp4"), this.createWrapper(this.createMainButton("single player", "multiplayer", MenuType.PLAYER), this.createBackButton(this.modeScene)));
+		root.getChildren().addAll(this.playMedia(), this.createWrapper(this.createMainButton("single player", "multiplayer", MenuType.PLAYER), this.createBackButton(this.modeScene)));
 		this.playerScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
@@ -138,6 +141,44 @@ public class GameStage {
 		this.root.getChildren().add(this.canvas);
 		this.gameScene = new Scene(root);
 	}
+
+	private void initBackground() {
+		// getting the video url file.
+		String url = System.getProperty("user.dir") + "\\src\\assets\\background.mp4";
+
+        // instantiating MediaPlayer class   
+		this.mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
+		this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop the video.
+		this.mediaPlayer.setAutoPlay(true); // auto play the video.
+		this.mediaPlayer.setOnError(() -> System.out.println("Media error occurred: " + mediaPlayer.getError()));
+	}
+
+	private MediaView playMedia() {
+		// instantiating MediaView class   
+		MediaView mediaView = new MediaView(this.mediaPlayer); 
+		mediaView.setFitHeight(Config.WINDOW_SIZE); // set the height of the video to the height of the window.
+		mediaView.setFitWidth(Config.WINDOW_SIZE); // set the width of the video to the width of the window.
+		mediaView.setPreserveRatio(false); // do not preserve the ratio of the video.
+
+		return mediaView;
+	}
+
+	private ImageView playImage(String name, String type) {
+		// getting the image url file.
+		String url = System.getProperty("user.dir") + "\\src\\assets\\" + name + type;
+
+		// instantiating ImageView class
+		ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
+
+		imageView.setFitHeight(Config.WINDOW_SIZE); // set the height of the image to the height of the window.
+		imageView.setFitWidth(Config.WINDOW_SIZE); // set the width of the image to the width of the window.
+		imageView.setPreserveRatio(false); // do not preserve the ratio of the image.
+
+		return imageView;
+	}
+
+
+
 
 	private String getIPaddress(){
 		try {
@@ -373,40 +414,6 @@ public class GameStage {
         });
 
         return hbox;
-	}
-
-	private MediaView playMedia(String name, String type) {
-		// getting the video url file.
-		String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
-
-        // instantiating MediaPlayer class   
-		MediaPlayer mediaPlayer = new MediaPlayer(new Media(Paths.get(url).toUri().toString()));  
-
-		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop the video.
-		mediaPlayer.setAutoPlay(true); // auto play the video.
-
-        // instantiating MediaView class   
-        MediaView mediaView = new MediaView(mediaPlayer); 
-		mediaView.setFitHeight(Config.WINDOW_SIZE); // set the height of the video to the height of the window.
-		mediaView.setFitWidth(Config.WINDOW_SIZE); // set the width of the video to the width of the window.
-		mediaView.setPreserveRatio(false); // do not preserve the ratio of the video.
-		mediaPlayer.setOnError(() -> System.out.println("Media error occurred: " + mediaPlayer.getError()));
-
-		return mediaView;
-	}
-
-	private ImageView playImage(String name, String type) {
-		// getting the image url file.
-		String url = System.getProperty("user.dir") + "/src/assets/" + name + type;
-		
-		// instantiating ImageView class
-		ImageView imageView = new ImageView(new Image(Paths.get(url).toUri().toString()));
-
-		imageView.setFitHeight(Config.WINDOW_SIZE); // set the height of the image to the height of the window.
-		imageView.setFitWidth(Config.WINDOW_SIZE); // set the width of the image to the width of the window.
-		imageView.setPreserveRatio(false); // do not preserve the ratio of the image.
-
-		return imageView;
 	}
 
 	private void setGameScene(Stage stage) {
