@@ -18,12 +18,14 @@ public class Button extends Sprite{
 
 	private boolean clicked;
 	private boolean sentServerMessage;
+	private int btnNum;
 
 	public Button(){
 		super(Config.obstacleLocation("BUTTON", BUTTON_NUMBER, true), Config.obstacleLocation("BUTTON", BUTTON_NUMBER, false));
 		this.loadImage(BUTTON_UNCLICKED);
 		this.clicked = false;
 		this.sentServerMessage = false;
+		this.btnNum = Button.BUTTON_NUMBER;
 		Button.BUTTON_NUMBER++;
 	}
 
@@ -49,7 +51,7 @@ public class Button extends Sprite{
 			this.setClicked();
 			player.die();
 
-			if (!GameStage.isSinglePlayer() && !this.sentServerMessage) GameTimer.client.sendMessage("button;clicked");
+			if (!GameStage.isSinglePlayer() && !this.sentServerMessage) GameTimer.client.sendMessage("button;clicked;" + this.btnNum );
 			this.sentServerMessage = true;
 
 		} else {

@@ -307,5 +307,9 @@ public class GameTimer extends AnimationTimer{
 		return GameTimer.boxes;
 	}
 
+	public ArrayList<Button> getButtons(){
+		return this.buttons;
+	}
+
 }
 

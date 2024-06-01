@@ -136,7 +136,6 @@ public class GameStage {
 		if (GameStage.SINGLE_PLAYER_GAME){
 			this.canvas = new Canvas(Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 		}
-		GameStage.GAME_CREATED = true;
 
 		this.root.getChildren().add(this.canvas);
 		this.gameScene = new Scene(root);
@@ -417,6 +416,7 @@ public class GameStage {
 	}
 
 	private void setGameScene(Stage stage) {
+		GameStage.GAME_CREATED = true;
         stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 

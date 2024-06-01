@@ -356,7 +356,10 @@ public class Player extends Sprite{
 						Timeline appearTL = new Timeline(
 							new KeyFrame(
 								Duration.seconds(5),
-								e -> this.appear()
+								e -> {
+									this.appear();
+									if (this.name.equals(GameStage.getIdentifier()) && !GameStage.isSinglePlayer()) this.sendPlayerCoordinates();
+								}
 							)
 						);
 						appearTL.setCycleCount(1);

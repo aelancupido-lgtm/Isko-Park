@@ -85,8 +85,9 @@ public class ChatClientThreadUDP extends Thread{
                 this.players.get(playerName).vanish();
 
             // for other players clicking button
-            } else if(message.equals("button;clicked")){
-                this.gameTimer.getButton().setClicked();
+            } else if(message.startsWith("button;clicked")){
+                int btnNum = Integer.parseInt(message.split(";")[2]);
+                this.gameTimer.getButtons().get(btnNum).setClicked();
 
             // for other players obtaining key
             } else if(message.startsWith("key;")){
