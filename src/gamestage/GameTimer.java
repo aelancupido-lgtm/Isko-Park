@@ -249,7 +249,7 @@ public class GameTimer extends AnimationTimer{
 
 	private void setUpPortalWarps(){
 		for (int i = 0; i< this.portals.size(); i++){
-			this.portals.get(i).setWarpPortal(this.portals.get(Config.PORTAL_WARPS[GameStage.getLevel()][i]));
+			this.portals.get(i).setWarpPortal(this.portals.get(Config.getWarpPortalIndex(i)));
 		}
 	}
 

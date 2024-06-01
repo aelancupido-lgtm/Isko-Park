@@ -33,7 +33,7 @@ public class Config {
 
 	// for portal warping
 	// contains indexes of portals
-	public final static int[][] PORTAL_WARPS = {{1, 0}};
+	private final static int[][] PORTAL_WARPS = {{1, 0}};
 
 	// order button, spike, box, portal 
 	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2}};
@@ -76,6 +76,10 @@ public class Config {
 			default:
 				return -1;
 		}
+	}
+
+	public static int getWarpPortalIndex(int portalIndex){
+		return PORTAL_WARPS[GameStage.getLevel()][portalIndex];
 	}
 }
 
