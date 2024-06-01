@@ -11,16 +11,19 @@ import java.util.Enumeration;
 import chat.ChatServerUDP;
 import javafx.util.Duration;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,6 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -360,18 +364,56 @@ public class GameStage {
 					}
 					initWaiting();
 					showWaitingScene();
+
+					Parent root = stage.getScene().getRoot();
+					if(root instanceof StackPane) {
+						StackPane stackPane = (StackPane) root;
+						Label node = createLabel("0");
+						stackPane.getChildren().add(node);
+
+						// Run the loop on a separate thread.
+						new Thread(() -> {
+							while(true) {
+								// Use Platform.runLater to update the UI from another thread.
+								Platform.runLater(() -> {
+									int numberOfPlayers = GameStage.server.getNumberOfPlayers();
+									System.out.println(numberOfPlayers);
+
+									node.setText(String.valueOf(numberOfPlayers));
+
+									if(numberOfPlayers == Config.MAX_PLAYERS) {
+										// Start the game here.
+									}
+								});
+
+								// Use PauseTransition to introduce a delay.
+								PauseTransition pause = new PauseTransition(Duration.seconds(1));
+								pause.play();
+
+								// Wait for the pause to finish.
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException ev) {
+									ev.printStackTrace();
+								}
+							}
+						}).start();
+					}
+
 					// temp 1 sec delay
-					PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
-					pause1.setOnFinished(event1 -> {
-						initStage();
-						showStageScene();
+					// PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
+					// pause1.setOnFinished(event1 -> {
+					// 	initStage();
+					// 	showStageScene();
 
-						PauseTransition pause2 = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-						pause2.setOnFinished(event2 -> setGameScene()); // Set the gameScene after the pause.
-						pause2.play();
-					}); // Set the gameScene after the pause.
+					// 	PauseTransition pause2 = new PauseTransition(Duration.seconds(10.0)); // Create a pause of 2 seconds.
+					// 	pause2.setOnFinished(event2 -> setGameScene()); // Set the gameScene after the pause.
+					// 	pause2.play();
+					// }); 
+					
+					// Set the gameScene after the pause.
 
-					pause1.play(); // Start the pause.
+					// pause1.play(); // Start the pause.
 					
 					// showStageScene(stage);
 					 // Start the pause.
@@ -413,6 +455,13 @@ public class GameStage {
         });
 
         return hbox;
+	}
+
+	private Label createLabel(String text) {
+		Label label = new Label(String.valueOf(text));
+		label.setFont(Font.font(GameStage.font.getName(), 20));
+		label.setTextFill(Color.web("#FF874E"));
+		return label;
 	}
 
 	private void setGameScene() {

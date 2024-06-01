@@ -64,6 +64,10 @@ public class ChatServerUDP extends Thread{
 
     }
 
+    public int getNumberOfPlayers() {
+        return users.size();
+    }
+
 	@Override
 	public void run(){
         System.out.println("Server started on port " + Config.SERVER_PORT_NUMBER);
