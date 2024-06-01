@@ -236,10 +236,8 @@ public class GameStage {
 
 	public void setStage(Stage stage){
 		this.stage = stage;
-		stage.setTitle("Isko Park");
-		
-		stage.setScene(this.splashScene);
 		this.prepareActionHandlers(this.splashScene);
+		stage.setScene(this.splashScene);
 		stage.setResizable(false);
 		stage.show();
 	}
