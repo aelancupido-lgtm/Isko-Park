@@ -90,6 +90,7 @@ public class ChatClientThreadUDP extends Thread{
             } else if(message.startsWith("door;")){
                 String playerName = message.split(";")[1];
                 this.players.get(playerName).vanish();
+                this.players.get(playerName).enterDoor();
 
             // for other players clicking button
             } else if(message.startsWith("button;clicked")){

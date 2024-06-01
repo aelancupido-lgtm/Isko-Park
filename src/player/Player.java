@@ -48,6 +48,7 @@ public class Player extends Sprite{
 	private static final double USERNAME_FONTSIZE = 15;
 	private boolean sentIdleCheck;
 	private boolean sentDeadCheck;
+	private boolean hasEnteredDoor;
 
 	// Player image
 	private final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
@@ -89,6 +90,7 @@ public class Player extends Sprite{
 		this.jumping = false;
 		this.falling = false;
 		this.pushing = false;
+		this.hasEnteredDoor = false;
 		this.tileManager = GameTimer.getTileManager();
 		this.direction = INITIAL_DIRECTION;
 		this.action = INITIAL_ACTION;
@@ -411,6 +413,10 @@ public class Player extends Sprite{
 		return this.name;
 	}
 
+	public boolean hasExitedLevel(){
+		return this.hasEnteredDoor;
+	}
+
 
 	//Setter methods
 	public void acquireKey(Key key){
@@ -445,6 +451,10 @@ public class Player extends Sprite{
 	public void stopPushing(){
 		this.pushing = false;
 	}
+
+	public void enterDoor(){
+		this.hasEnteredDoor = true;
+	}
 	
 	public void removeKey(){
 		this.key = null;
@@ -454,6 +464,7 @@ public class Player extends Sprite{
 		this.removeKey();
 		this.jumping = false;
 		this.falling = false;
+		this.hasEnteredDoor = false;
 		this.action = INITIAL_ACTION;
 		this.direction = INITIAL_DIRECTION;
 		this.left = false;

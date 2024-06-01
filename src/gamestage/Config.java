@@ -90,5 +90,21 @@ public class Config {
 			return INITIAL_PLAYER_LOCATION[GameStage.getLevel()][1];
 		}
 	}
+
+	public static double getInitialKeyLocation(boolean isXPos){
+		if (isXPos){
+			return INITIAL_KEY_LOCATION[GameStage.getLevel()][0];
+		} else {
+			return INITIAL_KEY_LOCATION[GameStage.getLevel()][1];
+		}
+	}
+
+	public static double getInitialDoorLocation(boolean isXPos){
+		if (isXPos){
+			return INITIAL_DOOR_LOCATION[GameStage.getLevel()][0];
+		} else {
+			return INITIAL_DOOR_LOCATION[GameStage.getLevel()][1];
+		}
+	}
 }
 

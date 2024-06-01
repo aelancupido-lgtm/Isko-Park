@@ -145,12 +145,10 @@ public class GameTimer extends AnimationTimer{
 
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
-        if (this.door.isOpen() && this.door.playerAtCenter(this.player)){
+        if (this.door.isOpen() && this.door.playerAtCenter(this.player) && !this.player.hasExitedLevel()){
+			this.player.enterDoor();
             PauseTransition transition = new PauseTransition(Duration.seconds(1));
             transition.setOnFinished(event -> {
-
-				// GameStage.nextLevel();
-				// this.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 				this.showNextLevel();
             });
             transition.play();
@@ -160,8 +158,8 @@ public class GameTimer extends AnimationTimer{
 	private void showNextLevel(){
 		if (GameStage.getLevel() < Config.MAX_LEVEL){
 			GameStage.nextLevel();
-			this.tm.clear(this.gc);
-			this.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
+			GameTimer.tm.clear(this.gc);
+			GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 
 			this.key.removePlayer();
 			this.player.setXPos(Config.getInitialPlayerLocation(true));

@@ -8,15 +8,13 @@ import player.Player;
 import sprite.Sprite;
 
 public class Key extends Sprite{
-	private final static double INITIAL_X = Config.INITIAL_KEY_LOCATION[GameStage.getLevel()][0];
-	private final static double INITIAL_Y = Config.INITIAL_KEY_LOCATION[GameStage.getLevel()][1];
 	private final static int KEY_SIZE = 35;
 	private final static Image KEY_IMAGE = new Image("assets/key.png", KEY_SIZE, KEY_SIZE, true, false);
 
 	private Player player;
 
 	public Key(){
-		super(INITIAL_X, INITIAL_Y);
+		super(Config.getInitialKeyLocation(true), Config.getInitialKeyLocation(false));
 		this.loadImage(KEY_IMAGE);
 	}
 
