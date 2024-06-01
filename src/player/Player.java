@@ -171,9 +171,9 @@ public class Player extends Sprite{
 		if (this.pushing) this.pushing = false;
 		this.checkBoxCollision(prevXPos);
 		this.checkBoxCollisionY();
-		this.checkBlockCollisionX(prevXPos);
+		this.checkBlockCollision(prevXPos);
 		this.checkBlockCollisionY();
-		this.checkPlatformCollisionX(prevXPos);
+		this.checkPlatformCollision(prevXPos);
 		this.checkPlatformCollisionY();
 
 		this.checkOnPlatform();
@@ -213,7 +213,7 @@ public class Player extends Sprite{
         return onBlock;
     }
 
-    private void checkBlockCollisionX(double prevXPos) {
+    private void checkBlockCollision(double prevXPos) {
         ArrayList<Sprite> blocks = tileManager.getBlocks();
 
         for (Sprite block : blocks){
@@ -317,11 +317,20 @@ public class Player extends Sprite{
         return onPlatform;
     }
 
-    private void checkPlatformCollisionX(double prevXPos) {
+    private void checkPlatformCollision(double prevXPos) {
         ArrayList<Platform> platforms = GameTimer.getPlatforms();
 
         for (Platform platform : platforms){
             if (this.collidesWith(platform)){
+				// if (!this.jumping){
+				// 	if (platform.isMovingRight() == true && (this.left || this.dx == 0)){  // platform moving right
+				// 		this.xPos = platform.getXPos() + this.width - 8;
+				// 	} else if (platform.isMovingRight() == false && (this.right || this.dx == 0)){  // platform moving left;
+				// 		this.xPos = platform.getXPos() - this.width - 1;
+				// 	}
+				// } else {
+				// 	this.xPos = prevXPos + 0.5;
+				// }
 				this.xPos = prevXPos;
 				this.dx = 0;
 				break;
@@ -338,7 +347,7 @@ public class Player extends Sprite{
                     this.yPos = platform.getYPos() - this.height;
                     this.dy = 0;
                     this.jumping = false;
-                    this.falling = false;;
+                    this.falling = false;
                 } else if (this.dy < 0){  //jumping
                     this.yPos = platform.getYPos() + platform.getHeight();
                     this.dy = 0;

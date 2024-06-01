@@ -30,7 +30,7 @@ public class Config {
 	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}};
 	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}};
 	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}};
-	private final static double[][] INITIAL_PLATFORM_LOCATION = {{300, 400, 600, 120}};
+	private final static double[][] INITIAL_PLATFORM_LOCATION = {{220, 420, 600, 120}};
 
 	// for portal warping
 	// contains indexes of portals
