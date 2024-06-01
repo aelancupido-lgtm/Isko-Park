@@ -33,11 +33,7 @@ public class Config {
 
 	// order button, spike, box, portal 
 	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2}};
-
-
 	public final static int MAX_LEVEL = 3;
-
-	// TODO: add getConfigurations method
 
 	// gets the obstacle location based on object number and return xPos or yPos
 	// allows for multiple obstacles of the same type per stage
@@ -77,11 +73,5 @@ public class Config {
 				return -1;
 		}
 	}
-
-
-
-	// TODO: add LevelConfigurations class for obstacles
-
-
 }
 

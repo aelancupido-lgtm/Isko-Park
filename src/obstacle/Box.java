@@ -16,7 +16,6 @@ public class Box extends Sprite{
     private static final double PUSH_FORCE = 1;
     private static int BOX_NUMBER = 0;
     private int boxNum;
-    // TODO: allow box player standing (collison y)
 
     public Box(){
         super(Config.obstacleLocation("BOX", BOX_NUMBER, true), Config.obstacleLocation("BOX", BOX_NUMBER, false));
@@ -39,6 +38,7 @@ public class Box extends Sprite{
 		}
 
         if (!GameStage.isSinglePlayer()) GameTimer.client.sendMessage("box;" + this.boxNum + ";" + this.getXPos());
+        this.dx = 0;
 	}
 
     private boolean buttonAtCenter(Button button){
