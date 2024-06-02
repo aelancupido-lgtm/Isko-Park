@@ -32,7 +32,6 @@ public class GameTimer extends AnimationTimer{
 	private Key key;
 	private Door door;
 	private Button button;
-	//private Platform platform;
 	private static TileManager tm;
 	private GameOver gameOver;
 	private GameStage gameStage;
@@ -61,10 +60,10 @@ public class GameTimer extends AnimationTimer{
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.initObstacles();
 		Player.resetPlayerCount();
-		this.player = new Player(GameStage.getIdentifier());
-		
 
-		if (!GameStage.isSinglePlayer()) {	
+		if (GameStage.isSinglePlayer()) {
+			this.player = new Player(GameStage.getIdentifier());
+		} else {	
 			this.players = new HashMap<>();
 			this.populatePlayerHashMap();
 			this.initChat();
@@ -82,7 +81,11 @@ public class GameTimer extends AnimationTimer{
 
 	private void populatePlayerHashMap(){
 		for (String username: GameStage.getPlayers()){
-			this.players.put(username, new Player(username));
+			if (GameStage.getIdentifier().equals(username)) {
+				this.player = new Player(username);
+			} else {
+				this.players.put(username, new Player(username));
+			}
 		}
 	}
 
@@ -90,7 +93,7 @@ public class GameTimer extends AnimationTimer{
 		this.messageArea = new TextArea();
 		this.inputBox = new TextField();
 
-		GameStage.client.getClientThread().startGame(this, messageArea);
+		GameStage.getClient().getClientThread().startGame(this, messageArea);
 
 		this.messageArea.setMaxWidth(Config.CHAT_SIZE);
 		this.messageArea.setLayoutX(Config.WINDOW_SIZE);
@@ -123,7 +126,7 @@ public class GameTimer extends AnimationTimer{
 					String message = "[" + GameStage.getIdentifier() + "] " + inputBox.getText();
 					messageArea.setText(messageArea.getText() + message + "\n");
 					inputBox.setText("");
-					GameStage.client.sendMessage(message);
+					GameStage.getClient().sendMessage(message);
 				}
 				
 			} else if (e.getCode() == KeyCode.ESCAPE){
@@ -144,7 +147,6 @@ public class GameTimer extends AnimationTimer{
 		this.checkObstacleCollision();
 
 		//shows GameOver scene when player enter the door
-		// **need to edit when game level is implemented
         if (this.door.isOpen() && this.door.playerAtCenter(this.player) && !this.player.hasExitedLevel()){
 			this.player.enterDoor();
             PauseTransition transition = new PauseTransition(Duration.seconds(1));
@@ -166,7 +168,7 @@ public class GameTimer extends AnimationTimer{
 			if (!GameStage.isSinglePlayer()){
 				this.gameStage.initWaiting();
 				this.gameStage.showWaitingScene();
-				GameStage.client.sendMessage("nextLvl;");
+				GameStage.getClient().sendMessage("nextLvl;");
 				this.gameStage.waitAllPlayers();
 			} else {
 				this.gameStage.initStage();
@@ -332,7 +334,6 @@ public class GameTimer extends AnimationTimer{
 
 	public static Scene getScene(){
 		return GameTimer.scene;
-
 	}
 
 	public Door getDoor(){

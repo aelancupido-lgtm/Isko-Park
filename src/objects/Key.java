@@ -59,7 +59,7 @@ public class Key extends Sprite{
 	}
 
 	private void sendKeyCoordinates(){
-		GameStage.client.sendMessage("key;" + this.player.getUsername());
+		GameStage.getClient().sendMessage("key;" + this.player.getUsername());
 	}
 
 	//For unlocking door

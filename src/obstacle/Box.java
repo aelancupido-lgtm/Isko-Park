@@ -36,7 +36,7 @@ public class Box extends Sprite{
 			this.xPos += dx;
 		}
 
-        if (!GameStage.isSinglePlayer()) GameStage.client.sendMessage("box;" + this.boxNum + ";" + this.getXPos());
+        if (!GameStage.isSinglePlayer()) GameStage.getClient().sendMessage("box;" + this.boxNum + ";" + this.getXPos());
         this.dx = 0;
 	}
 
