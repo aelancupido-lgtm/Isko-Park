@@ -74,7 +74,7 @@ public class ChatClientThreadUDP extends Thread{
             }
 
             if (isRunning){
-                if (message.startsWith("coor;")){
+                if (message.startsWith("coor;") && !this.players.isEmpty()){
                     String[] playerCoor = message.split(";");
                     
                     String name = playerCoor[1];
@@ -150,6 +150,8 @@ public class ChatClientThreadUDP extends Thread{
                     double boxXPos = Double.parseDouble(message.split(";")[2]);
     
                     GameTimer.getBoxes().get(boxNumber).setXPos(boxXPos);
+                } else if (message.startsWith("userNum;") || message.startsWith("player;")){
+
                 }
                 //Regular chat
                 else {

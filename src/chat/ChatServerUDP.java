@@ -53,10 +53,10 @@ public class ChatServerUDP extends Thread{
     // send all players to new port
     private static void initPlayersArray(){
         System.out.println("initializing players...");
-        String players = "player;";
 
         // construct and forward message to each client
         for (int i = 0; i < users.size(); i++){
+            String players = "player;";
             for (String identifier : identifiers ){
                 if (!identifier.equals(identifiers.get(i))) players = players + identifier + ";";
             }
@@ -95,6 +95,7 @@ public class ChatServerUDP extends Thread{
 
 	@Override
 	public void run(){
+        boolean sentPlayerIdentifiers = false;
         System.out.println("Server started on port " + Config.SERVER_PORT_NUMBER);
 		while (!socket.isClosed()){
 
@@ -162,8 +163,9 @@ public class ChatServerUDP extends Thread{
 
             // send all players to port
             // assumes that all players have already joined the game
-            if (identifiers.size() == Config.MAX_PLAYERS) {
+            if (identifiers.size() == Config.MAX_PLAYERS && !sentPlayerIdentifiers) {
                 initPlayersArray();
+                sentPlayerIdentifiers = true;
             }
 
 			}
