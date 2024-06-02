@@ -51,10 +51,18 @@ public class ChatClientThreadUDP extends Thread{
 
             if (!isRunning){
 
+
                 if (message.startsWith("userNum;")){
                 int numUsersWaiting = Integer.parseInt(message.split(";")[1]);
                 GameStage.setNumWaiting(numUsersWaiting);
-                }
+                
+                // for adding players to gametimer hashmap
+                } else if (message.startsWith("player;")){
+                    String[] players = message.split(";");
+                    for(int i = 1; i<players.length; i++){
+                        GameStage.addPlayers(players[i]);
+                    }
+            }
                 
                 // System.out.println("Waiting for other players...");
                 // try {
@@ -66,8 +74,9 @@ public class ChatClientThreadUDP extends Thread{
 
             }
 
+
             if (isRunning){
-                if (message.startsWith("coor;")){
+                if (message.startsWith("coor;") && !this.players.isEmpty()){
                     String[] playerCoor = message.split(";");
                     
                     String name = playerCoor[1];
@@ -95,17 +104,6 @@ public class ChatClientThreadUDP extends Thread{
                     if (playerCoor.length > 8) {
                         int spriteNum = Integer.parseInt(playerCoor[8]);
                         player.setSpriteNum(spriteNum);
-                    }
-    
-    
-                // for adding players to gametimer hashmap
-                } else if (message.startsWith("player;")){
-                    String[] players = message.split(";");
-                    for(int i = 1; i<players.length; i++){
-                        this.players.put(players[i], new Player(players[i]));
-                        // String current = textArea.getText();
-                        // textArea.setText(current + players[i] + "\n");
-                        // textArea.appendText("");
                     }
     
                 // opens door for all players
@@ -154,6 +152,8 @@ public class ChatClientThreadUDP extends Thread{
                     double boxXPos = Double.parseDouble(message.split(";")[2]);
     
                     GameTimer.getBoxes().get(boxNumber).setXPos(boxXPos);
+                } else if (message.startsWith("userNum;") || message.startsWith("player;")){
+                  
                 }
                 //Regular chat
                 else {
