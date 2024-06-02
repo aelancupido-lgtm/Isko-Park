@@ -7,8 +7,6 @@ import player.Player;
 import sprite.Sprite;
 
 public class Door extends Sprite{
-	private final static double INITIAL_X = Config.INITIAL_DOOR_LOCATION[GameStage.getLevel()][0];
-	private final static double INITIAL_Y = Config.INITIAL_DOOR_LOCATION[GameStage.getLevel()][1];
 	private final static double DOOR_SIZE = 64;
 	private final static Image CLOSED_DOOR_IMAGE = new Image("assets/close_door.png", DOOR_SIZE, DOOR_SIZE, true, false);
 	private final static Image OPEN_DOOR_IMAGE = new Image("assets/open_door.png", DOOR_SIZE, DOOR_SIZE, true, false);
@@ -16,7 +14,7 @@ public class Door extends Sprite{
 	private boolean open;
 
 	public Door() {
-		super(INITIAL_X, INITIAL_Y);
+		super(Config.getInitialDoorLocation(true), Config.getInitialDoorLocation(false));
 		this.loadImage(CLOSED_DOOR_IMAGE);
 		this.open = false;
 	}

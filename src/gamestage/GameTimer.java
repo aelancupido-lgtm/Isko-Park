@@ -10,7 +10,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -24,8 +23,6 @@ import obstacle.Portal;
 import obstacle.Spike;
 import player.Player;
 import tile.TileManager;
-
-// TODO: fix static variables
 
 public class GameTimer extends AnimationTimer{
 	private static Scene scene;
@@ -63,6 +60,7 @@ public class GameTimer extends AnimationTimer{
 	    GameTimer.tm = new TileManager();
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.initObstacles();
+		Player.resetPlayerCount();
 		this.player = new Player(GameStage.getIdentifier());
 		
 
@@ -147,16 +145,45 @@ public class GameTimer extends AnimationTimer{
 
 		//shows GameOver scene when player enter the door
 		// **need to edit when game level is implemented
-        if (this.door.isOpen() && this.door.playerAtCenter(this.player)){
+        if (this.door.isOpen() && this.door.playerAtCenter(this.player) && !this.player.hasExitedLevel()){
+			this.player.enterDoor();
             PauseTransition transition = new PauseTransition(Duration.seconds(1));
             transition.setOnFinished(event -> {
-            	this.stop();
-                this.gameOver.showGameOver();
-                gameStage.setGameOverScene(gameOver.getScene());
+				this.showNextLevel();
             });
             transition.play();
         }
 	}
+
+	private void showNextLevel(){
+		
+		if (GameStage.getStageLevel() != Config.MAX_LEVEL){
+			GameStage.nextLevel();
+			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+			this.stop();
+
+			// multiplayer next level
+			if (!GameStage.isSinglePlayer()){
+				this.gameStage.initWaiting();
+				this.gameStage.showWaitingScene();
+				GameStage.client.sendMessage("nextLvl;");
+				this.gameStage.waitAllPlayers();
+			} else {
+				this.gameStage.initStage();
+				this.gameStage.showStageScene();
+
+				PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+				pause.setOnFinished(event -> this.gameStage.setGameScene()); // Set the gameScene after the pause.
+				pause.play();
+			}
+
+		} else {
+            this.stop();
+            this.gameOver.showGameOver();
+            gameStage.setGameOverScene(gameOver.getScene());
+		}
+	}
+
 
 	private void checkObstacleCollision(){
 		for (Spike spike: this.spikesList){

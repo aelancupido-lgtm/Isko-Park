@@ -204,21 +204,21 @@ public class GameStage {
 	}
 
 	// Create a scene for the stage level.
-	private void initStage() {
+	void initStage() {
 		StackPane root = new StackPane();
 		
 		root.getChildren().add(this.playImage("stage_" + GameStage.STAGE_LEVEL, ".gif"));
 		this.stageScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
-	private void initWaiting() {
+	void initWaiting() {
 		StackPane root = new StackPane();
 		
 		root.getChildren().addAll(this.playMedia(), this.playImage("waiting", ".gif"));
 		this.waitingScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
-	private void initGame() {
+	void initGame() {
 		this.root = new Group();
 
 		//Adds space for chat if multiplayer game
@@ -269,7 +269,8 @@ public class GameStage {
 		return imageView;
 	}
 
-	private void waitAllPlayers() {
+	void waitAllPlayers() {
+
 		Parent root = this.stage.getScene().getRoot();
 		if(root instanceof StackPane) {
 			StackPane stackPane = (StackPane) root;
@@ -399,6 +400,7 @@ public class GameStage {
 					initWaiting();
 					showWaitingScene();
 					waitAllPlayers();
+
 				}
 
 				if (type == MenuType.PLAYER){ // Multiplayer game.
@@ -440,7 +442,7 @@ public class GameStage {
         return hbox;
 	}
 
-	private Label createLabel(String text) {
+	Label createLabel(String text) {
 		Label label = new Label("(" + String.valueOf(text) + "/" + Config.MAX_PLAYERS + ")");
 		label.setFont(Font.font(GameStage.font.getName(), 50));
 		label.setTextFill(Color.web("#FF874E"));
@@ -455,7 +457,7 @@ public class GameStage {
 		return label;
 	}
 
-	private void setGameScene() {
+	void setGameScene() {
 		GameStage.GAME_CREATED = true;
         this.stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
@@ -477,11 +479,11 @@ public class GameStage {
 		this.stage.setScene(this.playerScene);
 	}
 
-	private void showStageScene() {
+	void showStageScene() {
 		this.stage.setScene(this.stageScene);
 	}
 
-	private void showWaitingScene() {
+	public void showWaitingScene() {
 		this.stage.setScene(this.waitingScene);
 	}
 
@@ -524,12 +526,14 @@ public class GameStage {
 	}
 
 	public static void nextLevel(){
-		if (GameStage.STAGE_LEVEL < Config.MAX_LEVEL){
-			GameStage.STAGE_LEVEL++;
-		}
+		GameStage.STAGE_LEVEL++;
 	}
 
 	public static boolean isCreated(){
 		return GameStage.GAME_CREATED;
+	}
+
+	Stage getStage(){
+		return this.stage;
 	}
 }

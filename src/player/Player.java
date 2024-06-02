@@ -30,8 +30,8 @@ public class Player extends Sprite{
 	private final static String[] ACTIONS = {"idle", "walk", "jump", "push", "dead"};
 
 	//Initial player spawn location
-	public static double INITIAL_X = Config.INITIAL_PLAYER_LOCATION[GameStage.getLevel()][0];
-	public static double INITIAL_Y = Config.INITIAL_PLAYER_LOCATION[GameStage.getLevel()][1];
+	public static double INITIAL_X = Config.getInitialPlayerLocation(true);
+	public static double INITIAL_Y = Config.getInitialPlayerLocation(false);
 
 	private static int INITIAL_INDEX = 0; // increment this for multiplayer.
 	private final String INITIAL_COLOR = COLORS[INITIAL_INDEX]; // not static since this is an instance variable, not a class variable.
@@ -49,6 +49,7 @@ public class Player extends Sprite{
 	private static final double USERNAME_FONTSIZE = 15;
 	private boolean sentIdleCheck;
 	private boolean sentDeadCheck;
+	private boolean hasEnteredDoor;
 
 	// Player image
 	private final Image INITIAL_IMAGE = new Image("assets/" + INITIAL_COLOR + "_character/" + INITIAL_DIRECTION + "_" + INITIAL_ACTION + ".png", PLAYER_HEIGHT, PLAYER_HEIGHT, true, false);
@@ -90,6 +91,7 @@ public class Player extends Sprite{
 		this.jumping = false;
 		this.falling = false;
 		this.pushing = false;
+		this.hasEnteredDoor = false;
 		this.tileManager = GameTimer.getTileManager();
 		this.direction = INITIAL_DIRECTION;
 		this.action = INITIAL_ACTION;
@@ -374,6 +376,11 @@ public class Player extends Sprite{
 		this.falling = false;
 		this.isAlive = false;
 
+		if (this.key != null){
+			this.key.removePlayer();
+			this.removeKey();
+		}
+
 		if(GameStage.getIdentifier().equals(this.name) && !GameStage.isSinglePlayer() && !this.sentDeadCheck) {
 			GameStage.client.sendMessage("dead;" + this.name);
 			this.sentDeadCheck = true;
@@ -465,6 +472,16 @@ public class Player extends Sprite{
 		return this.name;
 	}
 
+	public boolean hasExitedLevel(){
+		return this.hasEnteredDoor;
+	}
+
+	public static void resetPlayerCount(){
+		Player.INITIAL_INDEX = 0;
+		Player.INITIAL_X = Config.getInitialPlayerLocation(true);
+		Player.INITIAL_Y = Config.getInitialPlayerLocation(false);
+	}
+
 
 	//Setter methods
 	public void acquireKey(Key key){
@@ -499,9 +516,27 @@ public class Player extends Sprite{
 	public void stopPushing(){
 		this.pushing = false;
 	}
+
+	public void enterDoor(){
+		this.hasEnteredDoor = true;
+	}
 	
 	public void removeKey(){
 		this.key = null;
+	}
+
+	public void resetPlayer(){
+		this.removeKey();
+		this.jumping = false;
+		this.falling = false;
+		this.hasEnteredDoor = false;
+		this.action = INITIAL_ACTION;
+		this.direction = INITIAL_DIRECTION;
+		this.left = false;
+		this.right = false;
+		this.dy = 0;
+		this.dx = 0;
+		this.loadImage(INITIAL_IMAGE);
 	}
 
 	@Override
