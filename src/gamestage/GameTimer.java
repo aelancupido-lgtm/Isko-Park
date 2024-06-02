@@ -33,7 +33,6 @@ public class GameTimer extends AnimationTimer{
 	private Door door;
 	private Button button;
 	private static TileManager tm;
-	private GameOver gameOver;
 	private GameStage gameStage;
 
 	private TextArea messageArea;
@@ -52,7 +51,6 @@ public class GameTimer extends AnimationTimer{
 	    GameTimer.scene = scene;
 	    this.root = root;
 		this.gameStage = gameStage;
-	    this.gameOver = new GameOver(scene, gc);
 	    this.key = new Key();
 	    this.door = new Door();
 
@@ -180,9 +178,8 @@ public class GameTimer extends AnimationTimer{
 			}
 
 		} else {
+			this.gameStage.setGameOver("win");
             this.stop();
-            this.gameOver.showGameOver();
-            gameStage.setGameOverScene(gameOver.getScene());
 		}
 	}
 

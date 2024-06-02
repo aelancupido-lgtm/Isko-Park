@@ -24,6 +24,10 @@ public class Key extends Sprite{
 			if (!GameStage.isSinglePlayer()) sendKeyCoordinates();
 			this.move();
 			}
+			if(!player.isAlive()){
+				this.resetKey();
+			}
+
 		}
 
 	public void move(){
@@ -55,12 +59,18 @@ public class Key extends Sprite{
 				this.yPos = this.player.getYPos() - KEY_SIZE / 3.5;
 			}
 		}
-
 	}
 
 	private void sendKeyCoordinates(){
 		GameStage.getClient().sendMessage("key;" + this.player.getUsername());
 	}
+
+	// resets key to its initial position
+	public void resetKey() {
+        this.xPos = Config.getInitialKeyLocation(true);
+        this.yPos = Config.getInitialKeyLocation(false);
+        this.player = null;
+    }
 
 	//For unlocking door
 	public void use(){
