@@ -389,7 +389,7 @@ public class Player extends Sprite{
 		// vanish player after 2 seconds
 		Timeline vanishTL = new Timeline(
 			new KeyFrame(
-				Duration.seconds(2),
+				Duration.seconds(Config.DEAD_TIME),
 				event -> {
 					this.vanish();
 					this.setXPos(Player.INITIAL_X);
@@ -417,7 +417,7 @@ public class Player extends Sprite{
 						if (!GameStage.isSinglePlayer()) this.sentDeadCheck = false;
 						Timeline appearTL = new Timeline(
 							new KeyFrame(
-								Duration.seconds(2),
+								Duration.seconds(Config.RESPAWN_TIME),
 								e -> {
 									this.appear();
 									if (this.name.equals(GameStage.getIdentifier()) && !GameStage.isSinglePlayer()) this.sendPlayerCoordinates();
