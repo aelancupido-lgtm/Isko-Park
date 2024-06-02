@@ -571,6 +571,7 @@ public class GameStage {
 	// used for setting number of users waiting
 	public static void setNumWaiting(int usersWaiting){
 		GameStage.numUsersWaiting = usersWaiting;
+		System.out.println(GameStage.numUsersWaiting);
 	}
 
 	public static void nextLevel(){
