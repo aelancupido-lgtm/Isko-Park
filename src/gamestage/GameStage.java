@@ -132,7 +132,7 @@ public class GameStage {
 	private void initWaiting() {
 		StackPane root = new StackPane();
 		
-		root.getChildren().add(this.playImage("waiting", ".gif"));
+		root.getChildren().addAll(this.playMedia(), this.playImage("waiting", ".gif"));
 		this.waitingScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
@@ -367,7 +367,7 @@ public class GameStage {
 									// int numberOfPlayers = GameStage.server.getNumberOfPlayers();
 									System.out.println(GameStage.numUsersWaiting);
 
-									node.setText(String.valueOf(GameStage.numUsersWaiting));
+									node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
 
 									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
 										// Start the game here.
@@ -423,8 +423,7 @@ public class GameStage {
 									// int numberOfPlayers = GameStage.server.getNumberOfPlayers();
 									System.out.println(GameStage.numUsersWaiting);
 
-									node.setText(String.valueOf(GameStage.numUsersWaiting));
-
+									node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
 									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
 										// Start the game here.
 									}
@@ -482,7 +481,7 @@ public class GameStage {
 		// Set the font color to orange.
 		b1.setFont(Font.font(GameStage.font.getName(), 20));
 
-		// Set the font of the buttons.
+		// Set the size of the button.
 		b1.setMinSize(80, 40); 
 		b1.setMaxSize(80, 40); 
 
@@ -507,9 +506,17 @@ public class GameStage {
 	}
 
 	private Label createLabel(String text) {
-		Label label = new Label(String.valueOf(text));
-		label.setFont(Font.font(GameStage.font.getName(), 20));
+		Label label = new Label("(" + String.valueOf(text) + "/" + Config.MAX_PLAYERS + ")");
+		label.setFont(Font.font(GameStage.font.getName(), 50));
 		label.setTextFill(Color.web("#FF874E"));
+
+		// Set the size of the label.
+        label.setPrefSize(Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+		label.setAlignment(Pos.CENTER);
+		
+		// Set the padding of the label.
+		label.setPadding(new Insets(800, 0, 0, 0)); // top, right, bottom, left
+
 		return label;
 	}
 
