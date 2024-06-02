@@ -63,15 +63,6 @@ public class ChatClientThreadUDP extends Thread{
                         GameStage.addPlayers(players[i]);
                     }
             }
-                
-                // System.out.println("Waiting for other players...");
-                // try {
-                //     Thread.sleep(1000);
-                // } catch (InterruptedException e) {
-                //     e.printStackTrace();
-                // }
-
-
             }
 
 
