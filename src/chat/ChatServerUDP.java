@@ -130,6 +130,7 @@ public class ChatServerUDP extends Thread{
                 playersWaiting++;
                 byte[] nextLevelPlayers = new String("userNum;" + playersWaiting).getBytes();
                 forwardMessageToAll(nextLevelPlayers, "userNum;" + playersWaiting);
+                if (playersWaiting == users.size()) playersWaiting = 0;
             } 
             
             else {

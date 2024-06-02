@@ -65,6 +65,9 @@ public class GameStage {
 	private static String IDENTIFIER;
 	private static int STAGE_LEVEL = 1;
 
+	// if one member of team fails to exit door in time
+	private static boolean TEAM_FAILED = false;
+
 	private static ChatClientUDP CLIENT;
 	
 	// for lobby
@@ -77,6 +80,7 @@ public class GameStage {
 	private static boolean GAME_CREATED;
 	private static boolean SINGLE_PLAYER_GAME;
 	private static boolean CREATE_GAME_MODE;
+	public static boolean teamFail;
 
 	public Font font_pico;
 	public Font font_minecraft;
@@ -299,8 +303,6 @@ public class GameStage {
 				while(running.get()) {
 					// Use Platform.runLater to update the UI from another thread.
 					Platform.runLater(() -> {
-						System.out.println(GameStage.NUM_USERS_WAITING);
-
 						node.setText("(" + String.valueOf(GameStage.NUM_USERS_WAITING) + "/" + Config.MAX_PLAYERS + ")");
 
 						if(GameStage.NUM_USERS_WAITING == Config.MAX_PLAYERS) {
@@ -321,6 +323,9 @@ public class GameStage {
 								pauseGameScene.play();
 							});
 							pause.play();
+						} else if (TEAM_FAILED){
+							running.set(false);
+							setGameOver("lose");
 						}
 					});
 
@@ -556,5 +561,13 @@ public class GameStage {
 	void setGameOver(String result) {
 		this.initGameOver(result);
 		this.setGameOverScene();
+	}
+
+	public static void teamFailed(){
+		GameStage.TEAM_FAILED = true;
+	}
+
+	public static boolean checkTeamFail(){
+		return GameStage.TEAM_FAILED;
 	}
 }

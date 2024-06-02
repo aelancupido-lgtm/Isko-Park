@@ -149,7 +149,7 @@ public class ChatClientThreadUDP extends Thread{
                     GameStage.setNumWaiting(numUsersWaiting);
 
                 } else if(message.startsWith("player;")){
-
+                    if (!GameStage.checkTeamFail()) GameStage.teamFailed();
                 }
               
                 //Regular chat

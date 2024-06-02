@@ -37,8 +37,7 @@
 
 ## Assets:
   - Player: https://picoparkteco.comic.studio/
-  - Box: https://kenney.nl/assets/pixel-platformer
   - Key: https://www.pixil.art/art/key-c0274e0785c3672
   - Portal: https://pixelnauta.itch.io/pixel-dimensional-portal-32x32
   - Spikes: https://bdragon1727.itch.io/free-trap-platformer
-  - Platform, Door, Button: https://www.artstation.com/artwork/Ea9oEK?fbclid=IwAR2uZju2h5-zElmwUYZvKHa3ZjQjArBY2PMmcmc93ybwmFKHKodB_MRCbBg
+  - Platform, Door, Button, Box: https://www.artstation.com/artwork/Ea9oEK?fbclid=IwAR2uZju2h5-zElmwUYZvKHa3ZjQjArBY2PMmcmc93ybwmFKHKodB_MRCbBg

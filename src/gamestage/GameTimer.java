@@ -84,9 +84,8 @@ public class GameTimer extends AnimationTimer{
 		this.setTimeElapsed();
 		
 		if (this.timeElapsed == Config.TIME_PER_LEVEL){
-			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
-			this.stop();
-			this.gameStage.setGameOver("lose");
+			if (!GameStage.isSinglePlayer()) GameStage.getClient().sendMessage("player;");
+			this.stopGame("lose");
 		}
 	}
 
@@ -353,11 +352,14 @@ public class GameTimer extends AnimationTimer{
 			}
 
 		} else {
-			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
-			this.stop();
-			this.gameStage.setGameOver("win");
-            
+			this.stopGame("win");
 		}
+	}
+
+	private void stopGame(String type){
+		this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+		this.stop();
+		this.gameStage.setGameOver(type);
 	}
 
 	public static TileManager getTileManager(){
