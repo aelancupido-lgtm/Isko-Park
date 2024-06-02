@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.util.Duration;
+import networking.ClientUDP;
+import networking.ServerUDP;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -39,8 +41,6 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import chat.ChatClientUDP;
-import chat.ChatServerUDP;
 
 enum MenuType {
 	MODE,
@@ -68,19 +68,16 @@ public class GameStage {
 	// if one member of team fails to exit door in time
 	private static boolean TEAM_FAILED = false;
 
-	private static ChatClientUDP CLIENT;
+	private static ClientUDP CLIENT;
 	
 	// for lobby
 	private static int NUM_USERS_WAITING; //number of users waiting
 	private static ArrayList<String> PLAYERS;
 	
 	private static String SERVER_ADDRESS;
-
-	// private static ChatServerUDP SERVER;
 	private static boolean GAME_CREATED;
 	private static boolean SINGLE_PLAYER_GAME;
 	private static boolean CREATE_GAME_MODE;
-	public static boolean teamFail;
 
 	public Font font_pico;
 	public Font font_minecraft;
@@ -164,9 +161,9 @@ public class GameStage {
 	private void initServer() throws UnknownHostException{
 		GameStage.SERVER_ADDRESS = this.getIPaddress();
 
-		ChatServerUDP server = new ChatServerUDP();
-		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
-			protected ChatServerUDP call() throws Exception {
+		ServerUDP server = new ServerUDP();
+		Task<ServerUDP> task = new Task<ServerUDP>(){
+			protected ServerUDP call() throws Exception {
 				server.run();
 				return server;
 			}
@@ -181,7 +178,7 @@ public class GameStage {
 
 	private void initClient(){
 		GameStage.PLAYERS = new ArrayList<>();
-		GameStage.CLIENT = new ChatClientUDP();
+		GameStage.CLIENT = new ClientUDP();
 	    try {
 			GameStage.CLIENT.createClientThread(GameStage.getIdentifier());
 		} catch (IOException e) {
@@ -554,7 +551,7 @@ public class GameStage {
 		return GameStage.GAME_CREATED;
 	}
 
-	public static ChatClientUDP getClient(){
+	public static ClientUDP getClient(){
 		return GameStage.CLIENT;
 	}
 

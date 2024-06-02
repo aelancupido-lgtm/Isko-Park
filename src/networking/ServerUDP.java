@@ -1,4 +1,4 @@
-package chat;
+package networking;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import gamestage.Config;
 import gamestage.GameStage;
 
-public class ChatServerUDP extends Thread{
+public class ServerUDP extends Thread{
 	private static byte[] incoming = new byte[256];
 	private static DatagramSocket socket;
 
@@ -130,7 +130,7 @@ public class ChatServerUDP extends Thread{
                 playersWaiting++;
                 byte[] nextLevelPlayers = new String("userNum;" + playersWaiting).getBytes();
                 forwardMessageToAll(nextLevelPlayers, "userNum;" + playersWaiting);
-                if (playersWaiting == users.size()) playersWaiting = 0;
+                if (playersWaiting == Config.MAX_PLAYERS) playersWaiting = 0;
             } 
             
             else {
@@ -148,7 +148,6 @@ public class ChatServerUDP extends Thread{
             // send all players to port
             // assumes that all players have already joined the game
             if (identifiers.size() == Config.MAX_PLAYERS && !sentPlayerIdentifiers) {
-                
                 initPlayersArray();
                 sentPlayerIdentifiers = true;
             }

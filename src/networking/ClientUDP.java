@@ -1,4 +1,4 @@
-package chat;
+package networking;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -11,8 +11,8 @@ import gamestage.Config;
 import gamestage.GameStage;
 import javafx.concurrent.Task;
 
-public class ChatClientUDP {
-	private ChatClientThreadUDP clientThread;
+public class ClientUDP {
+	private ClientThreadUDP clientThread;
 
 
 	private static DatagramSocket socket;
@@ -44,10 +44,10 @@ public class ChatClientUDP {
 	}
 
 	public void createClientThread(String identifier) throws IOException{
-		this.clientThread = new ChatClientThreadUDP(socket);
-		Task<ChatClientThreadUDP> task = new Task<ChatClientThreadUDP>(){
+		this.clientThread = new ClientThreadUDP(socket);
+		Task<ClientThreadUDP> task = new Task<ClientThreadUDP>(){
 
-			protected ChatClientThreadUDP call() throws Exception {
+			protected ClientThreadUDP call() throws Exception {
 
 				clientThread.start();
 				return clientThread;
@@ -64,7 +64,7 @@ public class ChatClientUDP {
         socket.send(initialize);
 	}
 
-	public ChatClientThreadUDP getClientThread(){
+	public ClientThreadUDP getClientThread(){
 		return this.clientThread;
 	}
 

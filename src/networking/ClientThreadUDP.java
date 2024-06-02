@@ -1,4 +1,4 @@
-package chat;
+package networking;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -11,7 +11,7 @@ import javafx.scene.control.TextArea;
 import objects.Key;
 import player.Player;
 
-public class ChatClientThreadUDP extends Thread{
+public class ClientThreadUDP extends Thread{
 
 	private DatagramSocket socket;
 	private byte[] incoming = new byte[256];
@@ -21,7 +21,7 @@ public class ChatClientThreadUDP extends Thread{
     private GameTimer gameTimer;
     private boolean isRunning;
 
-	public ChatClientThreadUDP(DatagramSocket socket){
+	public ClientThreadUDP(DatagramSocket socket){
 		this.socket = socket;
         this.isRunning = false;
 	}
