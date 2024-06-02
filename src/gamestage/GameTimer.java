@@ -19,6 +19,7 @@ import objects.Door;
 import objects.Key;
 import obstacle.Box;
 import obstacle.Button;
+import obstacle.Platform;
 import obstacle.Portal;
 import obstacle.Spike;
 import player.Player;
@@ -34,6 +35,7 @@ public class GameTimer extends AnimationTimer{
 	private Key key;
 	private Door door;
 	private Button button;
+	//private Platform platform;
 	private static TileManager tm;
 	private GameOver gameOver;
 	private GameStage gameStage;
@@ -44,11 +46,11 @@ public class GameTimer extends AnimationTimer{
 	private HashMap<String, Player> players;
 
 	private static ArrayList<Box> boxes = new ArrayList<>();
+	private static ArrayList<Platform> platforms = new ArrayList<>();
 	private ArrayList<Portal> portals = new ArrayList<>();
 	private ArrayList<Button> buttons = new ArrayList<>();
 	private ArrayList<Spike> spikesList = new ArrayList<>();
 	
-
 	GameTimer(Scene scene, GraphicsContext gc, GameStage gameStage, Group root) {
 	    this.gc = gc;
 	    GameTimer.scene = scene;
@@ -66,10 +68,10 @@ public class GameTimer extends AnimationTimer{
 
 		if (!GameStage.isSinglePlayer()) {	
 			this.players = new HashMap<>();
+			this.populatePlayerHashMap();
 			this.initChat();
 		}
 	}
-
 
 	@Override
 	public void handle(long arg0) {
@@ -78,6 +80,12 @@ public class GameTimer extends AnimationTimer{
 		this.checkStatus();
 		this.renderSprites();
 		this.moveSprites();
+	}
+
+	private void populatePlayerHashMap(){
+		for (String username: GameStage.getPlayers()){
+			this.players.put(username, new Player(username));
+		}
 	}
 
 	private void initChat(){
@@ -242,30 +250,30 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	private void initObstacles(){
-		this.portals.clear();
-		GameTimer.boxes.clear();
+
 		this.buttons.clear();
 		this.spikesList.clear();
+		this.portals.clear();
+		GameTimer.boxes.clear();
+		GameTimer.platforms.clear();
 
 		Button.resetButtonCount();
 		Spike.resetSpikeCount();
-		Box.resetBoxCount();
 		Portal.resetPortalCount();
+		Box.resetBoxCount();
+		Platform.resetPlatformCount();
 
+		int buttonNumber = Config.obstacleCount("BUTTON");
+		int spikeNumber = Config.obstacleCount("SPIKE");
 		int portalNumber = Config.obstacleCount("PORTAL");
 		int boxNumber = Config.obstacleCount("BOX");
-		int spikeNumber = Config.obstacleCount("SPIKE");
-		int buttonNumber = Config.obstacleCount("BUTTON");
-
+		int platformNumber = Config.obstacleCount("PLATFORM");
+		
 		for (int i = 0; i < portalNumber; i++){
 			this.portals.add(new Portal());
 		}
 
 		this.setUpPortalWarps();
-
-		for (int i = 0; i < boxNumber; i++){
-			GameTimer.boxes.add(new Box());
-		}
 
 		for (int i =0 ; i < spikeNumber; i++){
 			this.spikesList.add(new Spike());
@@ -273,6 +281,16 @@ public class GameTimer extends AnimationTimer{
 
 		for (int i = 0; i <buttonNumber; i++){
 			this.buttons.add(new Button());
+		}
+
+		for (int i = 0; i < boxNumber; i++){
+			GameTimer.boxes.add(new Box());
+		}
+
+		for (int i = 0; i < platformNumber; i++) {
+			double x = Config.obstacleLocation("PLATFORM", Platform.getPlatformNumber(), true);
+			double y = Config.obstacleLocation("PLATFORM", Platform.getPlatformNumber(), false);
+			GameTimer.platforms.add(new Platform(x, y));
 		}
 	}
 
@@ -283,12 +301,12 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	private void renderObstacles(){
-		for (Spike spike: this.spikesList){
-			spike.render(gc, spike.getXPos(), spike.getYPos());
-		}
-
 		for (Button btn: this.buttons){
 			if (btn.isVisible()) btn.render(gc, btn.getXPos(), btn.getYPos());
+		}
+
+		for (Spike spike: this.spikesList){
+			spike.render(gc, spike.getXPos(), spike.getYPos());
 		}
 
 		for (Portal portal: this.portals){
@@ -299,6 +317,10 @@ public class GameTimer extends AnimationTimer{
 			box.render(gc, box.getXPos(), box.getYPos());
 		}
 
+		for (Platform platform: GameTimer.platforms){
+			platform.render(gc, platform.getXPos(), platform.getYPos());
+		}
+
 	}
 
 	//For sprite movement
@@ -307,6 +329,9 @@ public class GameTimer extends AnimationTimer{
 			this.key.move();
 			this.player.move();
 		}
+		for (Platform platform : GameTimer.platforms) {
+            platform.move();
+        }
 	}
 
 	public static TileManager getTileManager(){
@@ -336,6 +361,10 @@ public class GameTimer extends AnimationTimer{
 
 	public static ArrayList<Box> getBoxes(){
 		return GameTimer.boxes;
+	}
+
+	public static ArrayList<Platform> getPlatforms(){
+		return GameTimer.platforms;
 	}
 
 	public ArrayList<Button> getButtons(){

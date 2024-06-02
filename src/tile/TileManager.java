@@ -12,11 +12,11 @@ import gamestage.Config;
 public class TileManager {
 	private Tile tile[];
 	private int tileMap[][];
-	private ArrayList<Sprite> platforms;
+	private ArrayList<Sprite> blocks;
 
 	public TileManager(){
 		this.tile = new Tile[2];
-		this.platforms = new ArrayList<Sprite>();
+		this.blocks = new ArrayList<Sprite>();
 		this.tileMap = new int [Config.MAX_ROW][Config.MAX_ROW];
 		this.populateTileList();
 	}
@@ -31,8 +31,8 @@ public class TileManager {
 		this.tile[1].collision = true;
 	}
 
-	//Populates the platforms arraylist
-	private void populatePlatforms(){
+	//Populates the blocks arraylist
+	private void populateBlocks(){
 		int col = 0;
 		int row = 0;
 		int x = 0;
@@ -43,7 +43,7 @@ public class TileManager {
 			int tileNum = tileMap[col][row];
 
 			if (tileNum == 1){
-				this.platforms.add(new Sprite(x, y, tile[tileNum].tileImage));
+				this.blocks.add(new Sprite(x, y, tile[tileNum].tileImage));
 			}
 
 			col++;
@@ -63,8 +63,8 @@ public class TileManager {
 
 	//For rendering map
 	public void draw (GraphicsContext gc){
-		for (Sprite platform: this.platforms){
-			platform.render(gc, platform.getXPos(), platform.getYPos());
+		for (Sprite block: this.blocks){
+			block.render(gc, block.getXPos(), block.getYPos());
 		}
 	}
 
@@ -102,16 +102,16 @@ public class TileManager {
 			}
 
 			in.close();
-			this.populatePlatforms();
+			this.populateBlocks();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	//Returns the platforms arraylist
-	public ArrayList<Sprite> getPlatforms(){
-		return this.platforms;
+	//Returns the blocks arraylist
+	public ArrayList<Sprite> getBlocks(){
+		return this.blocks;
 	}
 
 }

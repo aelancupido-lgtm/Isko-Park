@@ -31,14 +31,16 @@ public class Config {
 	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}, {}};
 	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}, {}};
 	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}, {}};
+	private final static double[][] INITIAL_PLATFORM_LOCATION = {{220, 420, 600, 120}};
+
 
 	// for portal warping
 	// contains indexes of portals
 	private final static int[][] PORTAL_WARPS = {{1, 0}, {}};
 
-	// order button, spike, box, portal 
-	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2}, {0, 0, 0, 0}};
-	public final static int MAX_LEVEL = 2;
+	// order button, spike, box, portal, platform 
+	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2, 2}};
+	public final static int MAX_LEVEL = 3;
 
 	// gets the obstacle location based on object number and return xPos or yPos
 	// allows for multiple obstacles of the same type per stage
@@ -59,6 +61,8 @@ public class Config {
 				return INITIAL_BOX_LOCATION[GameStage.getLevel()][index];
 			case "PORTAL":
 				return INITIAL_PORTAL_LOCATION[GameStage.getLevel()][index];
+			case "PLATFORM":
+				return INITIAL_PLATFORM_LOCATION[GameStage.getLevel()][index];
 			default:
 				return -1;
 		}	
@@ -74,6 +78,8 @@ public class Config {
 				return OBSTACLE_NUMBERS[GameStage.getLevel()][2];
 			case "PORTAL":
 				return OBSTACLE_NUMBERS[GameStage.getLevel()][3];
+			case "PLATFORM":
+				return OBSTACLE_NUMBERS[GameStage.getLevel()][4];
 			default:
 				return -1;
 		}

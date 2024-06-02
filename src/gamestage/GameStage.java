@@ -7,6 +7,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import chat.ChatClientUDP;
@@ -67,6 +68,7 @@ public class GameStage {
 	
 	// for lobby
 	private static int numUsersWaiting; //number of users waiting
+	private static ArrayList<String> PLAYERS;
 	
 	private static String SERVER_ADDRESS;
 
@@ -345,7 +347,6 @@ public class GameStage {
 					serverAddressInputDialog.showAndWait();
 
 					SERVER_ADDRESS = serverAddressInputDialog.getEditor().getText();
-
 					initClient(); // initializes the client thread
 					initGame();
 					showStageScene();
@@ -429,6 +430,7 @@ public class GameStage {
     }
 
 	private void initClient(){
+		PLAYERS = new ArrayList<>();
 		GameStage.client = new ChatClientUDP();
 	    try {
 			GameStage.client.createClientThread(GameStage.getIdentifier());
@@ -535,6 +537,14 @@ public class GameStage {
 	// used for setting number of users waiting
 	public static void setNumWaiting(int usersWaiting){
 		GameStage.numUsersWaiting = usersWaiting;
+	}
+
+	public static void addPlayers(String playerName){
+		GameStage.PLAYERS.add(playerName);
+	}
+
+	public static ArrayList<String> getPlayers(){
+		return GameStage.PLAYERS;
 	}
 
 	public static void nextLevel(){

@@ -20,6 +20,7 @@ import gamestage.GameStage;
 import gamestage.GameTimer;
 import objects.Key;
 import obstacle.Box;
+import obstacle.Platform;
 import tile.TileManager;
 import sprite.Sprite;
 
@@ -172,12 +173,14 @@ public class Player extends Sprite{
 		if (this.pushing) this.pushing = false;
 		this.checkBoxCollision(prevXPos);
 		this.checkBoxCollisionY();
-		this.checkPlatformCollisionX(prevXPos);
+		this.checkBlockCollision(prevXPos);
+		this.checkBlockCollisionY();
+		this.checkPlatformCollision(prevXPos);
 		this.checkPlatformCollisionY();
 
 		this.checkOnPlatform();
 	
-			//For sprite animation
+		//For sprite animation
 		this.spriteCounter++;
 		if (this.spriteCounter > MAX_FRAME){
 			this.spriteNum = (this.spriteNum % MAX_SPRITE) + 1; // wrapping sprite number using modulo.
@@ -197,13 +200,26 @@ public class Player extends Sprite{
 			GameStage.client.sendMessage(message);
 			this.sentIdleCheck = true;
 		}
-
 	}
-    private void checkPlatformCollisionX(double prevXPos) {
-        ArrayList<Sprite> platforms = tileManager.getPlatforms();
 
-        for (Sprite platform : platforms){
-            if (this.collidesWith(platform)){
+	private boolean isOnBlock(ArrayList<Sprite> blocks) {
+        this.yPos += 1;
+        boolean onBlock = false;
+        for (Sprite block : blocks) {
+            if (this.collidesWith(block)){
+                onBlock = true;
+                break;
+            }
+        }
+        this.yPos -= 1;
+        return onBlock;
+    }
+
+    private void checkBlockCollision(double prevXPos) {
+        ArrayList<Sprite> blocks = tileManager.getBlocks();
+
+        for (Sprite block : blocks){
+            if (this.collidesWith(block)){
 				this.xPos = prevXPos;
 				this.dx = 0;
 				break;
@@ -211,18 +227,18 @@ public class Player extends Sprite{
         }
     }
 
-	private void checkPlatformCollisionY() {
-        ArrayList<Sprite> platforms = tileManager.getPlatforms();
+	private void checkBlockCollisionY() {
+        ArrayList<Sprite> blocks = tileManager.getBlocks();
 
-        for (Sprite platform : platforms){
-            if (this.collidesWith(platform)){
+        for (Sprite block : blocks){
+            if (this.collidesWith(block)){
                 if (this.dy > 0){  //falling
-                    this.yPos = platform.getYPos() - this.height;
+                    this.yPos = block.getYPos() - this.height;
                     this.dy = 0;
                     this.jumping = false;
                     this.falling = false;;
                 } else if (this.dy < 0){  //jumping
-                    this.yPos = platform.getYPos() + platform.getHeight();
+                    this.yPos = block.getYPos() + block.getHeight();
                     this.dy = 0;
                 }
             }
@@ -230,32 +246,21 @@ public class Player extends Sprite{
     }
 
 	private void checkOnPlatform(){
-		ArrayList<Sprite> platforms = tileManager.getPlatforms();
+		ArrayList<Sprite> blocks = tileManager.getBlocks();
 		ArrayList<Box> boxes = GameTimer.getBoxes();
+		ArrayList<Platform> platforms = GameTimer.getPlatforms();
 
-        boolean onPlatform = this.isOnPlatform(platforms);
+        boolean onBlock = this.isOnBlock(blocks);
 		boolean onBox = this.isOnBox(boxes);
+		boolean onPlatform = this.isOnPlatform(platforms);
 
-		if (!onPlatform && !onBox){
+		if (!onBlock && !onBox && !onPlatform){
             this.falling = true;
         } else {
             this.falling = false;
         }
 
 	}
-
-    private boolean isOnPlatform(ArrayList<Sprite> platforms) {
-        this.yPos += 1;
-        boolean onPlatform = false;
-        for (Sprite platform : platforms) {
-            if (this.collidesWith(platform)){
-                onPlatform = true;
-                break;
-            }
-        }
-        this.yPos -= 1;
-        return onPlatform;
-    }
 
 	private void checkBoxCollision(double prevXPos){
 		ArrayList<Box> boxes = GameTimer.getBoxes();
@@ -301,7 +306,57 @@ public class Player extends Sprite{
         }
     }
 
+	private boolean isOnPlatform(ArrayList<Platform> platforms) {
+        this.yPos += 1;
+        boolean onPlatform = false;
+        for (Platform platform : platforms) {
+            if (this.collidesWith(platform)){
+                onPlatform = true;
+                break;
+            }
+        }
+        this.yPos -= 1;
+        return onPlatform;
+    }
 
+    private void checkPlatformCollision(double prevXPos) {
+        ArrayList<Platform> platforms = GameTimer.getPlatforms();
+
+        for (Platform platform : platforms){
+            if (this.collidesWith(platform)){
+				// if (!this.jumping){
+				// 	if (platform.isMovingRight() == true && (this.left || this.dx == 0)){  // platform moving right
+				// 		this.xPos = platform.getXPos() + this.width - 8;
+				// 	} else if (platform.isMovingRight() == false && (this.right || this.dx == 0)){  // platform moving left;
+				// 		this.xPos = platform.getXPos() - this.width - 1;
+				// 	}
+				// } else {
+				// 	this.xPos = prevXPos + 0.5;
+				// }
+				this.xPos = prevXPos;
+				this.dx = 0;
+				break;
+            }
+        }
+    }
+
+	private void checkPlatformCollisionY() {
+        ArrayList<Platform> platforms = GameTimer.getPlatforms();
+
+        for (Platform platform : platforms){
+            if (this.collidesWith(platform)){
+                if (this.dy > 0){  //falling
+                    this.yPos = platform.getYPos() - this.height;
+                    this.dy = 0;
+                    this.jumping = false;
+                    this.falling = false;
+                } else if (this.dy < 0){  //jumping
+                    this.yPos = platform.getYPos() + platform.getHeight();
+                    this.dy = 0;
+                }
+            }
+        }
+    }
 
 	//Initiates a jump for the player
 	// *Sets the player's state to jumping
