@@ -14,7 +14,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import objects.Door;
 import objects.Key;
@@ -85,8 +84,9 @@ public class GameTimer extends AnimationTimer{
 		this.setTimeElapsed();
 		
 		if (this.timeElapsed == Config.TIME_PER_LEVEL){
-			this.gameStage.setGameOver("lose");
+			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 			this.stop();
+			this.gameStage.setGameOver("lose");
 		}
 	}
 
@@ -219,7 +219,7 @@ public class GameTimer extends AnimationTimer{
 			this.gc.setFill(Color.RED);
 		}
 		this.gc.setFont(this.gameStage.font_minecraft);
-		this.gc.fillText(this.convertElapsedTime(), 750, 20);
+		this.gc.fillText(this.convertElapsedTime(), Config.WINDOW_SIZE / 2, 20);
 
 	}
 
@@ -353,8 +353,10 @@ public class GameTimer extends AnimationTimer{
 			}
 
 		} else {
+			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+			this.stop();
 			this.gameStage.setGameOver("win");
-            this.stop();
+            
 		}
 	}
 
