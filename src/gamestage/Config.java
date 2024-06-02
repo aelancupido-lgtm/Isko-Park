@@ -20,6 +20,8 @@ public class Config {
 
 	public final static int SERVER_PORT_NUMBER = 8080;
 
+	// time per level in seconds
+	public final static long TIME_PER_LEVEL = 60;
     public final static String[] INITIAL_MAPS = {"matrix_1", "matrix_2", "matrix_3"};
 
     public final static double[][] INITIAL_PLAYER_LOCATION = {{50, 592}, {64, 703}, {50, 720}};

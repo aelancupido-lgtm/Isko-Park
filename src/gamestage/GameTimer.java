@@ -39,6 +39,8 @@ public class GameTimer extends AnimationTimer{
 	private TextField inputBox;
 	private Group root;
 	private HashMap<String, Player> players;
+	private long startTime;
+	private long timeElapsed;
 
 	private static ArrayList<Box> boxes = new ArrayList<>();
 	private static ArrayList<Platform> platforms = new ArrayList<>();
@@ -51,6 +53,9 @@ public class GameTimer extends AnimationTimer{
 	    GameTimer.scene = scene;
 	    this.root = root;
 		this.gameStage = gameStage;
+
+		this.startTime = System.currentTimeMillis();
+
 	    this.key = new Key();
 	    this.door = new Door();
 
@@ -75,6 +80,13 @@ public class GameTimer extends AnimationTimer{
 		this.checkStatus();
 		this.renderSprites();
 		this.moveSprites();
+		this.setTimeElapsed();
+		
+		if (this.timeElapsed == Config.TIME_PER_LEVEL){
+			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+			this.gameStage.setGameOver("lose");
+			this.stop();
+		}
 	}
 
 	private void populatePlayerHashMap(){
@@ -137,107 +149,15 @@ public class GameTimer extends AnimationTimer{
 		this.root.getChildren().addAll(messageArea, inputBox);
 	}
 
-	//For checking collision between objects and the player
-	private void checkStatus(){
-		this.key.checkCollision(this.player);
-		this.door.checkCollision(this.player);
-
-		this.checkObstacleCollision();
-
-		//shows GameOver scene when player enter the door
-        if (this.door.isOpen() && this.door.playerAtCenter(this.player) && !this.player.hasExitedLevel()){
-			this.player.enterDoor();
-            PauseTransition transition = new PauseTransition(Duration.seconds(1));
-            transition.setOnFinished(event -> {
-				this.showNextLevel();
-            });
-            transition.play();
-        }
-	}
-
-	private void showNextLevel(){
-		
-		if (GameStage.getStageLevel() != Config.MAX_LEVEL){
-			GameStage.nextLevel();
-			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
-			this.stop();
-
-			// multiplayer next level
-			if (!GameStage.isSinglePlayer()){
-				this.gameStage.initWaiting();
-				this.gameStage.showWaitingScene();
-				GameStage.getClient().sendMessage("nextLvl;");
-				this.gameStage.waitAllPlayers();
-			} else {
-				this.gameStage.initStage();
-				this.gameStage.showStageScene();
-
-				PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-				pause.setOnFinished(event -> this.gameStage.setGameScene()); // Set the gameScene after the pause.
-				pause.play();
-			}
-
-		} else {
-			this.gameStage.setGameOver("win");
-            this.stop();
-		}
-	}
-
-
-	private void checkObstacleCollision(){
-		for (Spike spike: this.spikesList){
-			spike.checkCollision(this.player);
-		}
-
-		for (Button btn: this.buttons){
-			btn.checkCollision(this.player);
-		}
-
-		for (Portal portal: this.portals){
-			portal.checkCollision(this.player);
-		}
-
-		for (Box box: GameTimer.boxes){
-			for (Button btn: this.buttons){
-				box.checkCollision(btn);
-			}
-		} 
-	}
-
-	//For chat restrictions on keywords
+		//For chat restrictions on keywords
 	private boolean checkChatRestrictions(String chatText){
 		for (String keyword : Config.RESERVED_KEYWORDS) {
 			if (chatText.startsWith(keyword)){
 				return false;
 			}
 		}
-
+	
 		return true;
-	}
-
-	//For rendering sprites
-	private void renderSprites(){
-
-		GameTimer.tm.draw(gc);
-		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
-
-		this.renderObstacles();
-
-		if (this.key.isVisible()){
-			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());
-		}
-
-		if(this.player.isVisible()) {
-			this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
-		}
-
-		//Render other players
-		if (!GameStage.isSinglePlayer()){
-			this.players.forEach((key, user) -> {
-				if (user.isVisible()) user.render(gc, user.getXPos(), user.getYPos());
-			});
-		}
-		
 	}
 
 	private void initObstacles(){
@@ -291,6 +211,68 @@ public class GameTimer extends AnimationTimer{
 		}
 	}
 
+	//For checking collision between objects and the player
+	private void checkStatus(){
+		this.key.checkCollision(this.player);
+		this.door.checkCollision(this.player);
+
+		this.checkObstacleCollision();
+
+		//shows GameOver scene when player enter the door
+        if (this.door.isOpen() && this.door.playerAtCenter(this.player) && !this.player.hasExitedLevel()){
+			this.player.enterDoor();
+            PauseTransition transition = new PauseTransition(Duration.seconds(1));
+            transition.setOnFinished(event -> {
+				this.showNextLevel();
+            });
+            transition.play();
+        }
+	}
+
+	private void checkObstacleCollision(){
+		for (Spike spike: this.spikesList){
+			spike.checkCollision(this.player);
+		}
+
+		for (Button btn: this.buttons){
+			btn.checkCollision(this.player);
+		}
+
+		for (Portal portal: this.portals){
+			portal.checkCollision(this.player);
+		}
+
+		for (Box box: GameTimer.boxes){
+			for (Button btn: this.buttons){
+				box.checkCollision(btn);
+			}
+		} 
+	}
+
+	//For rendering sprites
+	private void renderSprites(){
+		GameTimer.tm.draw(gc);
+		this.door.render(this.gc, this.door.getXPos(), this.door.getYPos());
+
+		this.renderObstacles();
+
+		if (this.key.isVisible()){
+			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());
+		}
+
+		if(this.player.isVisible()) {
+			this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
+		}
+
+		//Render other players
+		if (!GameStage.isSinglePlayer()){
+			this.players.forEach((key, user) -> {
+				if (user.isVisible()) user.render(gc, user.getXPos(), user.getYPos());
+			});
+		}
+		
+	}
+
 	private void renderObstacles(){
 		for (Button btn: this.buttons){
 			if (btn.isVisible()) btn.render(gc, btn.getXPos(), btn.getYPos());
@@ -323,6 +305,34 @@ public class GameTimer extends AnimationTimer{
 		for (Platform platform : GameTimer.platforms) {
             platform.move();
         }
+	}
+
+	private void showNextLevel(){
+		if (GameStage.getStageLevel() != Config.MAX_LEVEL){
+			GameStage.nextLevel();
+			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+			this.stop();
+
+			// multiplayer next level
+			if (!GameStage.isSinglePlayer()){
+				this.gameStage.initWaiting();
+				this.gameStage.showWaitingScene();
+				GameStage.getClient().sendMessage("nextLvl;");
+				this.gameStage.waitAllPlayers();
+			} else {
+				this.gameStage.initStage();
+				this.gameStage.showStageScene();
+
+				PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+				pause.setOnFinished(event -> this.gameStage.setGameScene()); // Set the gameScene after the pause.
+				pause.play();
+			}
+
+		} else {
+			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+			this.gameStage.setGameOver("win");
+            this.stop();
+		}
 	}
 
 	public static TileManager getTileManager(){
@@ -359,6 +369,10 @@ public class GameTimer extends AnimationTimer{
 
 	public ArrayList<Button> getButtons(){
 		return this.buttons;
+	}
+
+	private void setTimeElapsed(){
+		this.timeElapsed = (System.currentTimeMillis() - this.startTime) / 1000;
 	}
 
 }
