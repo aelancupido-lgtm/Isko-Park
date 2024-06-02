@@ -96,6 +96,32 @@ public class GameStage {
 		this.playerUsernameInputDialog.setHeaderText("Enter your username");
 	}
 
+	public void setStage(Stage stage){
+		this.stage = stage;
+		this.prepareActionHandlers(this.splashScene);
+		stage.setScene(this.splashScene);
+		stage.setResizable(false);
+		stage.show();
+	}
+
+	private void prepareActionHandlers(Scene scene) {
+	    scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+	    	public void handle(KeyEvent e){
+	    		KeyCode code = e.getCode();
+	    		if(code.equals(KeyCode.ENTER)) {
+					playerUsernameInputDialog.showAndWait();
+					if (!(playerUsernameInputDialog.getEditor().getText().equals(""))){
+						IDENTIFIER = playerUsernameInputDialog.getEditor().getText();
+	    			} else {
+	    				IDENTIFIER = "temp";
+	    			}
+					
+					showModeScene();
+				}
+	    	}
+	    });
+	}
+
 	// Create a scene for the splash screen.
 	private void initSplash() {
 		StackPane root = new StackPane();
@@ -215,8 +241,6 @@ public class GameStage {
 		return null;
 	}
 
-
-
 	private void initServer() throws UnknownHostException{
 		GameStage.SERVER_ADDRESS = this.getIPaddress();
 
@@ -235,41 +259,14 @@ public class GameStage {
 		System.out.println("Server ip address: " + GameStage.SERVER_ADDRESS);
 	}
 
-	public void setStage(Stage stage){
-		this.stage = stage;
-		this.prepareActionHandlers(this.splashScene);
-		stage.setScene(this.splashScene);
-		stage.setResizable(false);
-		stage.show();
-	}
-
-	private void prepareActionHandlers(Scene scene) {
-	    scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
-	    	public void handle(KeyEvent e){
-	    		KeyCode code = e.getCode();
-	    		if(code.equals(KeyCode.ENTER)) {
-					playerUsernameInputDialog.showAndWait();
-					if (!(playerUsernameInputDialog.getEditor().getText().equals(""))){
-						IDENTIFIER = playerUsernameInputDialog.getEditor().getText();
-	    			} else {
-	    				IDENTIFIER = "temp";
-	    			}
-					
-					showModeScene();
-				}
-	    	}
-	    });
-	}
-
-	private VBox createWrapper(VBox mainButton, HBox backButton) {
-		VBox vBox = new VBox();
-
-		mainButton.setPadding(new Insets(250, 0, 0, 0));
-		backButton.setPadding(new Insets(30, 30, 30, 30));
-		
-		vBox.getChildren().addAll(backButton, mainButton);
-
-		return vBox;
+	private void initClient(){
+		GameStage.PLAYERS = new ArrayList<>();
+		GameStage.client = new ChatClientUDP();
+	    try {
+			GameStage.client.createClientThread(GameStage.getIdentifier());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void waitAllPlayers() {
@@ -303,7 +300,7 @@ public class GameStage {
 								// Change the scene after the pause.
 								showStageScene();
 								PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-								pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
+								pauseGameScene.setOnFinished(e -> setGameScene()); // Set the gameScene after the pause.
 								pauseGameScene.play();
 							});
 							pause.play();
@@ -314,13 +311,24 @@ public class GameStage {
 					if(running.get()) {
 						try {
 							Thread.sleep(1000);
-						} catch (InterruptedException ev) {
-							ev.printStackTrace();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 					}
 				}
 			}).start();
 		}
+	}
+
+	private VBox createWrapper(VBox mainButton, HBox backButton) {
+		VBox vBox = new VBox();
+
+		mainButton.setPadding(new Insets(250, 0, 0, 0));
+		backButton.setPadding(new Insets(30, 30, 30, 30));
+		
+		vBox.getChildren().addAll(backButton, mainButton);
+
+		return vBox;
 	}
 
 	private void designButton(Button b, double w, double h, double s) {
@@ -412,16 +420,6 @@ public class GameStage {
 
         return vBox;
     }
-
-	private void initClient(){
-		PLAYERS = new ArrayList<>();
-		GameStage.client = new ChatClientUDP();
-	    try {
-			GameStage.client.createClientThread(GameStage.getIdentifier());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	private HBox createBackButton(Scene scene) {
     	HBox hbox = new HBox();
