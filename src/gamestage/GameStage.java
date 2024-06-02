@@ -343,6 +343,7 @@ public class GameStage {
 
 				if(type == MenuType.MODE) { // Join a game.
 					GameStage.CREATE_GAME_MODE = false;
+					GameStage.SINGLE_PLAYER_GAME = false;
 					serverAddressInputDialog = new TextInputDialog();
 					serverAddressInputDialog.setHeaderText("Enter the server address");
 					serverAddressInputDialog.showAndWait();
@@ -406,7 +407,6 @@ public class GameStage {
 
 				if (type == MenuType.PLAYER){ // Multiplayer game.
 					GameStage.SINGLE_PLAYER_GAME = false;
-					initGame();
 					if (GameStage.CREATE_GAME_MODE){
 						try {
 							initServer();
@@ -607,7 +607,6 @@ public class GameStage {
 	// used for setting number of users waiting
 	public static void setNumWaiting(int usersWaiting){
 		GameStage.numUsersWaiting = usersWaiting;
-		System.out.println(GameStage.numUsersWaiting);
 	}
 
 	public static void addPlayers(String playerName){
