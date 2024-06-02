@@ -55,6 +55,7 @@ public class GameStage {
 	private Scene playerScene;
 	private Scene stageScene;
 	private Scene waitingScene;
+	private Scene gameOverScene;
 	private Stage stage;
 	private Canvas canvas;
 	private GameTimer gameTimer;
@@ -91,7 +92,7 @@ public class GameStage {
 		this.initSplash();
 		this.initMode();
 		this.initPlayer();
-		
+
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
 		this.playerUsernameInputDialog.setHeaderText("Enter your username");
 	}
@@ -216,6 +217,13 @@ public class GameStage {
 		
 		root.getChildren().addAll(this.playMedia(), this.playImage("waiting", ".gif"));
 		this.waitingScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+	}
+
+	private void initGameOver(String result) {
+		StackPane root = new StackPane();
+		
+		root.getChildren().addAll(this.playImage("gameover-" + result, ".gif"), this.playImage("gameover", ".gif"));
+		this.gameOverScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
 	void initGame() {
@@ -467,8 +475,8 @@ public class GameStage {
         gameTimer.start(); // invoke the start method of the animation timer.
 	}
 
-	void setGameOverScene(Scene gameOverScene){
-        this.stage.setScene(gameOverScene);
+	private void setGameOverScene(){
+        this.stage.setScene(this.gameOverScene);
     }
 
 	private void showModeScene() {
@@ -535,5 +543,10 @@ public class GameStage {
 
 	public static ChatClientUDP getClient(){
 		return GameStage.CLIENT;
+	}
+
+	void setGameOver(String result) {
+		this.initGameOver(result);
+		this.setGameOverScene();
 	}
 }
