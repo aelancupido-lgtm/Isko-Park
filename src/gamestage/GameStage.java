@@ -84,16 +84,13 @@ public class GameStage {
 	public GameStage(){
 		String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
     	GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
-		
 		GameStage.STAGE_LEVEL = 1;
+		GameStage.GAME_CREATED = false;
 
 		this.initBackground();
 		this.initSplash();
 		this.initMode();
 		this.initPlayer();
-		// this.initStage();
-		// this.initWaiting();
-		GameStage.GAME_CREATED = false;
 		
 		this.playerUsernameInputDialog = new TextInputDialog("Isko 12");
 		this.playerUsernameInputDialog.setHeaderText("Enter your username");
@@ -223,16 +220,12 @@ public class GameStage {
 	private void initServer() throws UnknownHostException{
 		GameStage.SERVER_ADDRESS = this.getIPaddress();
 
-
 		server = new ChatServerUDP();
 		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
-
 			protected ChatServerUDP call() throws Exception {
-
 				server.run();
 				return server;
 			}
-
 		};
 
 		Thread th = new Thread(task);
@@ -240,7 +233,6 @@ public class GameStage {
 		th.start();
 
 		System.out.println("Server ip address: " + GameStage.SERVER_ADDRESS);
-
 	}
 
 	public void setStage(Stage stage){
@@ -280,37 +272,83 @@ public class GameStage {
 		return vBox;
 	}
 
+	private void waitAllPlayers() {
+		Parent root = this.stage.getScene().getRoot();
+		if(root instanceof StackPane) {
+			StackPane stackPane = (StackPane) root;
+			Label node = createLabel("0");
+			stackPane.getChildren().add(node);
+
+			// Run the loop on a separate thread.
+			AtomicBoolean running = new AtomicBoolean(true);
+			new Thread(() -> {
+				while(running.get()) {
+					// Use Platform.runLater to update the UI from another thread.
+					Platform.runLater(() -> {
+						System.out.println(GameStage.numUsersWaiting);
+
+						node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
+
+						if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+							// Stop the while loop.
+							running.set(false);
+
+							// Add a delay before changing the scene.
+							PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+							pause.setOnFinished(event -> {
+								// Start the game here.
+								initGame();
+								initStage();
+
+								// Change the scene after the pause.
+								showStageScene();
+								PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+								pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
+								pauseGameScene.play();
+							});
+							pause.play();
+						}
+					});
+
+					// Add 1 sec delay.
+					if(running.get()) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException ev) {
+							ev.printStackTrace();
+						}
+					}
+				}
+			}).start();
+		}
+	}
+
+	private void designButton(Button b, double w, double h, double s) {
+		// Set the font of the buttons.
+		b.setFont(Font.font(GameStage.font.getName(), s));
+
+		// Set the size of the buttons.
+		b.setMinSize(w, h); 
+		b.setMaxSize(w, h); 
+		b.setPrefSize(w, h);
+
+		// Set the color of the buttons.
+		b.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent;");
+
+		// Add a hover animation.
+		b.setOnMouseEntered(e -> b.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1.1; -fx-scale-y: 1.1;"));
+		b.setOnMouseExited(e -> b.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1; -fx-scale-y: 1;"));
+	}
+
 	private VBox createMainButton(String text1, String text2, MenuType type) {
     	VBox vBox = new VBox();
     	vBox.setAlignment(Pos.CENTER);
-    	// vBox.setPadding(new Insets(150, 0, 0, 0));
 
         Button b1 = new Button(text1);
         Button b2 = new Button(text2);
-
-		// Set the font of the buttons.
-		b1.setFont(Font.font(GameStage.font.getName(), 60));
-		b2.setFont(Font.font(GameStage.font.getName(), 60)); 
-
-		// Set the size of the buttons.
-		b1.setMinSize(500, 100); 
-		b1.setMaxSize(500, 100); 
-		b2.setMinSize(500, 100);
-		b2.setMaxSize(500, 100);
-
-		b1.setPrefSize(500, 100);
-		b2.setPrefSize(500, 100);
-
-		// Set the color of the buttons.
-		b1.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent;");
-		b2.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent;");
-
-		 // Add a hover animation.
-		 b1.setOnMouseEntered(e -> b1.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1.1; -fx-scale-y: 1.1;"));
-		 b1.setOnMouseExited(e -> b1.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1; -fx-scale-y: 1;"));
-		 b2.setOnMouseEntered(e -> b2.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1.1; -fx-scale-y: 1.1;"));
-		 b2.setOnMouseExited(e -> b2.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1; -fx-scale-y: 1;"));
-
+		
+		designButton(b1, 500, 100, 60);
+		designButton(b2, 500, 100, 60);
 		vBox.getChildren().addAll(b1, b2);
 
         b1.setOnAction(new EventHandler<ActionEvent>() {
@@ -326,7 +364,7 @@ public class GameStage {
 				if(type == MenuType.PLAYER) { // Single player game.
 					GameStage.SINGLE_PLAYER_GAME = true;
 					initGame();
-					// TODO: initStage?
+					initStage();
 					showStageScene();
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
@@ -343,6 +381,7 @@ public class GameStage {
 
 				if(type == MenuType.MODE) { // Join a game.
 					GameStage.CREATE_GAME_MODE = false;
+					GameStage.SINGLE_PLAYER_GAME = false;
 					serverAddressInputDialog = new TextInputDialog();
 					serverAddressInputDialog.setHeaderText("Enter the server address");
 					serverAddressInputDialog.showAndWait();
@@ -351,56 +390,7 @@ public class GameStage {
 					initClient(); // initializes the client thread
 					initWaiting();
 					showWaitingScene();
-
-					// Parent root = stage.getScene().getRoot();
-					// if(root instanceof StackPane) {
-					// 	StackPane stackPane = (StackPane) root;
-					// 	Label node = createLabel("0");
-					// 	stackPane.getChildren().add(node);
-
-						
-					// 	// Run the loop on a separate thread.
-					// 	AtomicBoolean running = new AtomicBoolean(true);
-					// 	new Thread(() -> {
-					// 		while(running.get()) {
-					// 			// Use Platform.runLater to update the UI from another thread.
-					// 			Platform.runLater(() -> {
-					// 				System.out.println(GameStage.numUsersWaiting);
-
-					// 				node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
-
-					// 				if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
-					// 					// Stop the while loop.
-					// 					running.set(false);
-
-					// 					// Add a delay before changing the scene.
-					// 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					// 					pause.setOnFinished(event -> {
-					// 						// Start the game here.
-					// 						initGame();
-					// 						initStage();
-
-					// 						// Change the scene after the pause.
-					// 						showStageScene();
-					// 						PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					// 						pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
-					// 						pauseGameScene.play();
-					// 					});
-					// 					pause.play();
-					// 				}
-					// 			});
-
-					// 			// Add 1 sec delay.
-					// 			if(running.get()) {
-					// 				try {
-					// 					Thread.sleep(1000);
-					// 				} catch (InterruptedException ev) {
-					// 					ev.printStackTrace();
-					// 				}
-					// 			}
-					// 		}
-					// 	}).start();
-					// }
+					waitAllPlayers();
 
 				}
 
@@ -416,73 +406,7 @@ public class GameStage {
 					initClient(); // initializes the client thread
 					initWaiting();
 					showWaitingScene();
-
-					// Parent root = stage.getScene().getRoot();
-					// if(root instanceof StackPane) {
-					// 	StackPane stackPane = (StackPane) root;
-					// 	Label node = createLabel("0");
-					// 	stackPane.getChildren().add(node);
-
-					// 	// Run the loop on a separate thread.
-					// 	AtomicBoolean running = new AtomicBoolean(true);
-					// 	new Thread(() -> {
-					// 		while(running.get()) {
-					// 			// Use Platform.runLater to update the UI from another thread.
-					// 			Platform.runLater(() -> {
-					// 				System.out.println(GameStage.numUsersWaiting);
-
-					// 				node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
-
-					// 				if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
-					// 					// Stop the while loop.
-					// 					running.set(false);
-
-					// 					// Add a delay before changing the scene.
-					// 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					// 					pause.setOnFinished(event -> {
-					// 						// Start the game here.
-					// 						initGame();
-					// 						initStage();
-
-					// 						// Change the scene after the pause.
-					// 						showStageScene();
-					// 						PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					// 						pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
-					// 						pauseGameScene.play();
-					// 					});
-					// 					pause.play();
-					// 				}
-					// 			});
-
-					// 			// Add 1 sec delay.
-					// 			if(running.get()) {
-					// 				try {
-					// 					Thread.sleep(1000);
-					// 				} catch (InterruptedException ev) {
-					// 					ev.printStackTrace();
-					// 				}
-					// 			}
-					// 		}
-					// 	}).start();
-					// }
-
-					// temp 1 sec delay
-					// PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
-					// pause1.setOnFinished(event1 -> {
-					// 	initStage();
-					// 	showStageScene();
-
-					// 	PauseTransition pause2 = new PauseTransition(Duration.seconds(10.0)); // Create a pause of 2 seconds.
-					// 	pause2.setOnFinished(event2 -> setGameScene()); // Set the gameScene after the pause.
-					// 	pause2.play();
-					// }); 
-					
-					// Set the gameScene after the pause.
-
-					// pause1.play(); // Start the pause.
-					
-					// showStageScene(stage);
-					 // Start the pause.
+					waitAllPlayers();
 				}
             }
         });
@@ -506,21 +430,7 @@ public class GameStage {
 		
         Button b1 = new Button("back");
 
-		// Set the font color to orange.
-		b1.setFont(Font.font(GameStage.font.getName(), 20));
-
-		// Set the size of the button.
-		b1.setMinSize(80, 40); 
-		b1.setMaxSize(80, 40); 
-
-        b1.setPrefSize(80, 40);
-		
-		// Set the color of the buttons.
-		b1.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent;");
-
-		// Add a hover animation.
-		b1.setOnMouseEntered(e -> b1.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1.1; -fx-scale-y: 1.1;"));
-		b1.setOnMouseExited(e -> b1.setStyle("-fx-text-fill: #FF874E; -fx-background-color: transparent; -fx-scale-x: 1; -fx-scale-y: 1;"));
+		designButton(b1, 80, 40, 20);
         hbox.getChildren().addAll(b1);
 
         b1.setOnAction(new EventHandler<ActionEvent>() {

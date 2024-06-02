@@ -191,7 +191,7 @@ public class Player extends Sprite{
 
 	// send player coordinates to server
 	public void sendPlayerCoordinates(){
-		if ((this.dx != 0 || this.dy != 0) && !this.action.equals("idle")){
+		if ((this.dx != 0 || this.dy != 0)){
 			String message = "coor;" + name + ";" +  this.getXPos() + ";" + this.getYPos() + ";" + this.action + ";" + this.direction + ";" + this.left + ";" + this.right + ";" + this.spriteNum + ";";
 			GameStage.client.sendMessage(message);
 			this.sentIdleCheck = false;
@@ -433,7 +433,6 @@ public class Player extends Sprite{
 			respawnTL.play();
 	}
 
-	// TODO: fix player push bug
 	//For sprite animation
 	private void animatePlayer() {
 		Image img = null;
