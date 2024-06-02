@@ -28,7 +28,7 @@ public class Config {
 
 	// If no button on level, set level index to {} and if conditional for rendering [set to button.vanish()]
 	private final static double[][] INITIAL_BUTTON_LOCATION = {{450, 632}, {}};
-	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}, {}};
+	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}, {150, 715}};
 	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}, {}};
 	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}, {}};
 	private final static double[][] INITIAL_PLATFORM_LOCATION = {{220, 420, 600, 120}};
@@ -39,8 +39,8 @@ public class Config {
 	private final static int[][] PORTAL_WARPS = {{1, 0}, {}};
 
 	// order button, spike, box, portal, platform 
-	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2, 2}, {0, 0, 0, 0, 0}};
-	public final static int MAX_LEVEL = 3;
+	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2, 2}, {0, 1, 0, 0, 0}};
+	public final static int MAX_LEVEL = 2;
 
 	// gets the obstacle location based on object number and return xPos or yPos
 	// allows for multiple obstacles of the same type per stage

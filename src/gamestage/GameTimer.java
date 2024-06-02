@@ -10,7 +10,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -61,6 +60,7 @@ public class GameTimer extends AnimationTimer{
 	    GameTimer.tm = new TileManager();
 	    GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
 		this.initObstacles();
+		Player.resetPlayerCount();
 		this.player = new Player(GameStage.getIdentifier());
 		
 
@@ -156,32 +156,19 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	private void showNextLevel(){
+		
 		if (GameStage.getStageLevel() != Config.MAX_LEVEL){
 			GameStage.nextLevel();
-			GameTimer.tm.clear(this.gc);
-			GameTimer.tm.loadMap(Config.INITIAL_MAPS[GameStage.getLevel()]);
+			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+			this.stop();
+			this.gameStage.initWaiting();
+			this.gameStage.showWaitingScene();
 
-			this.key.removePlayer();
-			this.player.setXPos(Config.getInitialPlayerLocation(true));
-			this.player.setYPos(Config.getInitialPlayerLocation(false));
-			this.player.resetPlayer();
-			this.player.appear();
-
-			this.door = new Door();
-			this.key = new Key();
-
-			// TODO: waiting screen for other players
-
+			// multiplayer next level
 			if (!GameStage.isSinglePlayer()){
-				this.players.forEach((key, user) -> {
-					user.setXPos(Config.getInitialPlayerLocation(false));
-					user.setYPos(Config.getInitialPlayerLocation(true));
-					user.resetPlayer();
-					user.appear();
-				});
+				GameStage.client.sendMessage("nextLvl;");
+				// this.gameStage.waitAllPlayers();
 			}
-
-			this.initObstacles();
 
 		} else {
             this.stop();

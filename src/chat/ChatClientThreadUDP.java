@@ -152,8 +152,12 @@ public class ChatClientThreadUDP extends Thread{
                     double boxXPos = Double.parseDouble(message.split(";")[2]);
     
                     GameTimer.getBoxes().get(boxNumber).setXPos(boxXPos);
-                } else if (message.startsWith("userNum;") || message.startsWith("player;")){
-                  
+                } else if (message.startsWith("userNum;")){
+                    int numUsersWaiting = Integer.parseInt(message.split(";")[1]);
+                    GameStage.setNumWaiting(numUsersWaiting);
+
+                } else if(message.startsWith("player;")){
+
                 }
               
                 //Regular chat

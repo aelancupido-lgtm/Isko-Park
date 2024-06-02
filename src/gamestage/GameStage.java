@@ -131,14 +131,14 @@ public class GameStage {
 		this.stageScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
-	private void initWaiting() {
+	void initWaiting() {
 		StackPane root = new StackPane();
 		
 		root.getChildren().addAll(this.playMedia(), this.playImage("waiting", ".gif"));
 		this.waitingScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
-	private void initGame() {
+	void initGame() {
 		this.root = new Group();
 
 		//Adds space for chat if multiplayer game
@@ -352,61 +352,60 @@ public class GameStage {
 					initWaiting();
 					showWaitingScene();
 
-					Parent root = stage.getScene().getRoot();
-					if(root instanceof StackPane) {
-						StackPane stackPane = (StackPane) root;
-						Label node = createLabel("0");
-						stackPane.getChildren().add(node);
+					// Parent root = stage.getScene().getRoot();
+					// if(root instanceof StackPane) {
+					// 	StackPane stackPane = (StackPane) root;
+					// 	Label node = createLabel("0");
+					// 	stackPane.getChildren().add(node);
 
 						
-						// Run the loop on a separate thread.
-						AtomicBoolean running = new AtomicBoolean(true);
-						new Thread(() -> {
-							while(running.get()) {
-								// Use Platform.runLater to update the UI from another thread.
-								Platform.runLater(() -> {
-									System.out.println(GameStage.numUsersWaiting);
+					// 	// Run the loop on a separate thread.
+					// 	AtomicBoolean running = new AtomicBoolean(true);
+					// 	new Thread(() -> {
+					// 		while(running.get()) {
+					// 			// Use Platform.runLater to update the UI from another thread.
+					// 			Platform.runLater(() -> {
+					// 				System.out.println(GameStage.numUsersWaiting);
 
-									node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
+					// 				node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
 
-									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
-										// Stop the while loop.
-										running.set(false);
+					// 				if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+					// 					// Stop the while loop.
+					// 					running.set(false);
 
-										// Add a delay before changing the scene.
-										PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-										pause.setOnFinished(event -> {
-											// Start the game here.
-											initGame();
-											initStage();
+					// 					// Add a delay before changing the scene.
+					// 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					// 					pause.setOnFinished(event -> {
+					// 						// Start the game here.
+					// 						initGame();
+					// 						initStage();
 
-											// Change the scene after the pause.
-											showStageScene();
-											PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-											pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
-											pauseGameScene.play();
-										});
-										pause.play();
-									}
-								});
+					// 						// Change the scene after the pause.
+					// 						showStageScene();
+					// 						PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					// 						pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
+					// 						pauseGameScene.play();
+					// 					});
+					// 					pause.play();
+					// 				}
+					// 			});
 
-								// Add 1 sec delay.
-								if(running.get()) {
-									try {
-										Thread.sleep(1000);
-									} catch (InterruptedException ev) {
-										ev.printStackTrace();
-									}
-								}
-							}
-						}).start();
-					}
+					// 			// Add 1 sec delay.
+					// 			if(running.get()) {
+					// 				try {
+					// 					Thread.sleep(1000);
+					// 				} catch (InterruptedException ev) {
+					// 					ev.printStackTrace();
+					// 				}
+					// 			}
+					// 		}
+					// 	}).start();
+					// }
 
 				}
 
 				if (type == MenuType.PLAYER){ // Multiplayer game.
 					GameStage.SINGLE_PLAYER_GAME = false;
-					initGame();
 					if (GameStage.CREATE_GAME_MODE){
 						try {
 							initServer();
@@ -418,54 +417,54 @@ public class GameStage {
 					initWaiting();
 					showWaitingScene();
 
-					Parent root = stage.getScene().getRoot();
-					if(root instanceof StackPane) {
-						StackPane stackPane = (StackPane) root;
-						Label node = createLabel("0");
-						stackPane.getChildren().add(node);
+					// Parent root = stage.getScene().getRoot();
+					// if(root instanceof StackPane) {
+					// 	StackPane stackPane = (StackPane) root;
+					// 	Label node = createLabel("0");
+					// 	stackPane.getChildren().add(node);
 
-						// Run the loop on a separate thread.
-						AtomicBoolean running = new AtomicBoolean(true);
-						new Thread(() -> {
-							while(running.get()) {
-								// Use Platform.runLater to update the UI from another thread.
-								Platform.runLater(() -> {
-									System.out.println(GameStage.numUsersWaiting);
+					// 	// Run the loop on a separate thread.
+					// 	AtomicBoolean running = new AtomicBoolean(true);
+					// 	new Thread(() -> {
+					// 		while(running.get()) {
+					// 			// Use Platform.runLater to update the UI from another thread.
+					// 			Platform.runLater(() -> {
+					// 				System.out.println(GameStage.numUsersWaiting);
 
-									node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
+					// 				node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
 
-									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
-										// Stop the while loop.
-										running.set(false);
+					// 				if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+					// 					// Stop the while loop.
+					// 					running.set(false);
 
-										// Add a delay before changing the scene.
-										PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-										pause.setOnFinished(event -> {
-											// Start the game here.
-											initGame();
-											initStage();
+					// 					// Add a delay before changing the scene.
+					// 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					// 					pause.setOnFinished(event -> {
+					// 						// Start the game here.
+					// 						initGame();
+					// 						initStage();
 
-											// Change the scene after the pause.
-											showStageScene();
-											PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-											pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
-											pauseGameScene.play();
-										});
-										pause.play();
-									}
-								});
+					// 						// Change the scene after the pause.
+					// 						showStageScene();
+					// 						PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+					// 						pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
+					// 						pauseGameScene.play();
+					// 					});
+					// 					pause.play();
+					// 				}
+					// 			});
 
-								// Add 1 sec delay.
-								if(running.get()) {
-									try {
-										Thread.sleep(1000);
-									} catch (InterruptedException ev) {
-										ev.printStackTrace();
-									}
-								}
-							}
-						}).start();
-					}
+					// 			// Add 1 sec delay.
+					// 			if(running.get()) {
+					// 				try {
+					// 					Thread.sleep(1000);
+					// 				} catch (InterruptedException ev) {
+					// 					ev.printStackTrace();
+					// 				}
+					// 			}
+					// 		}
+					// 	}).start();
+					// }
 
 					// temp 1 sec delay
 					// PauseTransition pause1 = new PauseTransition(Duration.seconds(1.0)); // Create a pause of 4 seconds.
@@ -534,7 +533,7 @@ public class GameStage {
         return hbox;
 	}
 
-	private Label createLabel(String text) {
+	Label createLabel(String text) {
 		Label label = new Label("(" + String.valueOf(text) + "/" + Config.MAX_PLAYERS + ")");
 		label.setFont(Font.font(GameStage.font.getName(), 50));
 		label.setTextFill(Color.web("#FF874E"));
@@ -549,7 +548,7 @@ public class GameStage {
 		return label;
 	}
 
-	private void setGameScene() {
+	void setGameScene() {
 		GameStage.GAME_CREATED = true;
         this.stage.setScene(this.gameScene);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
@@ -575,8 +574,61 @@ public class GameStage {
 		this.stage.setScene(this.stageScene);
 	}
 
-	private void showWaitingScene() {
+	public void showWaitingScene() {
 		this.stage.setScene(this.waitingScene);
+		// Parent root = stage.getScene().getRoot();
+		// 			if(root instanceof StackPane) {
+		// 				StackPane stackPane = (StackPane) root;
+		// 				Label node = createLabel("0");
+		// 				stackPane.getChildren().add(node);
+
+						
+		// 				// Run the loop on a separate thread.
+		// 				AtomicBoolean running = new AtomicBoolean(true);
+		// 				new Thread(() -> {
+		// 					while(running.get()) {
+		// 						// Use Platform.runLater to update the UI from another thread.
+		// 						Platform.runLater(() -> {
+		// 							System.out.println(GameStage.numUsersWaiting);
+
+		// 							node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
+
+		// 							if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+		// 								// Stop the while loop.
+		// 								running.set(false);
+
+		// 								// Add a delay before changing the scene.
+		// 								PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+		// 								pause.setOnFinished(event -> {
+		// 									// Start the game here.
+		// 									initGame();
+		// 									initStage();
+
+		// 									// Change the scene after the pause.
+		// 									showStageScene();
+		// 									PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+		// 									pauseGameScene.setOnFinished(ev -> {
+		// 										// resetNumberWaiting();
+		// 										setGameScene();
+		// 									}); // Set the gameScene after the pause.
+		// 									pauseGameScene.play();
+		// 								});
+		// 								pause.play();
+		// 							}
+		// 						});
+
+		// 						// Add 1 sec delay.
+		// 						if(running.get()) {
+		// 							try {
+		// 								Thread.sleep(1000);
+		// 							} catch (InterruptedException ev) {
+		// 								ev.printStackTrace();
+		// 							}
+		// 						}
+		// 					}
+		// 				}).start();
+		// 			}
+
 	}
 
 	// for getting int value for array
@@ -607,7 +659,6 @@ public class GameStage {
 	// used for setting number of users waiting
 	public static void setNumWaiting(int usersWaiting){
 		GameStage.numUsersWaiting = usersWaiting;
-		System.out.println(GameStage.numUsersWaiting);
 	}
 
 	public static void addPlayers(String playerName){
@@ -624,5 +675,9 @@ public class GameStage {
 
 	public static boolean isCreated(){
 		return GameStage.GAME_CREATED;
+	}
+
+	Stage getStage(){
+		return this.stage;
 	}
 }

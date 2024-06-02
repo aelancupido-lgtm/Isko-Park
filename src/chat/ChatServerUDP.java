@@ -63,6 +63,9 @@ public class ChatServerUDP extends Thread{
 
             forwardMessageToClient(users.get(i), hosts.get(i), players.getBytes(), players);
         }
+
+        byte[] gameStartMessage = new String("[Server] The game has started!").getBytes();
+        forwardMessageToAll(gameStartMessage, "[Server] The game has started!");
     }
 
     private static void forwardMessageToClient(int userPort, InetAddress userHost, byte[] byteMessage, String message){
@@ -95,6 +98,7 @@ public class ChatServerUDP extends Thread{
 
 	@Override
 	public void run(){
+        int playersWaiting = 0;
         boolean sentPlayerIdentifiers = false;
         System.out.println("Server started on port " + Config.SERVER_PORT_NUMBER);
 		while (!socket.isClosed()){
@@ -115,20 +119,9 @@ public class ChatServerUDP extends Thread{
 
                 String username = message.replace("init;", "");
                 identifiers.add(username);
-
-                // new user chat message
-                // byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
-                // byte[] gameStartMessage = new String("[Server] The game has started!").getBytes();
-
-
-                // add user to users hashmap message
-                // byte[] addUserMessage = new String("player;" + username).getBytes();
                 
                 byte[] sendNumberOfPlayers = new String("userNum;" + users.size()).getBytes();
 
-                // forwardMessage(userPort, userHost, newUserMessage, "[Server] Player " + username + " has joined the chat!");
-                // forwardMessage(userPort, userHost, addUserMessage, "player;" + username);
-                // forwardMessageToAll(addUserMessage, message);
                 forwardMessageToAll(sendNumberOfPlayers, "userNum;" + users.size());
 
             // forward
@@ -148,8 +141,14 @@ public class ChatServerUDP extends Thread{
                     e.printStackTrace();
                 }
                 
-
-            } else {
+            // if player is at the next level
+            } else if (message.contains("nextLvl;")) {
+                playersWaiting++;
+                byte[] nextLevelPlayers = new String("userNum;" + playersWaiting).getBytes();
+                forwardMessageToAll(nextLevelPlayers, "userNum;" + playersWaiting);
+            } 
+            
+            else {
                 int userPort = packet.getPort();  // get port from the packet
                 InetAddress userHost = packet.getAddress();
                 byte[] byteMessage = message.getBytes(); // convert the string to bytes
@@ -164,6 +163,7 @@ public class ChatServerUDP extends Thread{
             // send all players to port
             // assumes that all players have already joined the game
             if (identifiers.size() == Config.MAX_PLAYERS && !sentPlayerIdentifiers) {
+                
                 initPlayersArray();
                 sentPlayerIdentifiers = true;
             }
@@ -171,40 +171,4 @@ public class ChatServerUDP extends Thread{
 			}
 
 	}
-
-//	public static void main(String[] args){
-//		System.out.println("Server started on port " + PORT);
-//
-//		while (true){
-//
-//			DatagramPacket packet = new DatagramPacket(incoming, incoming.length); // prepare packet
-//            try {
-//                socket.receive(packet); // receive packet
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            String message = new String(packet.getData(), 0, packet.getLength()); // create a string
-//            System.out.println("Server received: " + message);
-//
-//
-//            if (message.contains("init;")) {
-//                users.add(packet.getPort());
-//                String username = message.replace("init;", "");
-//                byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
-//                int userPort = packet.getPort();
-//
-//                forwardMessage(userPort, newUserMessage, "[Server] Player " + username + " has joined the chat!");
-//                }
-//
-//            // forward
-//            else {
-//                int userPort = packet.getPort();  // get port from the packet
-//                byte[] byteMessage = message.getBytes(); // convert the string to bytes
-//
-//                forwardMessage(userPort, byteMessage, message);
-//            }
-//
-//			}
-//		}
 	}

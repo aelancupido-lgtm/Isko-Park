@@ -477,6 +477,12 @@ public class Player extends Sprite{
 		return this.hasEnteredDoor;
 	}
 
+	public static void resetPlayerCount(){
+		Player.INITIAL_INDEX = 0;
+		Player.INITIAL_X = Config.getInitialPlayerLocation(true);
+		Player.INITIAL_Y = Config.getInitialPlayerLocation(false);
+	}
+
 
 	//Setter methods
 	public void acquireKey(Key key){
