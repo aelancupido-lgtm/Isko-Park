@@ -78,13 +78,18 @@ public class GameStage {
 	private static boolean SINGLE_PLAYER_GAME;
 	private static boolean CREATE_GAME_MODE;
 
-	public static Font font;
+	public Font font_pico;
+	public Font font_minecraft;
 
 	private MediaPlayer mediaPlayer;
 
 	public GameStage(){
-		String url = System.getProperty("user.dir") + "/src/assets/font/PICOBL__.TTF";
-    	GameStage.font = Font.loadFont(Paths.get(url).toUri().toString(), 12);
+		String url1 = System.getProperty("user.dir") + "/src/assets/font/pico.TTF";
+    	this.font_pico = Font.loadFont(Paths.get(url1).toUri().toString(), 12);
+
+		String url2 = System.getProperty("user.dir") + "/src/assets/font/minecraft.ttf";
+    	this.font_minecraft = Font.loadFont(Paths.get(url2).toUri().toString(), 12);
+
 		GameStage.STAGE_LEVEL = 1;
 		GameStage.GAME_CREATED = false;
 
@@ -277,13 +282,17 @@ public class GameStage {
 		return imageView;
 	}
 
-	void waitAllPlayers() {
-
+	void waitAllPlayers(Boolean isServer) {
 		Parent root = this.stage.getScene().getRoot();
 		if(root instanceof StackPane) {
 			StackPane stackPane = (StackPane) root;
-			Label node = createLabel("0");
-			stackPane.getChildren().add(node);
+			Label node = createLabel("(0/" + Config.MAX_PLAYERS + ")", this.font_pico, 50, 800);
+			stackPane.getChildren().addAll(node);
+
+			if (isServer){
+				Label code = createLabel("Game Code: " + GameStage.SERVER_ADDRESS, this.font_minecraft, 20, 300);
+				stackPane.getChildren().addAll(code);
+			}
 
 			// Run the loop on a separate thread.
 			AtomicBoolean running = new AtomicBoolean(true);
@@ -342,7 +351,7 @@ public class GameStage {
 
 	private void designButton(Button b, double w, double h, double s) {
 		// Set the font of the buttons.
-		b.setFont(Font.font(GameStage.font.getName(), s));
+		b.setFont(Font.font(this.font_pico.getName(), s));
 
 		// Set the size of the buttons.
 		b.setMinSize(w, h); 
@@ -407,7 +416,7 @@ public class GameStage {
 					initClient(); // initializes the client thread
 					initWaiting();
 					showWaitingScene();
-					waitAllPlayers();
+					waitAllPlayers(false);
 
 				}
 
@@ -423,7 +432,7 @@ public class GameStage {
 					initClient(); // initializes the client thread
 					initWaiting();
 					showWaitingScene();
-					waitAllPlayers();
+					waitAllPlayers(true);
 				}
             }
         });
@@ -450,9 +459,9 @@ public class GameStage {
         return hbox;
 	}
 
-	private Label createLabel(String text) {
-		Label label = new Label("(" + String.valueOf(text) + "/" + Config.MAX_PLAYERS + ")");
-		label.setFont(Font.font(GameStage.font.getName(), 50));
+	private Label createLabel(String text, Font font, double size, double padding) {
+		Label label = new Label(text);
+		label.setFont(Font.font(font.getName(), size));
 		label.setTextFill(Color.web("#FF874E"));
 
 		// Set the size of the label.
@@ -460,7 +469,7 @@ public class GameStage {
 		label.setAlignment(Pos.CENTER);
 		
 		// Set the padding of the label.
-		label.setPadding(new Insets(800, 0, 0, 0)); // top, right, bottom, left
+		label.setPadding(new Insets(padding, 0, 0, 0)); // top, right, bottom, left
 
 		return label;
 	}

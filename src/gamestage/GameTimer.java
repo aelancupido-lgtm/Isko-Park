@@ -318,7 +318,7 @@ public class GameTimer extends AnimationTimer{
 				this.gameStage.initWaiting();
 				this.gameStage.showWaitingScene();
 				GameStage.getClient().sendMessage("nextLvl;");
-				this.gameStage.waitAllPlayers();
+				this.gameStage.waitAllPlayers(false);
 			} else {
 				this.gameStage.initStage();
 				this.gameStage.showStageScene();
