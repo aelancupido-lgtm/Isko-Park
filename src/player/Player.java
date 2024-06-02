@@ -408,7 +408,7 @@ public class Player extends Sprite{
 			// set player visibility to true 5 seconds after respawning (player flickers otherwise)
 			Timeline respawnTL = new Timeline(
 				new KeyFrame(
-					Duration.seconds(5),
+					Duration.seconds(2),
 					event -> {
 						this.setAction(Player.INITIAL_ACTION);
 						this.setDirection(Player.INITIAL_DIRECTION);
@@ -417,7 +417,7 @@ public class Player extends Sprite{
 						if (!GameStage.isSinglePlayer()) this.sentDeadCheck = false;
 						Timeline appearTL = new Timeline(
 							new KeyFrame(
-								Duration.seconds(5),
+								Duration.seconds(2),
 								e -> {
 									this.appear();
 									if (this.name.equals(GameStage.getIdentifier()) && !GameStage.isSinglePlayer()) this.sendPlayerCoordinates();

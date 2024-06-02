@@ -22,23 +22,23 @@ public class Config {
 
     public final static String[] INITIAL_MAPS = {"matrix_1", "matrix_2", "matrix_3"};
 
-    public final static double[][] INITIAL_PLAYER_LOCATION = {{50, 592}, {64, 702}, {50, 720}};
-    public final static double[][] INITIAL_DOOR_LOCATION = {{650, 576}, {615, 576}, {35, 64}};
-    public final static double[][] INITIAL_KEY_LOCATION = {{100, 118}, {453, 350}, {380, 300}};
+    public final static double[][] INITIAL_PLAYER_LOCATION = {{50, 592}, {64, 703}, {50, 720}};
+    public final static double[][] INITIAL_DOOR_LOCATION = {{650, 576}, {58, 64}, {35, 64}};
+    public final static double[][] INITIAL_KEY_LOCATION = {{100, 118}, {85, 200}, {380, 300}};
 
 	// If no button on level, set level index to {} and if conditional for rendering [set to button.vanish()]
-	private final static double[][] INITIAL_BUTTON_LOCATION = {{450, 632}, {}, {212, 272}};
-	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}, {150, 715}, {370, 545, 307, 545, 434, 545, 565, 737, 259, 735}};
-	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}, {}, {100, 736, 143, 257}};
-	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}, {}, {480, 430, 10, 550, 270, 430, 458, 690, 268, 25, 720, 690, 570, 285, 735, 25, 330, 690, 735, 167, 490, 167, 185, 50}};
-	private final static double[][] INITIAL_PLATFORM_LOCATION = {{220, 420, 600, 120}, {}, {360, 510, 675, 650, 675, 455}};
+	private final static double[][] INITIAL_BUTTON_LOCATION = {{450, 632}, {575, 625, 285, 432}, {212, 272}};
+	private final static double[][] INITIAL_SPIKE_LOCATION = {{400, 538}, {220, 730}, {370, 545, 307, 545, 434, 545, 565, 737, 259, 735}};
+	private final static double[][] INITIAL_BOX_LOCATION = {{280, 608}, {225, 418}, {100, 736, 143, 257}};
+	private final static double[][] INITIAL_PORTAL_LOCATION = {{560, 400, 100, 450}, {450, 250, 220, 50, 125, 350, 590, 400}, {480, 430, 10, 550, 270, 430, 458, 690, 268, 25, 720, 690, 570, 285, 735, 25, 330, 690, 735, 167, 490, 167, 185, 50}};
+	private final static double[][] INITIAL_PLATFORM_LOCATION = {{220, 420, 600, 120}, {210, 270, 300, 350}, {360, 510, 675, 650, 675, 455}};
 
 	// for portal warping
 	// contains indexes of portals
-	private final static int[][] PORTAL_WARPS = {{1, 0}, {}, {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10}};
+	private final static int[][] PORTAL_WARPS = {{1, 0}, {3, 0, 1, 2}, {1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10}};
 
 	// order button, spike, box, portal, platform 
-	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2, 2}, {0, 1, 0, 0, 0}, {1, 5, 2, 12, 3}};
+	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2, 2}, {2, 1, 1, 4, 2}, {1, 5, 2, 12, 3}};
 	public final static int MAX_LEVEL = 3;
 
 	// gets the obstacle location based on object number and return xPos or yPos
