@@ -377,7 +377,7 @@ public class GameStage {
 				if(type == MenuType.PLAYER) { // Single player game.
 					GameStage.SINGLE_PLAYER_GAME = true;
 					initGame();
-					// TODO: initStage?
+					initStage();
 					showStageScene();
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
