@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
 import java.io.IOException;
 
 import gamestage.Config;
@@ -49,6 +48,18 @@ public class ServerUDP extends Thread{
         }
 
 	}
+
+    private static void forwardMessageToClient(int userPort, InetAddress userHost, byte[] byteMessage, String message){
+        DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, userHost, userPort);
+        forward.setPort(userPort);
+        try {
+            forward.setAddress(userHost);
+            socket.send(forward);
+            System.out.println("Sent message: " + message + " to " + userHost.getHostAddress() + ":" + userPort);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     // send all players to new port
     private static void initPlayersArray(){
@@ -102,6 +113,17 @@ public class ServerUDP extends Thread{
                 hosts.add(packet.getAddress());
 
                 String username = message.replace("init;", "");
+
+                int occurrences = 0;
+                if (identifiers.contains(username)){
+                    while (identifiers.contains(username)){
+                        occurrences++;
+                        username = username + occurrences;
+                    }
+
+                    forwardMessageToClient(packet.getPort(), packet.getAddress(), new String("userN;" + username).getBytes(), "userN;" + username);
+                }
+
                 identifiers.add(username);
                 
                 byte[] sendNumberOfPlayers = new String("userNum;" + users.size()).getBytes();

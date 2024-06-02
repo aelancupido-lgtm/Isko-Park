@@ -9,8 +9,9 @@
 
 ## Isko Park
 ### Running
-  - To run the game, click on IskoPark.jar file in jar_file folder
-  - Alternatively, run `java -jar IskoPark.jar` from jar_file folder in any terminal
+  - To run the game, click on IskoPark.jar file in jar_file folder.
+  - Alternatively, run `java -jar IskoPark.jar` from jar_file folder in any terminal if Java SE 8.
+  - run `java --module-path $FX-PATH --add-modules javafx.controls -jar IskoPark.jar` where `$FX-PATH` is the JavaFX path if Java SE 11 or higher.
 
 ### How to play
   - #### Game Objectives
@@ -27,15 +28,16 @@
     - Use ENTER key to send the message to the chat.
     - Use ESCAPE key to exit the chat box and return to the game.
 
-## References:
+## References
   - JavaFX Chat App with UDP: https://github.com/javacodingcommunity/javafx-chat-app-with-udp/tree/main
   - Stopping threads on application close: https://stackoverflow.com/questions/14897194/stop-threads-before-close-my-javafx-program
   - Different IP UDP socket sending: https://stackoverflow.com/questions/18207195/udp-multiple-socket
   - JavaFX Task Documentation: https://openjfx.io/javadoc/18/javafx.graphics/javafx/concurrent/Task.html
   - Getting IP Address: https://stackoverflow.com/questions/8083479/java-getting-my-ip-address
   - Tile and TileManager Class: https://www.youtube.com/watch?v=ugzxCcpoSdE&list=PL_QPQmz5C6WUF-pOQDsbsKbaBZqXj4qSq&index=5
+  - Exporting JavaFX application to JAR file: https://stackoverflow.com/questions/39710286/export-javafx-project-to-a-runnable-using-eclipse
 
-## Assets:
+## Assets
   - Player: https://picoparkteco.comic.studio/
   - Key: https://www.pixil.art/art/key-c0274e0785c3672
   - Portal: https://pixelnauta.itch.io/pixel-dimensional-portal-32x32

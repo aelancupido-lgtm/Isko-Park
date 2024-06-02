@@ -104,7 +104,13 @@ public class GameTimer extends AnimationTimer{
 		this.inputBox = new TextField();
 
 		GameStage.getClient().getClientThread().startGame(this, messageArea);
+		this.initTextArea();
+		this.initInputField();
 
+		this.root.getChildren().addAll(this.messageArea, this.inputBox);
+	}
+
+	private void initTextArea(){
 		this.messageArea.setMaxWidth(Config.CHAT_SIZE);
 		this.messageArea.setLayoutX(Config.WINDOW_SIZE);
 		this.messageArea.setMinHeight(Config.WINDOW_SIZE - 2.5);
@@ -121,8 +127,9 @@ public class GameTimer extends AnimationTimer{
 			}
 			
 		});
+	}
 
-
+	private void initInputField(){
 		this.inputBox.setMaxWidth(Config.CHAT_SIZE);
 		this.inputBox.setPromptText("Enter your message");
 		this.inputBox.setLayoutX(Config.WINDOW_SIZE + 7.5);
@@ -146,7 +153,6 @@ public class GameTimer extends AnimationTimer{
 		});
 
 		this.inputBox.setFocusTraversable(false);
-		this.root.getChildren().addAll(messageArea, inputBox);
 	}
 
 		//For chat restrictions on keywords
@@ -161,47 +167,64 @@ public class GameTimer extends AnimationTimer{
 	}
 
 	private void initObstacles(){
+		this.initBoxes();
+		this.initButtons();
+		this.initPlatforms();
+		this.initPortals();
+		this.initSpikes();
+	}
 
-		this.buttons.clear();
-		this.spikesList.clear();
-		this.portals.clear();
-		GameTimer.boxes.clear();
+	private void initPlatforms(){
 		GameTimer.platforms.clear();
-
-		Button.resetButtonCount();
-		Spike.resetSpikeCount();
-		Portal.resetPortalCount();
-		Box.resetBoxCount();
 		Platform.resetPlatformCount();
 
-		int buttonNumber = Config.obstacleCount("BUTTON");
-		int spikeNumber = Config.obstacleCount("SPIKE");
-		int portalNumber = Config.obstacleCount("PORTAL");
-		int boxNumber = Config.obstacleCount("BOX");
 		int platformNumber = Config.obstacleCount("PLATFORM");
-		
+		for (int i = 0; i < platformNumber; i++) {
+			double x = Config.obstacleLocation("PLATFORM", Platform.getPlatformNumber(), true);
+			double y = Config.obstacleLocation("PLATFORM", Platform.getPlatformNumber(), false);
+			GameTimer.platforms.add(new Platform(x, y));
+		}
+	}
+
+	private void initSpikes(){
+		this.spikesList.clear();
+		Spike.resetSpikeCount();
+
+		int spikeNumber = Config.obstacleCount("SPIKE");
+		for (int i =0 ; i < spikeNumber; i++){
+			this.spikesList.add(new Spike());
+		}
+	}
+
+	private void initPortals(){
+		this.portals.clear();
+		Portal.resetPortalCount();		
+
+		int portalNumber = Config.obstacleCount("PORTAL");
 		for (int i = 0; i < portalNumber; i++){
 			this.portals.add(new Portal());
 		}
 
 		this.setUpPortalWarps();
+	}
 
-		for (int i =0 ; i < spikeNumber; i++){
-			this.spikesList.add(new Spike());
-		}
+	private void initBoxes(){
+		GameTimer.boxes.clear();
+		Box.resetBoxCount();
 
-		for (int i = 0; i <buttonNumber; i++){
-			this.buttons.add(new Button());
-		}
-
+		int boxNumber = Config.obstacleCount("BOX");
 		for (int i = 0; i < boxNumber; i++){
 			GameTimer.boxes.add(new Box());
 		}
+	}
 
-		for (int i = 0; i < platformNumber; i++) {
-			double x = Config.obstacleLocation("PLATFORM", Platform.getPlatformNumber(), true);
-			double y = Config.obstacleLocation("PLATFORM", Platform.getPlatformNumber(), false);
-			GameTimer.platforms.add(new Platform(x, y));
+	private void initButtons(){
+		this.buttons.clear();
+		Button.resetButtonCount();
+
+		int buttonNumber = Config.obstacleCount("BUTTON");
+		for (int i = 0; i <buttonNumber; i++){
+			this.buttons.add(new Button());
 		}
 	}
 
@@ -283,15 +306,17 @@ public class GameTimer extends AnimationTimer{
 			this.key.render(this.gc, this.key.getXPos(), this.key.getYPos());
 		}
 
-		if(this.player.isVisible()) {
-			this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
-		}
-
 		//Render other players
 		if (!GameStage.isSinglePlayer()){
-			this.players.forEach((key, user) -> {
-				if (user.isVisible()) user.render(gc, user.getXPos(), user.getYPos());
-			});
+			if (!this.players.isEmpty()){
+				this.players.forEach((key, user) -> {
+					if (user.isVisible()) user.render(gc, user.getXPos(), user.getYPos());
+				});
+			}
+		}
+
+		if(this.player.isVisible()) {
+			this.player.render(this.gc, this.player.getXPos(), this.player.getYPos());
 		}
 		
 	}

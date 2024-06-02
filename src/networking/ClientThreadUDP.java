@@ -62,7 +62,10 @@ public class ClientThreadUDP extends Thread{
                     for(int i = 1; i<players.length; i++){
                         GameStage.addPlayers(players[i]);
                     }
-            }
+                } else if (message.startsWith("userN;")){
+                    String newUsername = message.split(";")[1];
+                    GameStage.setIdentifier(newUsername);
+                }
             }
 
 
@@ -126,7 +129,7 @@ public class ClientThreadUDP extends Thread{
                     Player player = this.players.get(playerName);
                     
                     if (player.getKey() != null){
-                        player.getKey().removePlayer();
+                        player.getKey().resetKey();
                         player.removeKey();
                     }
     
@@ -137,8 +140,7 @@ public class ClientThreadUDP extends Thread{
                     String playerName = message.split(";")[1];
                     Player player = this.players.get(playerName);
                     player.die();
-                    this.gameTimer.getKey().resetKey();
-                
+
                 } else if (message.startsWith("box;")){
                     int boxNumber = Integer.parseInt(message.split(";")[1]);
                     double boxXPos = Double.parseDouble(message.split(";")[2]);
@@ -148,10 +150,10 @@ public class ClientThreadUDP extends Thread{
                     int numUsersWaiting = Integer.parseInt(message.split(";")[1]);
                     GameStage.setNumWaiting(numUsersWaiting);
 
-                } else if(message.startsWith("player;")){
+                } else if(message.equals("player;")){
                     if (!GameStage.checkTeamFail()) GameStage.teamFailed();
+                    
                 }
-              
                 //Regular chat
                 else {
                     message = message  + "\n";

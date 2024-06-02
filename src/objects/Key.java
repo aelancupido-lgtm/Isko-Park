@@ -24,10 +24,6 @@ public class Key extends Sprite{
 			if (!GameStage.isSinglePlayer()) sendKeyCoordinates();
 			this.move();
 			}
-			if(!player.isAlive()){
-				this.resetKey();
-			}
-
 		}
 
 	public void move(){

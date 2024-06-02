@@ -377,7 +377,7 @@ public class Player extends Sprite{
 		this.isAlive = false;
 
 		if (this.key != null){
-			this.key.removePlayer();
+			this.key.resetKey();
 			this.removeKey();
 		}
 

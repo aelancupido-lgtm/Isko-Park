@@ -79,8 +79,8 @@ public class GameStage {
 	private static boolean SINGLE_PLAYER_GAME;
 	private static boolean CREATE_GAME_MODE;
 
-	public Font font_pico;
-	public Font font_minecraft;
+	private Font font_pico;
+	Font font_minecraft;
 
 	private MediaPlayer mediaPlayer;
 
@@ -93,6 +93,7 @@ public class GameStage {
 
 		GameStage.STAGE_LEVEL = 1;
 		GameStage.GAME_CREATED = false;
+		GameStage.SINGLE_PLAYER_GAME = false;
 
 		this.initBackground();
 		this.initSplash();
@@ -409,16 +410,25 @@ public class GameStage {
 				if(type == MenuType.MODE) { // Join a game.
 					GameStage.CREATE_GAME_MODE = false;
 					GameStage.SINGLE_PLAYER_GAME = false;
+					boolean validAddress = false;
 					serverAddressInputDialog = new TextInputDialog();
 					serverAddressInputDialog.setHeaderText("Enter the server address");
 					serverAddressInputDialog.showAndWait();
 
-					SERVER_ADDRESS = serverAddressInputDialog.getEditor().getText();
-					initClient(); // initializes the client thread
-					initWaiting();
-					showWaitingScene();
-					waitAllPlayers(false);
+					try {
+						InetAddress.getByName(serverAddressInputDialog.getEditor().getText());
+						validAddress = true;
+					} catch (Exception e2) {
+						
+					}
 
+					if (validAddress){
+						SERVER_ADDRESS = serverAddressInputDialog.getEditor().getText();
+						initClient(); // initializes the client thread
+						initWaiting();
+						showWaitingScene();
+						waitAllPlayers(false);
+					}
 				}
 
 				if (type == MenuType.PLAYER){ // Multiplayer game.
@@ -566,5 +576,9 @@ public class GameStage {
 
 	public static boolean checkTeamFail(){
 		return GameStage.TEAM_FAILED;
+	}
+
+	public static void setIdentifier(String newUsername){
+		GameStage.IDENTIFIER = newUsername;
 	}
 }
