@@ -87,10 +87,6 @@ public class ServerUDP extends Thread{
         }
     }
 
-    public int getNumberOfPlayers() {
-        return users.size();
-    }
-
 	@Override
 	public void run(){
         int playersWaiting = 0;
