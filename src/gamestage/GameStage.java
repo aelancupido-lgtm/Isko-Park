@@ -64,15 +64,15 @@ public class GameStage {
 	private static String IDENTIFIER;
 	private static int STAGE_LEVEL = 1;
 
-	public static ChatClientUDP client;
+	private static ChatClientUDP CLIENT;
 	
 	// for lobby
-	private static int numUsersWaiting; //number of users waiting
+	private static int NUM_USERS_WAITING; //number of users waiting
 	private static ArrayList<String> PLAYERS;
 	
 	private static String SERVER_ADDRESS;
 
-	private static ChatServerUDP server;
+	// private static ChatServerUDP SERVER;
 	private static boolean GAME_CREATED;
 	private static boolean SINGLE_PLAYER_GAME;
 	private static boolean CREATE_GAME_MODE;
@@ -154,7 +154,7 @@ public class GameStage {
 	private void initServer() throws UnknownHostException{
 		GameStage.SERVER_ADDRESS = this.getIPaddress();
 
-		server = new ChatServerUDP();
+		ChatServerUDP server = new ChatServerUDP();
 		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
 			protected ChatServerUDP call() throws Exception {
 				server.run();
@@ -171,9 +171,9 @@ public class GameStage {
 
 	private void initClient(){
 		GameStage.PLAYERS = new ArrayList<>();
-		GameStage.client = new ChatClientUDP();
+		GameStage.CLIENT = new ChatClientUDP();
 	    try {
-			GameStage.client.createClientThread(GameStage.getIdentifier());
+			GameStage.CLIENT.createClientThread(GameStage.getIdentifier());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -283,11 +283,11 @@ public class GameStage {
 				while(running.get()) {
 					// Use Platform.runLater to update the UI from another thread.
 					Platform.runLater(() -> {
-						System.out.println(GameStage.numUsersWaiting);
+						System.out.println(GameStage.NUM_USERS_WAITING);
 
-						node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
+						node.setText("(" + String.valueOf(GameStage.NUM_USERS_WAITING) + "/" + Config.MAX_PLAYERS + ")");
 
-						if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+						if(GameStage.NUM_USERS_WAITING == Config.MAX_PLAYERS) {
 							// Stop the while loop.
 							running.set(false);
 
@@ -442,7 +442,7 @@ public class GameStage {
         return hbox;
 	}
 
-	Label createLabel(String text) {
+	private Label createLabel(String text) {
 		Label label = new Label("(" + String.valueOf(text) + "/" + Config.MAX_PLAYERS + ")");
 		label.setFont(Font.font(GameStage.font.getName(), 50));
 		label.setTextFill(Color.web("#FF874E"));
@@ -467,7 +467,7 @@ public class GameStage {
         gameTimer.start(); // invoke the start method of the animation timer.
 	}
 
-	public void setGameOverScene(Scene gameOverScene){
+	void setGameOverScene(Scene gameOverScene){
         this.stage.setScene(gameOverScene);
     }
 
@@ -483,16 +483,16 @@ public class GameStage {
 		this.stage.setScene(this.stageScene);
 	}
 
-	public void showWaitingScene() {
+	void showWaitingScene() {
 		this.stage.setScene(this.waitingScene);
 	}
 
 	// for getting int value for array
-	public static int getLevel(){
+	static int getLevel(){
 		return GameStage.STAGE_LEVEL - 1;
 	}
 
-	public static int getStageLevel(){
+	static int getStageLevel(){
 		return GameStage.STAGE_LEVEL;
 	}
 
@@ -514,18 +514,18 @@ public class GameStage {
 
 	// used for setting number of users waiting
 	public static void setNumWaiting(int usersWaiting){
-		GameStage.numUsersWaiting = usersWaiting;
+		GameStage.NUM_USERS_WAITING = usersWaiting;
 	}
 
 	public static void addPlayers(String playerName){
 		GameStage.PLAYERS.add(playerName);
 	}
 
-	public static ArrayList<String> getPlayers(){
+	static ArrayList<String> getPlayers(){
 		return GameStage.PLAYERS;
 	}
 
-	public static void nextLevel(){
+	static void nextLevel(){
 		GameStage.STAGE_LEVEL++;
 	}
 
@@ -533,7 +533,7 @@ public class GameStage {
 		return GameStage.GAME_CREATED;
 	}
 
-	Stage getStage(){
-		return this.stage;
+	public static ChatClientUDP getClient(){
+		return GameStage.CLIENT;
 	}
 }

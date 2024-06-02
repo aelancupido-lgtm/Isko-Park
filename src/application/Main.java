@@ -17,7 +17,7 @@ public class Main extends Application {
 
 		primaryStage.setOnCloseRequest(event -> {
 			if (GameStage.isCreated()){
-				if (!GameStage.isSinglePlayer()) GameStage.client.close();
+				if (!GameStage.isSinglePlayer()) GameStage.getClient().close();
 			}
 			System.exit(0);
 		});

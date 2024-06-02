@@ -54,28 +54,12 @@ public class ChatServerUDP extends Thread{
     private static void initPlayersArray(){
         System.out.println("initializing players...");
 
-        // construct and forward message to each client
-        for (int i = 0; i < users.size(); i++){
-            String players = "player;";
-            for (String identifier : identifiers ){
-                if (!identifier.equals(identifiers.get(i))) players = players + identifier + ";";
-            }
-
-            forwardMessageToClient(users.get(i), hosts.get(i), players.getBytes(), players);
+        String players = "player;";
+        for (String identifier : identifiers ){
+            players = players + identifier + ";";
         }
 
-        byte[] gameStartMessage = new String("[Server] The game has started!").getBytes();
-        forwardMessageToAll(gameStartMessage, "[Server] The game has started!");
-    }
-
-    private static void forwardMessageToClient(int userPort, InetAddress userHost, byte[] byteMessage, String message){
-        DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, userHost, userPort);
-        try {
-            socket.send(forward);
-            System.out.println("Sent message: " + message + " to " + userHost.getHostAddress() + ":" + userPort);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        forwardMessageToAll(players.getBytes(), players);
     }
 
     private static void forwardMessageToAll(byte[] byteMessage, String message){
@@ -168,7 +152,7 @@ public class ChatServerUDP extends Thread{
                 sentPlayerIdentifiers = true;
             }
 
-			}
+		}
 
 	}
 	}

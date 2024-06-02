@@ -50,7 +50,7 @@ public class Button extends Sprite{
 			this.setClicked();
 			player.die();
 
-			if (!GameStage.isSinglePlayer() && !this.sentServerMessage) GameStage.client.sendMessage("button;clicked;" + this.btnNum );
+			if (!GameStage.isSinglePlayer() && !this.sentServerMessage) GameStage.getClient().sendMessage("button;clicked;" + this.btnNum );
 			this.sentServerMessage = true;
 
 		} else {
