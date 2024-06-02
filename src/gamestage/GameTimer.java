@@ -13,6 +13,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import objects.Door;
 import objects.Key;
@@ -76,14 +78,13 @@ public class GameTimer extends AnimationTimer{
 	@Override
 	public void handle(long arg0) {
 		this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
-
+		this.drawTimer();
 		this.checkStatus();
 		this.renderSprites();
 		this.moveSprites();
 		this.setTimeElapsed();
 		
 		if (this.timeElapsed == Config.TIME_PER_LEVEL){
-			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 			this.gameStage.setGameOver("lose");
 			this.stop();
 		}
@@ -211,6 +212,29 @@ public class GameTimer extends AnimationTimer{
 		}
 	}
 
+	private void drawTimer(){
+		if (this.timeElapsed < Config.TIME_PER_LEVEL * 0.75){
+			this.gc.setFill(Color.web("#FF874E"));
+		} else {
+			this.gc.setFill(Color.RED);
+		}
+		this.gc.setFont(this.gameStage.font_minecraft);
+		this.gc.fillText(this.convertElapsedTime(), 750, 20);
+
+	}
+
+	private String convertElapsedTime(){
+		String time = "" + this.timeElapsed / 60 + ":";
+		long seconds = this.timeElapsed % 60;
+		if (seconds < 10){
+			time = time + "0" + seconds;
+		} else {
+			time = time + seconds;
+		}
+
+		return time;
+	}
+
 	//For checking collision between objects and the player
 	private void checkStatus(){
 		this.key.checkCollision(this.player);
@@ -329,7 +353,6 @@ public class GameTimer extends AnimationTimer{
 			}
 
 		} else {
-			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 			this.gameStage.setGameOver("win");
             this.stop();
 		}
