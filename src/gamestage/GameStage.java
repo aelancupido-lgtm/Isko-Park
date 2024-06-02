@@ -122,6 +122,63 @@ public class GameStage {
 	    });
 	}
 
+	private String getIPaddress(){
+		try {
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			while (interfaces.hasMoreElements()) {
+				NetworkInterface iface = interfaces.nextElement();
+				if (
+					iface.isLoopback() || 
+				!iface.isUp() || 
+				iface.isVirtual() || 
+				iface.isPointToPoint())
+					continue;
+
+				Enumeration<InetAddress> addresses = iface.getInetAddresses();
+				while(addresses.hasMoreElements()) {
+					InetAddress addr = addresses.nextElement();
+
+					final String ip = addr.getHostAddress();
+					if(Inet4Address.class == addr.getClass()) {
+						System.out.println(ip);
+						return ip;
+					};
+				}
+			}
+		} catch (SocketException e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+	private void initServer() throws UnknownHostException{
+		GameStage.SERVER_ADDRESS = this.getIPaddress();
+
+		server = new ChatServerUDP();
+		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
+			protected ChatServerUDP call() throws Exception {
+				server.run();
+				return server;
+			}
+		};
+
+		Thread th = new Thread(task);
+		th.setDaemon(true);
+		th.start();
+
+		System.out.println("Server ip address: " + GameStage.SERVER_ADDRESS);
+	}
+
+	private void initClient(){
+		GameStage.PLAYERS = new ArrayList<>();
+		GameStage.client = new ChatClientUDP();
+	    try {
+			GameStage.client.createClientThread(GameStage.getIdentifier());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	} 
+	
 	// Create a scene for the splash screen.
 	private void initSplash() {
 		StackPane root = new StackPane();
@@ -210,63 +267,6 @@ public class GameStage {
 		imageView.setPreserveRatio(false); // do not preserve the ratio of the image.
 
 		return imageView;
-	}
-
-	private String getIPaddress(){
-		try {
-			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-			while (interfaces.hasMoreElements()) {
-				NetworkInterface iface = interfaces.nextElement();
-				if (
-					iface.isLoopback() || 
-				!iface.isUp() || 
-				iface.isVirtual() || 
-				iface.isPointToPoint())
-					continue;
-
-				Enumeration<InetAddress> addresses = iface.getInetAddresses();
-				while(addresses.hasMoreElements()) {
-					InetAddress addr = addresses.nextElement();
-
-					final String ip = addr.getHostAddress();
-					if(Inet4Address.class == addr.getClass()) {
-						System.out.println(ip);
-						return ip;
-					};
-				}
-			}
-		} catch (SocketException e) {
-			throw new RuntimeException(e);
-		}
-		return null;
-	}
-
-	private void initServer() throws UnknownHostException{
-		GameStage.SERVER_ADDRESS = this.getIPaddress();
-
-		server = new ChatServerUDP();
-		Task<ChatServerUDP> task = new Task<ChatServerUDP>(){
-			protected ChatServerUDP call() throws Exception {
-				server.run();
-				return server;
-			}
-		};
-
-		Thread th = new Thread(task);
-		th.setDaemon(true);
-		th.start();
-
-		System.out.println("Server ip address: " + GameStage.SERVER_ADDRESS);
-	}
-
-	private void initClient(){
-		GameStage.PLAYERS = new ArrayList<>();
-		GameStage.client = new ChatClientUDP();
-	    try {
-			GameStage.client.createClientThread(GameStage.getIdentifier());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void waitAllPlayers() {
