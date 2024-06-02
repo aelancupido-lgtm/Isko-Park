@@ -11,7 +11,7 @@ public class Config {
 	public final static int CHAT_INPUT_SIZE = 35;
 	public final static int SCREEN_SIZE = WINDOW_SIZE + CHAT_SIZE;
 
-	public final static int MAX_PLAYERS = 2;
+	public final static int MAX_PLAYERS = 4;
 
 	public final static String[] RESERVED_KEYWORDS = {"button;clicked", "coor;", "init;", "player;", "key;", "door;", "kill;", "dead;", "box;", "userNum;", "nextLvl;"};
 
@@ -21,7 +21,7 @@ public class Config {
 	public final static int SERVER_PORT_NUMBER = 8080;
 
 	// time per level in seconds
-	public final static long TIME_PER_LEVEL = 60;
+	public final static long TIME_PER_LEVEL = 120;
     public final static String[] INITIAL_MAPS = {"matrix_1", "matrix_2", "matrix_3"};
 
     public final static double[][] INITIAL_PLAYER_LOCATION = {{50, 592}, {64, 703}, {50, 720}};
