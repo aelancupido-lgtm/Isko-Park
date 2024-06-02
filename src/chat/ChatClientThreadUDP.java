@@ -146,6 +146,7 @@ public class ChatClientThreadUDP extends Thread{
                     String playerName = message.split(";")[1];
                     Player player = this.players.get(playerName);
                     player.die();
+                    this.gameTimer.getKey().resetKey();
                 
                 } else if (message.startsWith("box;")){
                     int boxNumber = Integer.parseInt(message.split(";")[1]);

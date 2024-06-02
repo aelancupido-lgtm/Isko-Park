@@ -472,6 +472,10 @@ public class Player extends Sprite{
 		return this.name;
 	}
 
+	public boolean isAlive(){
+		return this.isAlive;
+	}
+
 	public boolean hasExitedLevel(){
 		return this.hasEnteredDoor;
 	}
