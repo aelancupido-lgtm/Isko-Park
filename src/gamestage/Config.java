@@ -39,7 +39,7 @@ public class Config {
 	private final static int[][] PORTAL_WARPS = {{1, 0}, {}};
 
 	// order button, spike, box, portal, platform 
-	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2, 2}};
+	private final static int[][] OBSTACLE_NUMBERS = {{1, 1, 1, 2, 2}, {0, 0, 0, 0, 0}};
 	public final static int MAX_LEVEL = 3;
 
 	// gets the obstacle location based on object number and return xPos or yPos

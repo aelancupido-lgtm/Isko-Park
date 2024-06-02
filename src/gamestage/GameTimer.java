@@ -25,8 +25,6 @@ import obstacle.Spike;
 import player.Player;
 import tile.TileManager;
 
-// TODO: fix static variables
-
 public class GameTimer extends AnimationTimer{
 	private static Scene scene;
 	private GraphicsContext gc;
