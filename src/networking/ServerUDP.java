@@ -113,13 +113,15 @@ public class ServerUDP extends Thread{
                 hosts.add(packet.getAddress());
 
                 String username = message.replace("init;", "");
-
-                int occurrences = 0;
                 if (identifiers.contains(username)){
-                    while (identifiers.contains(username)){
+                    String tempUsername = username;
+                    int occurrences = 0;
+                    while (identifiers.contains(tempUsername)){
                         occurrences++;
-                        username = username + occurrences;
+                        tempUsername = username + occurrences;
                     }
+
+                    username = tempUsername;
 
                     forwardMessageToClient(packet.getPort(), packet.getAddress(), new String("userN;" + username).getBytes(), "userN;" + username);
                 }
