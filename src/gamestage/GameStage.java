@@ -9,9 +9,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
-
-import chat.ChatClientUDP;
-import chat.ChatServerUDP;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.util.Duration;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -41,6 +39,8 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import chat.ChatClientUDP;
+import chat.ChatServerUDP;
 
 enum MenuType {
 	MODE,
@@ -134,7 +134,7 @@ public class GameStage {
 	private void initWaiting() {
 		StackPane root = new StackPane();
 		
-		root.getChildren().add(this.playImage("waiting", ".gif"));
+		root.getChildren().addAll(this.playMedia(), this.playImage("waiting", ".gif"));
 		this.waitingScene = new Scene(root, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 	}
 
@@ -319,13 +319,14 @@ public class GameStage {
                 System.out.println(text1);; // should call the init server and flash the ip address and also allow the user to select number of players.
 
 
-				if(type == MenuType.MODE) {
+				if(type == MenuType.MODE) {	// Create a game.
 					GameStage.CREATE_GAME_MODE = true;
 					showPlayerScene();
 				}
-				if(type == MenuType.PLAYER) {
+				if(type == MenuType.PLAYER) { // Single player game.
 					GameStage.SINGLE_PLAYER_GAME = true;
 					initGame();
+					// TODO: initStage?
 					showStageScene();
 
 					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
@@ -340,7 +341,7 @@ public class GameStage {
             public void handle(ActionEvent e) {
                 System.out.println(text2);; // should allow the client input the server ip address.
 
-				if(type == MenuType.MODE) {
+				if(type == MenuType.MODE) { // Join a game.
 					GameStage.CREATE_GAME_MODE = false;
 					serverAddressInputDialog = new TextInputDialog();
 					serverAddressInputDialog.setHeaderText("Enter the server address");
@@ -348,15 +349,62 @@ public class GameStage {
 
 					SERVER_ADDRESS = serverAddressInputDialog.getEditor().getText();
 					initClient(); // initializes the client thread
-					initGame();
-					showStageScene();
+					initWaiting();
+					showWaitingScene();
 
-					PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-					pause.setOnFinished(event -> setGameScene()); // Set the gameScene after the pause.
-					pause.play();
+					Parent root = stage.getScene().getRoot();
+					if(root instanceof StackPane) {
+						StackPane stackPane = (StackPane) root;
+						Label node = createLabel("0");
+						stackPane.getChildren().add(node);
+
+						
+						// Run the loop on a separate thread.
+						AtomicBoolean running = new AtomicBoolean(true);
+						new Thread(() -> {
+							while(running.get()) {
+								// Use Platform.runLater to update the UI from another thread.
+								Platform.runLater(() -> {
+									System.out.println(GameStage.numUsersWaiting);
+
+									node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
+
+									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+										// Stop the while loop.
+										running.set(false);
+
+										// Add a delay before changing the scene.
+										PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+										pause.setOnFinished(event -> {
+											// Start the game here.
+											initGame();
+											initStage();
+
+											// Change the scene after the pause.
+											showStageScene();
+											PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+											pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
+											pauseGameScene.play();
+										});
+										pause.play();
+									}
+								});
+
+								// Add 1 sec delay.
+								if(running.get()) {
+									try {
+										Thread.sleep(1000);
+									} catch (InterruptedException ev) {
+										ev.printStackTrace();
+									}
+								}
+							}
+						}).start();
+					}
+
 				}
 
-				if (type == MenuType.PLAYER){
+				if (type == MenuType.PLAYER){ // Multiplayer game.
 					GameStage.SINGLE_PLAYER_GAME = false;
 					initGame();
 					if (GameStage.CREATE_GAME_MODE){
@@ -377,29 +425,43 @@ public class GameStage {
 						stackPane.getChildren().add(node);
 
 						// Run the loop on a separate thread.
+						AtomicBoolean running = new AtomicBoolean(true);
 						new Thread(() -> {
-							while(true) {
+							while(running.get()) {
 								// Use Platform.runLater to update the UI from another thread.
 								Platform.runLater(() -> {
-									int numberOfPlayers = GameStage.server.getNumberOfPlayers();
-									System.out.println(numberOfPlayers);
+									System.out.println(GameStage.numUsersWaiting);
 
-									node.setText(String.valueOf(numberOfPlayers));
+									node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
 
-									if(numberOfPlayers == Config.MAX_PLAYERS) {
-										// Start the game here.
+									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
+										// Stop the while loop.
+										running.set(false);
+
+										// Add a delay before changing the scene.
+										PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+										pause.setOnFinished(event -> {
+											// Start the game here.
+											initGame();
+											initStage();
+
+											// Change the scene after the pause.
+											showStageScene();
+											PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+											pauseGameScene.setOnFinished(ev -> setGameScene()); // Set the gameScene after the pause.
+											pauseGameScene.play();
+										});
+										pause.play();
 									}
 								});
 
-								// Use PauseTransition to introduce a delay.
-								PauseTransition pause = new PauseTransition(Duration.seconds(1));
-								pause.play();
-
-								// Wait for the pause to finish.
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException ev) {
-									ev.printStackTrace();
+								// Add 1 sec delay.
+								if(running.get()) {
+									try {
+										Thread.sleep(1000);
+									} catch (InterruptedException ev) {
+										ev.printStackTrace();
+									}
 								}
 							}
 						}).start();
@@ -448,7 +510,7 @@ public class GameStage {
 		// Set the font color to orange.
 		b1.setFont(Font.font(GameStage.font.getName(), 20));
 
-		// Set the font of the buttons.
+		// Set the size of the button.
 		b1.setMinSize(80, 40); 
 		b1.setMaxSize(80, 40); 
 
@@ -473,9 +535,17 @@ public class GameStage {
 	}
 
 	private Label createLabel(String text) {
-		Label label = new Label(String.valueOf(text));
-		label.setFont(Font.font(GameStage.font.getName(), 20));
+		Label label = new Label("(" + String.valueOf(text) + "/" + Config.MAX_PLAYERS + ")");
+		label.setFont(Font.font(GameStage.font.getName(), 50));
 		label.setTextFill(Color.web("#FF874E"));
+
+		// Set the size of the label.
+        label.setPrefSize(Config.WINDOW_SIZE, Config.WINDOW_SIZE);
+		label.setAlignment(Pos.CENTER);
+		
+		// Set the padding of the label.
+		label.setPadding(new Insets(800, 0, 0, 0)); // top, right, bottom, left
+
 		return label;
 	}
 
@@ -537,6 +607,7 @@ public class GameStage {
 	// used for setting number of users waiting
 	public static void setNumWaiting(int usersWaiting){
 		GameStage.numUsersWaiting = usersWaiting;
+		System.out.println(GameStage.numUsersWaiting);
 	}
 
 	public static void addPlayers(String playerName){
