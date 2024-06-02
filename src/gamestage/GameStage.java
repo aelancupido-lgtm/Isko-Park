@@ -121,7 +121,7 @@ public class GameStage {
 	}
 
 	// Create a scene for the stage level.
-	private void initStage() {
+	void initStage() {
 		StackPane root = new StackPane();
 		
 		root.getChildren().add(this.playImage("stage_" + GameStage.STAGE_LEVEL, ".gif"));
@@ -272,7 +272,7 @@ public class GameStage {
 		return vBox;
 	}
 
-	private void waitAllPlayers() {
+	void waitAllPlayers() {
 		Parent root = this.stage.getScene().getRoot();
 		if(root instanceof StackPane) {
 			StackPane stackPane = (StackPane) root;
@@ -480,65 +480,12 @@ public class GameStage {
 		this.stage.setScene(this.playerScene);
 	}
 
-	private void showStageScene() {
+	void showStageScene() {
 		this.stage.setScene(this.stageScene);
 	}
 
 	public void showWaitingScene() {
 		this.stage.setScene(this.waitingScene);
-		// Parent root = stage.getScene().getRoot();
-		// 			if(root instanceof StackPane) {
-		// 				StackPane stackPane = (StackPane) root;
-		// 				Label node = createLabel("0");
-		// 				stackPane.getChildren().add(node);
-
-						
-		// 				// Run the loop on a separate thread.
-		// 				AtomicBoolean running = new AtomicBoolean(true);
-		// 				new Thread(() -> {
-		// 					while(running.get()) {
-		// 						// Use Platform.runLater to update the UI from another thread.
-		// 						Platform.runLater(() -> {
-		// 							System.out.println(GameStage.numUsersWaiting);
-
-		// 							node.setText("(" + String.valueOf(GameStage.numUsersWaiting) + "/" + Config.MAX_PLAYERS + ")");
-
-		// 							if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
-		// 								// Stop the while loop.
-		// 								running.set(false);
-
-		// 								// Add a delay before changing the scene.
-		// 								PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-		// 								pause.setOnFinished(event -> {
-		// 									// Start the game here.
-		// 									initGame();
-		// 									initStage();
-
-		// 									// Change the scene after the pause.
-		// 									showStageScene();
-		// 									PauseTransition pauseGameScene = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
-		// 									pauseGameScene.setOnFinished(ev -> {
-		// 										// resetNumberWaiting();
-		// 										setGameScene();
-		// 									}); // Set the gameScene after the pause.
-		// 									pauseGameScene.play();
-		// 								});
-		// 								pause.play();
-		// 							}
-		// 						});
-
-		// 						// Add 1 sec delay.
-		// 						if(running.get()) {
-		// 							try {
-		// 								Thread.sleep(1000);
-		// 							} catch (InterruptedException ev) {
-		// 								ev.printStackTrace();
-		// 							}
-		// 						}
-		// 					}
-		// 				}).start();
-		// 			}
-
 	}
 
 	// for getting int value for array

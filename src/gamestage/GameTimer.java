@@ -161,13 +161,20 @@ public class GameTimer extends AnimationTimer{
 			GameStage.nextLevel();
 			this.gc.clearRect(0, 0, Config.WINDOW_SIZE, Config.WINDOW_SIZE);
 			this.stop();
-			this.gameStage.initWaiting();
-			this.gameStage.showWaitingScene();
 
 			// multiplayer next level
 			if (!GameStage.isSinglePlayer()){
+				this.gameStage.initWaiting();
+				this.gameStage.showWaitingScene();
 				GameStage.client.sendMessage("nextLvl;");
-				// this.gameStage.waitAllPlayers();
+				this.gameStage.waitAllPlayers();
+			} else {
+				this.gameStage.initStage();
+				this.gameStage.showStageScene();
+
+				PauseTransition pause = new PauseTransition(Duration.seconds(2.0)); // Create a pause of 2 seconds.
+				pause.setOnFinished(event -> this.gameStage.setGameScene()); // Set the gameScene after the pause.
+				pause.play();
 			}
 
 		} else {
