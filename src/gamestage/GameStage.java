@@ -374,11 +374,7 @@ public class GameStage {
 									}
 								});
 
-								// Use PauseTransition to introduce a delay.
-								PauseTransition pause = new PauseTransition(Duration.seconds(1));
-								pause.play();
-
-								// Wait for the pause to finish.
+								// add 1 sec delay.
 								try {
 									Thread.sleep(1000);
 								} catch (InterruptedException ev) {
@@ -424,21 +420,17 @@ public class GameStage {
 							while(true) {
 								// Use Platform.runLater to update the UI from another thread.
 								Platform.runLater(() -> {
-									int numberOfPlayers = GameStage.server.getNumberOfPlayers();
-									System.out.println(numberOfPlayers);
+									// int numberOfPlayers = GameStage.server.getNumberOfPlayers();
+									System.out.println(GameStage.numUsersWaiting);
 
-									node.setText(String.valueOf(numberOfPlayers));
+									node.setText(String.valueOf(GameStage.numUsersWaiting));
 
-									if(numberOfPlayers == Config.MAX_PLAYERS) {
+									if(GameStage.numUsersWaiting == Config.MAX_PLAYERS) {
 										// Start the game here.
 									}
 								});
 
-								// Use PauseTransition to introduce a delay.
-								PauseTransition pause = new PauseTransition(Duration.seconds(1));
-								pause.play();
-
-								// Wait for the pause to finish.
+								// add 1 sec delay.
 								try {
 									Thread.sleep(1000);
 								} catch (InterruptedException ev) {
