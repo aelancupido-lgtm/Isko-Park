@@ -51,14 +51,18 @@ public class ChatServerUDP extends Thread{
 	}
 
     // send all players to new port
-    private static void initPlayersArray(int userPort, InetAddress userHost){
+    private static void initPlayersArray(){
         System.out.println("initializing players...");
         String players = "player;";
-        for (String identifier : identifiers ){
-            players = players + identifier + ";";
-        }
 
-        forwardMessageToClient(userPort, userHost, players.getBytes(), players);
+        // construct and forward message to each client
+        for (int i = 0; i < users.size(); i++){
+            for (String identifier : identifiers ){
+                if (!identifier.equals(identifiers.get(i))) players = players + identifier + ";";
+            }
+
+            forwardMessageToClient(users.get(i), hosts.get(i), players.getBytes(), players);
+        }
     }
 
     private static void forwardMessageToClient(int userPort, InetAddress userHost, byte[] byteMessage, String message){
@@ -71,7 +75,7 @@ public class ChatServerUDP extends Thread{
         }
     }
 
-    private static void forwardMessageToAll(int userPort, InetAddress userHost, byte[] byteMessage, String message){
+    private static void forwardMessageToAll(byte[] byteMessage, String message){
         for (int i = 0; i < users.size(); i++){
             DatagramPacket forward = new DatagramPacket(byteMessage, byteMessage.length, hosts.get(i), users.get(i));
             forward.setPort(users.get(i));
@@ -109,31 +113,22 @@ public class ChatServerUDP extends Thread{
                 hosts.add(packet.getAddress());
 
                 String username = message.replace("init;", "");
+                identifiers.add(username);
+
                 // new user chat message
-                byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
-                
+                // byte[] newUserMessage = new String("[Server] Player " + username + " has joined the chat!").getBytes();
+                // byte[] gameStartMessage = new String("[Server] The game has started!").getBytes();
+
+
                 // add user to users hashmap message
-                byte[] addUserMessage = new String("player;" + username).getBytes();
+                // byte[] addUserMessage = new String("player;" + username).getBytes();
                 
                 byte[] sendNumberOfPlayers = new String("userNum;" + users.size()).getBytes();
 
-                int userPort = packet.getPort();
-                InetAddress userHost = packet.getAddress();
-
-                // System.out.println("identifiers in list: " + identifiers.size());
-                // send all players to new port
-                if (identifiers.size() != 0) initPlayersArray(userPort, userHost);
-
-                identifiers.add(username);
-
-                try {
-                    forwardMessage(userPort, userHost, newUserMessage, "[Server] Player " + username + " has joined the chat!");
-                    forwardMessage(userPort, userHost, addUserMessage, "player;" + username);
-                    forwardMessageToAll(userPort, userHost, sendNumberOfPlayers, "userNum;" + users.size());
-
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
+                // forwardMessage(userPort, userHost, newUserMessage, "[Server] Player " + username + " has joined the chat!");
+                // forwardMessage(userPort, userHost, addUserMessage, "player;" + username);
+                // forwardMessageToAll(addUserMessage, message);
+                forwardMessageToAll(sendNumberOfPlayers, "userNum;" + users.size());
 
             // forward
             } else if (message.startsWith("kill;")) {
@@ -163,6 +158,12 @@ public class ChatServerUDP extends Thread{
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }
+            }
+
+            // send all players to port
+            // assumes that all players have already joined the game
+            if (identifiers.size() == Config.MAX_PLAYERS) {
+                initPlayersArray();
             }
 
 			}

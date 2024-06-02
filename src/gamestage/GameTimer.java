@@ -68,6 +68,7 @@ public class GameTimer extends AnimationTimer{
 
 		if (!GameStage.isSinglePlayer()) {	
 			this.players = new HashMap<>();
+			this.populatePlayerHashMap();
 			this.initChat();
 		}
 	}
@@ -79,6 +80,12 @@ public class GameTimer extends AnimationTimer{
 		this.checkStatus();
 		this.renderSprites();
 		this.moveSprites();
+	}
+
+	private void populatePlayerHashMap(){
+		for (String username: GameStage.getPlayers()){
+			this.players.put(username, new Player(username));
+		}
 	}
 
 	private void initChat(){
