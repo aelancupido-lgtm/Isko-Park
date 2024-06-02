@@ -11,7 +11,7 @@ public class Config {
 	public final static int CHAT_INPUT_SIZE = 35;
 	public final static int SCREEN_SIZE = WINDOW_SIZE + CHAT_SIZE;
 
-	public final static int MAX_PLAYERS = 4;
+	public final static int MAX_PLAYERS = 2;
 
 	public final static String[] RESERVED_KEYWORDS = {"button;clicked", "coor;", "init;", "player;", "key;", "door;", "kill;", "dead;", "box;", "userNum;"};
 

@@ -51,6 +51,7 @@ public class ChatClientThreadUDP extends Thread{
 
             if (!isRunning){
 
+
                 if (message.startsWith("userNum;")){
                 int numUsersWaiting = Integer.parseInt(message.split(";")[1]);
                 GameStage.setNumWaiting(numUsersWaiting);
@@ -72,6 +73,7 @@ public class ChatClientThreadUDP extends Thread{
 
 
             }
+
 
             if (isRunning){
                 if (message.startsWith("coor;") && !this.players.isEmpty()){
@@ -151,7 +153,7 @@ public class ChatClientThreadUDP extends Thread{
     
                     GameTimer.getBoxes().get(boxNumber).setXPos(boxXPos);
                 } else if (message.startsWith("userNum;") || message.startsWith("player;")){
-
+                  
                 }
               
                 //Regular chat
